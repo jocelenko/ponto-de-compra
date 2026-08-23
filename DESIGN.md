@@ -65,6 +65,9 @@ Regras duráveis:
   megamenu. Existe porque **filtro e peso fazem coisas diferentes**: filtro tira candidatos, peso
   reordena. Juntar os dois no mesmo painel faria o usuário mexer num peso e estranhar que a contagem
   não mudou. A ponte resolve a descoberta sem apagar a distinção.
+- **`.conta`**: extrato vertical do custo anual, com uma linha por componente, régua e total.
+  Cada linha traz o quadradinho da cor que o componente tem no gráfico de composição, então
+  extrato e gráfico se leem juntos. A soma sempre bate com o total exibido.
 - **`.ajuda` e `#balao`**: ajuda contextual. Um balão único no `body`, posicionado por JS, porque como
   filho de cada número ele seria cortado pela tabela e pela matriz, que têm `overflow` próprio.
 - **`.quadro`**: moldura de gráfico. **Todo gráfico é obrigado a ter `.tit` com a conclusão e `.sub` ensinando a ler.** Gráfico sem título que conclui é gráfico incompleto.
@@ -89,6 +92,9 @@ Verificado por harness de iframe (`mobile.html`), porque o painel de navegador d
 
 - Risco sobre "preço da vitrine" traçado uma vez na entrada.
 - `.rev` revela blocos na rolagem, com `IntersectionObserver` e `unobserve` depois de revelar.
+  **Duas redes de segurança obrigatórias**: o que já está na viewport ao carregar é revelado na hora,
+  sem depender do observador, e um `setTimeout` de 1,5 s revela o resto. Sem isso, uma falha do
+  observador deixa a página inteira invisível para sempre.
 - Leitura em rolagem na seção da curva: gráfico fixo, texto avança em três etapas.
 - Parallax só nas manchas do herói, e só nos primeiros 140% da viewport.
 - Barra de progresso usa `transform: scaleX`, nunca `width`, que causa thrash de layout.

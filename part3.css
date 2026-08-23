@@ -119,3 +119,26 @@ main{padding-bottom:80px}
   .val .exp{display:none}
   .val .cifra{font-size:clamp(26px,3.6vw,32px)}
 }
+
+/* ---------- extrato do custo anual ---------- */
+.verConta{display:inline-flex; align-items:center; gap:6px; margin-top:10px; padding:6px 10px 6px 8px;
+  border:1px solid var(--line); border-radius:99px; background:var(--card); color:var(--acc-ink);
+  font:inherit; font-size:13px; font-weight:650; cursor:pointer; min-height:34px}
+.verConta:hover{border-color:var(--acc); background:var(--acc-soft)}
+.verConta svg{width:12px; height:12px; transition:transform .2s}
+.verConta[aria-expanded=true] svg{transform:rotate(180deg)}
+@media (pointer:coarse){ .verConta{min-height:42px; padding:0 14px 0 12px} }
+.conta{margin-top:12px; border-top:1px solid var(--line-2); padding-top:12px;
+  font-size:14px; font-variant-numeric:tabular-nums}
+.conta[hidden]{display:none}
+.conta .l{display:flex; align-items:baseline; gap:10px; padding:5px 0}
+.conta .l .nome{color:var(--ink-2); display:flex; align-items:center; gap:7px; min-width:0}
+.conta .l .pt{flex:1; border-bottom:1px dotted var(--line); min-width:12px; transform:translateY(-3px)}
+.conta .l .v{font-weight:650; white-space:nowrap}
+.conta .l .marca{width:8px; height:8px; border-radius:2px; flex:0 0 auto}
+.conta .l.zero .nome,.conta .l.zero .v{color:var(--ink-3); font-weight:400}
+.conta .soma{display:flex; align-items:baseline; gap:10px; margin-top:8px; padding-top:10px;
+  border-top:2px solid var(--ink)}
+.conta .soma .nome{font-weight:700}
+.conta .soma .v{font-weight:800; font-size:17px; white-space:nowrap}
+.conta .rodape{margin-top:10px; font-size:12.5px; line-height:1.45; color:var(--ink-3)}

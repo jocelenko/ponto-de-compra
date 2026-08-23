@@ -42,6 +42,31 @@ function motivoDe(c, cs){
   return `Ganha porque ${partes.join(", e ")}.${extra}`;
 }
 
+/* Extrato vertical: cada componente, uma regua, o total. Deixa a soma explicita. */
+const LINHAS_CONTA = [
+  ["deprec","Depreciação","--s1","O que o carro perde de valor, medido na curva da FIPE"],
+  ["manut","Manutenção","--s2","Oficina, revisão e, em elétrico, provisão de bateria"],
+  ["seguro","Seguro","--s3","Percentual do valor FIPE por ano"],
+  ["ipva","IPVA","--s4","Alíquota do estado sobre o valor médio no período"],
+  ["comb","Energia","--s5","Combustível ou eletricidade"],
+  ["juros","Juros do financiamento","--s6","Só entra se você marcar financiado"]
+];
+function montaConta(c){
+  if(!c) return "";
+  const linhas = LINHAS_CONTA.map(([k,nome,cor,dica])=>{
+    const v = c[k] || 0;
+    if(k === "juros" && v <= 0 && S.pagamento !== "financiado") return "";
+    return `<div class="l${v<=0?" zero":""}" title="${dica}">` +
+      `<span class="nome"><i class="marca" style="background:var(${cor})"></i>${nome}</span>` +
+      `<span class="pt"></span><span class="v">${v>0?BRL(v):"não entra"}</span></div>`;
+  }).join("");
+  return linhas +
+    `<div class="soma"><span class="nome">Total por ano</span><span class="pt"></span>` +
+    `<span class="v">${BRL(c.total)}</span></div>` +
+    `<p class="rodape">Ao longo de ${S.H} anos dá <b>${BRL(c.total*S.H)}</b>. ` +
+    `Não entram entrada, licenciamento, multas nem estacionamento.</p>`;
+}
+
 function drawTopo(top, cs){
   const q = id => document.getElementById(id);
   const c = top[0];
@@ -53,6 +78,7 @@ function drawTopo(top, cs){
   q("topPreco").textContent = BRL(c.preco);
   q("topCusto").textContent = BRL(c.total);
   q("topAnos").textContent = S.H;
+  const conta = q("contaTopo"); if(conta) conta.innerHTML = montaConta(c);
 }
 
 function drawPicks(top, cs){

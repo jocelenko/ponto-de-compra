@@ -367,6 +367,29 @@ main{padding-bottom:80px}
   .val .cifra{font-size:clamp(26px,3.6vw,32px)}
 }
 
+/* ---------- extrato do custo anual ---------- */
+.verConta{display:inline-flex; align-items:center; gap:6px; margin-top:10px; padding:6px 10px 6px 8px;
+  border:1px solid var(--line); border-radius:99px; background:var(--card); color:var(--acc-ink);
+  font:inherit; font-size:13px; font-weight:650; cursor:pointer; min-height:34px}
+.verConta:hover{border-color:var(--acc); background:var(--acc-soft)}
+.verConta svg{width:12px; height:12px; transition:transform .2s}
+.verConta[aria-expanded=true] svg{transform:rotate(180deg)}
+@media (pointer:coarse){ .verConta{min-height:42px; padding:0 14px 0 12px} }
+.conta{margin-top:12px; border-top:1px solid var(--line-2); padding-top:12px;
+  font-size:14px; font-variant-numeric:tabular-nums}
+.conta[hidden]{display:none}
+.conta .l{display:flex; align-items:baseline; gap:10px; padding:5px 0}
+.conta .l .nome{color:var(--ink-2); display:flex; align-items:center; gap:7px; min-width:0}
+.conta .l .pt{flex:1; border-bottom:1px dotted var(--line); min-width:12px; transform:translateY(-3px)}
+.conta .l .v{font-weight:650; white-space:nowrap}
+.conta .l .marca{width:8px; height:8px; border-radius:2px; flex:0 0 auto}
+.conta .l.zero .nome,.conta .l.zero .v{color:var(--ink-3); font-weight:400}
+.conta .soma{display:flex; align-items:baseline; gap:10px; margin-top:8px; padding-top:10px;
+  border-top:2px solid var(--ink)}
+.conta .soma .nome{font-weight:700}
+.conta .soma .v{font-weight:800; font-size:17px; white-space:nowrap}
+.conta .rodape{margin-top:10px; font-size:12.5px; line-height:1.45; color:var(--ink-3)}
+
 /* ============ gráficos ============ */
 .quadro{background:var(--card); border:1px solid var(--line-2); border-radius:var(--r-m); padding:20px 12px 8px;
   box-shadow:var(--sh-1); min-width:0}
@@ -751,6 +774,11 @@ table.rk th .thin button{width:auto}
           <div class="val est">
             <span class="tag">Estimado pelo Ponto de Compra</span><button class="ajuda" type="button" data-ajuda="custoAno" aria-expanded="false" aria-label="O que entra no custo por ano">?</button>
             <div class="cifra" id="topCusto"></div>
+            <button class="verConta" id="btnConta" aria-expanded="false" aria-controls="contaTopo">
+              <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.9" aria-hidden="true"><path d="M2 4l4 4 4-4"/></svg>
+              <span class="rot">Ver a conta</span>
+            </button>
+            <div class="conta" id="contaTopo" hidden></div>
             <p class="exp">É quanto ele consome <b>por ano</b> se você ficar <span id="topAnos"></span> anos com ele. Soma o que ele perde de valor, mais IPVA, seguro, manutenção, combustível e, se for financiado, os juros. <b>Depende de premissas que você pode mexer nos filtros.</b></p>
           </div>
         </div>
@@ -1776,6 +1804,31 @@ function motivoDe(c, cs){
   return `Ganha porque ${partes.join(", e ")}.${extra}`;
 }
 
+/* Extrato vertical: cada componente, uma regua, o total. Deixa a soma explicita. */
+const LINHAS_CONTA = [
+  ["deprec","Depreciação","--s1","O que o carro perde de valor, medido na curva da FIPE"],
+  ["manut","Manutenção","--s2","Oficina, revisão e, em elétrico, provisão de bateria"],
+  ["seguro","Seguro","--s3","Percentual do valor FIPE por ano"],
+  ["ipva","IPVA","--s4","Alíquota do estado sobre o valor médio no período"],
+  ["comb","Energia","--s5","Combustível ou eletricidade"],
+  ["juros","Juros do financiamento","--s6","Só entra se você marcar financiado"]
+];
+function montaConta(c){
+  if(!c) return "";
+  const linhas = LINHAS_CONTA.map(([k,nome,cor,dica])=>{
+    const v = c[k] || 0;
+    if(k === "juros" && v <= 0 && S.pagamento !== "financiado") return "";
+    return `<div class="l${v<=0?" zero":""}" title="${dica}">` +
+      `<span class="nome"><i class="marca" style="background:var(${cor})"></i>${nome}</span>` +
+      `<span class="pt"></span><span class="v">${v>0?BRL(v):"não entra"}</span></div>`;
+  }).join("");
+  return linhas +
+    `<div class="soma"><span class="nome">Total por ano</span><span class="pt"></span>` +
+    `<span class="v">${BRL(c.total)}</span></div>` +
+    `<p class="rodape">Ao longo de ${S.H} anos dá <b>${BRL(c.total*S.H)}</b>. ` +
+    `Não entram entrada, licenciamento, multas nem estacionamento.</p>`;
+}
+
 function drawTopo(top, cs){
   const q = id => document.getElementById(id);
   const c = top[0];
@@ -1787,6 +1840,7 @@ function drawTopo(top, cs){
   q("topPreco").textContent = BRL(c.preco);
   q("topCusto").textContent = BRL(c.total);
   q("topAnos").textContent = S.H;
+  const conta = q("contaTopo"); if(conta) conta.innerHTML = montaConta(c);
 }
 
 function drawPicks(top, cs){
@@ -2141,6 +2195,13 @@ function bind(){
   q("fecharMega").onclick = fecharMega;
   // stopPropagation: sem ele o clique borbulha ate o document, que fecha o megamenu
   // no mesmo instante em que ele abre
+  const bConta = q("btnConta");
+  if(bConta) bConta.onclick = () => {
+    const alvo = q("contaTopo"), abrindo = alvo.hidden;
+    alvo.hidden = !abrindo;
+    bConta.setAttribute("aria-expanded", abrindo);
+    bConta.querySelector(".rot").textContent = abrindo ? "Esconder a conta" : "Ver a conta";
+  };
   if(q("verCriterios")) q("verCriterios").onclick = e => { e.stopPropagation(); abrirMega(); };
   if(q("irCriterios"))  q("irCriterios").onclick  = e => { e.stopPropagation(); abrir(false); abrirMega(); };
   document.addEventListener("click", e => {
@@ -2214,12 +2275,21 @@ function ajudaBind(){
 
 /* ============ rolagem: revelação, progresso, seção atual, parallax ============ */
 let obsRev;
+function revelarTudo(){ document.querySelectorAll(".rev:not(.vis)").forEach(e=>e.classList.add("vis")); }
 function revelar(){
-  if(!("IntersectionObserver" in window)) { document.querySelectorAll(".rev").forEach(e=>e.classList.add("vis")); return; }
+  if(!("IntersectionObserver" in window)){ revelarTudo(); return; }
   if(!obsRev) obsRev = new IntersectionObserver(ents => {
     ents.forEach(e => { if(e.isIntersecting){ e.target.classList.add("vis"); obsRev.unobserve(e.target); } });
   }, {rootMargin:"0px 0px -12% 0px", threshold:.08});
-  document.querySelectorAll(".rev:not(.vis)").forEach(e => obsRev.observe(e));
+  document.querySelectorAll(".rev:not(.vis)").forEach(e => {
+    // ja visivel na carga: revela na hora, sem depender do observador
+    const r = e.getBoundingClientRect();
+    if(r.top < innerHeight && r.bottom > 0) e.classList.add("vis");
+    else obsRev.observe(e);
+  });
+  // rede de seguranca: conteudo nunca pode ficar invisivel por falha do observador
+  clearTimeout(window._revFallback);
+  window._revFallback = setTimeout(revelarTudo, 1500);
 }
 function rolagem(){
   const links = [...document.querySelectorAll("#navTopo a")];

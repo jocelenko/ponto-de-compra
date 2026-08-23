@@ -183,6 +183,13 @@ function bind(){
   q("fecharMega").onclick = fecharMega;
   // stopPropagation: sem ele o clique borbulha ate o document, que fecha o megamenu
   // no mesmo instante em que ele abre
+  const bConta = q("btnConta");
+  if(bConta) bConta.onclick = () => {
+    const alvo = q("contaTopo"), abrindo = alvo.hidden;
+    alvo.hidden = !abrindo;
+    bConta.setAttribute("aria-expanded", abrindo);
+    bConta.querySelector(".rot").textContent = abrindo ? "Esconder a conta" : "Ver a conta";
+  };
   if(q("verCriterios")) q("verCriterios").onclick = e => { e.stopPropagation(); abrirMega(); };
   if(q("irCriterios"))  q("irCriterios").onclick  = e => { e.stopPropagation(); abrir(false); abrirMega(); };
   document.addEventListener("click", e => {
@@ -256,12 +263,21 @@ function ajudaBind(){
 
 /* ============ rolagem: revelação, progresso, seção atual, parallax ============ */
 let obsRev;
+function revelarTudo(){ document.querySelectorAll(".rev:not(.vis)").forEach(e=>e.classList.add("vis")); }
 function revelar(){
-  if(!("IntersectionObserver" in window)) { document.querySelectorAll(".rev").forEach(e=>e.classList.add("vis")); return; }
+  if(!("IntersectionObserver" in window)){ revelarTudo(); return; }
   if(!obsRev) obsRev = new IntersectionObserver(ents => {
     ents.forEach(e => { if(e.isIntersecting){ e.target.classList.add("vis"); obsRev.unobserve(e.target); } });
   }, {rootMargin:"0px 0px -12% 0px", threshold:.08});
-  document.querySelectorAll(".rev:not(.vis)").forEach(e => obsRev.observe(e));
+  document.querySelectorAll(".rev:not(.vis)").forEach(e => {
+    // ja visivel na carga: revela na hora, sem depender do observador
+    const r = e.getBoundingClientRect();
+    if(r.top < innerHeight && r.bottom > 0) e.classList.add("vis");
+    else obsRev.observe(e);
+  });
+  // rede de seguranca: conteudo nunca pode ficar invisivel por falha do observador
+  clearTimeout(window._revFallback);
+  window._revFallback = setTimeout(revelarTudo, 1500);
 }
 function rolagem(){
   const links = [...document.querySelectorAll("#navTopo a")];
