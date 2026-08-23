@@ -63,7 +63,7 @@ reconstruível rodando a coleta.
 
 | Caminho | O que é |
 |---|---|
-| `site/index.html` | o painel, arquivo único e autossuficiente |
+| `docs/index.html` | o painel, arquivo único e autossuficiente (é o que o GitHub Pages serve) |
 | `fetch_v2.py` | coleta na API, com cache e retomada |
 | `rebuild.py` | reconstrói o dataset a partir do cache |
 | `analise4.py` | índice encadeado e curva de retenção |
@@ -83,6 +83,17 @@ reconstruível rodando a coleta.
 - Modelos com menos de quatro anos na tabela têm curva fraca e vêm marcados.
 - O maior risco não está nesta conta: um exemplar mal cuidado apaga qualquer
   vantagem calculada aqui. Vistoria cautelar e laudo de motor e câmbio antes de fechar.
+
+## Site publicado
+
+<https://jocelenko.github.io/ponto-de-compra/>
+
+O GitHub Pages serve a pasta `docs/`. Para atualizar o site, rode `python3 build.py`
+e copie o resultado:
+
+```bash
+python3 build.py && cp ponto-de-compra.html docs/index.html
+```
 
 ## Licença
 

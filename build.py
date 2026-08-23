@@ -12,3 +12,9 @@ parts = [
 out = "\n".join(parts)
 open(p+"ponto-de-compra.html","w",encoding="utf-8").write(out)
 print(f"montado: {len(out)/1024:.0f} KB")
+
+# publica direto na pasta que o GitHub Pages serve
+import shutil, os
+if os.path.isdir(p+"docs"):
+    shutil.copyfile(p+"ponto-de-compra.html", p+"docs/index.html")
+    print("docs/index.html atualizado")
