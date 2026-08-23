@@ -2,7 +2,13 @@
 function drawStack(top){
   const box = document.getElementById("cStack");
   const rows = top.slice(0, 12);
-  const W = 900, H = 40 + rows.length*34, L = 214, R = 92, T = 26, B = 8;
+  const dim = dimChart(box, {razao: 0.01});
+  const W = dim.W;
+  const alturaLinha = dim.estreito ? 46 : 36;
+  const H = 40 + rows.length*alturaLinha;
+  const L = dim.estreito ? 8 : 200, R = dim.estreito ? 10 : 92;
+  const T = dim.estreito ? 30 : 26, B = 8;
+  const rotuloDentro = dim.estreito;
   const s = svgFor(box, W, H), tip = tipFor(box);
   if(!rows.length){ el("text",{x:W/2,y:40,class:"ann","text-anchor":"middle"},s)
     .textContent = "Nenhum candidato na faixa selecionada."; return; }
@@ -14,10 +20,15 @@ function drawStack(top){
     el("text",{x:xs(v),y:T-12,class:"tk","text-anchor":"middle"},s).textContent = v?BRLk(v):"0";
   }
   rows.forEach((r,i)=>{
-    const y = T + i*34, h = 21;
-    el("text",{x:0,y:y+11,class:"tk",fill:cssv("--ink"),"font-size":12.5,
-      "font-family":'"Archivo",sans-serif'},s).textContent = (x=>x.length>28?x.slice(0,27)+"…":x)(famNome(r.fam));
-    el("text",{x:0,y:y+23,class:"tk"},s).textContent = `${r.ano} · ${BRL(r.preco)}`;
+    const y = T + i*alturaLinha + (rotuloDentro?12:0), h = dim.estreito ? 18 : 22;
+    if(rotuloDentro){
+      el("text",{x:L,y:y-6,class:"tk",fill:cssv("--ink"),"font-size":13,"font-weight":700},s)
+        .textContent = `${famNome(r.fam)} ${r.ano}`;
+    } else {
+      el("text",{x:0,y:y+11,class:"tk",fill:cssv("--ink"),"font-size":13,"font-weight":600},s)
+        .textContent = (x=>x.length>26?x.slice(0,25)+"…":x)(famNome(r.fam));
+      el("text",{x:0,y:y+24,class:"tk"},s).textContent = `${r.ano} · ${BRL(r.preco)}`;
+    }
     let acc = 0;
     COMPS.forEach(c=>{
       const w = (r[c.k]/maxT)*(W-L-R);
@@ -33,7 +44,7 @@ function drawStack(top){
       rect.addEventListener("pointerleave",()=>tip.classList.remove("on"));
       acc += r[c.k];
     });
-    el("text",{x:xs(r.total)+9, y:y+15, class:"tk", fill:cssv("--ink"), "font-weight":600},s)
+    if(!dim.estreito) el("text",{x:xs(r.total)+9, y:y+15, class:"tk", fill:cssv("--ink"), "font-weight":700},s)
       .textContent = BRL(r.total);
   });
   document.getElementById("lgStack").innerHTML = COMPS.map(c=>
@@ -43,7 +54,10 @@ function drawStack(top){
 /* ============ 5. fronteira: preço de compra x custo anual ============ */
 function drawScatter(cs, top){
   const box = document.getElementById("cScat");
-  const W = 900, H = 440, L = 70, R = 28, T = 22, B = 50;
+  const dim = dimChart(box, {minH: 340, maxH: 560});
+  const W = dim.W, H = dim.H;
+  const L = dim.estreito ? 54 : 68, R = dim.estreito ? 14 : 28;
+  const T = 22, B = dim.estreito ? 54 : 50;
   const s = svgFor(box, W, H), tip = tipFor(box);
   if(!cs.length){ el("text",{x:W/2,y:H/2,class:"ann","text-anchor":"middle"},s)
     .textContent = "Nenhum candidato na faixa."; return; }

@@ -14,10 +14,27 @@ function tipFor(box){
 }
 const path = pts => pts.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join(" ");
 
+/* Desenha no tamanho real do container. Antes o SVG era autorado em 900px e exibido
+   em ~700, o que encolhia todo texto em 22%. Agora 11px de rotulo sao 11px na tela. */
+function dimChart(box, opt){
+  opt = opt || {};
+  const larg = Math.max(280, Math.round(box.getBoundingClientRect().width) || 900);
+  const estreito = larg < 560, medio = larg < 900;
+  const razao = opt.razao || (estreito ? 1.12 : medio ? 0.78 : 0.56);
+  let H = Math.round(larg * razao);
+  H = Math.max(opt.minH || 320, Math.min(opt.maxH || 640, H));
+  return {W: larg, H, estreito, medio};
+}
+
 /* ============ 1. curva de retencao ============ */
 function drawCurva(){
   const box = document.getElementById("cCurva");
-  const W = 900, H = 430, L = 58, R = 140, T = 20, B = 46;
+  const dim = dimChart(box, {minH: 360, maxH: 620});
+  const W = dim.W, H = dim.H;
+  const rotuloDireto = !dim.estreito;                 // em tela estreita a identidade vem dos chips
+  const L = dim.estreito ? 42 : 54;
+  const R = rotuloDireto ? (dim.medio ? 108 : 132) : 14;
+  const T = 22, B = dim.estreito ? 52 : 48;
   const s = svgFor(box, W, H), tip = tipFor(box);
   const xs = i => L + (i/12) * (W-L-R);
   const ys = v => T + (1 - (v-0.15)/(1.0-0.15)) * (H-T-B);
@@ -27,11 +44,12 @@ function drawCurva(){
     el("text",{x:L-9,y:ys(v)+3.5,class:"tk","text-anchor":"end"},s).textContent = Math.round(v*100)+"%";
   }
   el("line",{x1:L,x2:W-R,y1:ys(0.15),y2:ys(0.15),class:"ax"},s);
-  for(let i=0;i<=12;i+=2){
-    el("text",{x:xs(i),y:H-B+18,class:"tk","text-anchor":"middle"},s).textContent = i;
+  const passoX = dim.estreito ? 3 : 2;
+  for(let i=0;i<=12;i+=passoX){
+    el("text",{x:xs(i),y:H-B+20,class:"tk","text-anchor":"middle"},s).textContent = i;
   }
-  el("text",{x:L,y:H-4,class:"axlab"},s).textContent = "Idade do carro (anos)";
-  el("text",{x:L-42,y:T-4,class:"axlab"},s).textContent = "% do valor de 0 km";
+  el("text",{x:L,y:H-6,class:"axlab"},s).textContent = "Idade do carro (anos)";
+  el("text",{x:L-(dim.estreito?34:42),y:T-6,class:"axlab"},s).textContent = "% do valor de 0 km";
 
   // mediana de mercado
   const med = [];
@@ -79,7 +97,7 @@ function drawCurva(){
   for(let i=1;i<rot.length;i++) if(rot[i].y - rot[i-1].y < GAP) rot[i].y = rot[i-1].y + GAP;
   const excesso = rot.length ? rot[rot.length-1].y - (H-B) : 0;
   if(excesso > 0) rot.forEach(r => r.y -= excesso);
-  rot.forEach(r=>{
+  if(rotuloDireto) rot.forEach(r=>{
     el("text",{x:xs(12)+10, y:r.y+4, class:"dlab", fill:r.col},s).textContent = r.txt;
   });
 
@@ -103,16 +121,41 @@ function drawCurva(){
   hit.addEventListener("pointerleave", ()=>{ cross.setAttribute("opacity",0); tip.classList.remove("on"); });
 
   // legenda
+  // Chips do que esta no grafico, mais um seletor para trocar.
+  // Antes eram 22 botoes empilhados, que ocupavam mais altura que o proprio grafico.
   const lg = document.getElementById("lgCurva");
   lg.innerHTML = "";
-  const disp = S.curvas.filter(n => n.on || (S.elegiveis && S.elegiveis.has(n.nome))).slice(0, 26);
-  disp.forEach((n,i)=>{
+  lg.className = "serie";
+  act.forEach((n,k)=>{
     const b = document.createElement("button");
-    b.setAttribute("aria-pressed", n.on);
-    const k = act.indexOf(n);
-    b.innerHTML = `<i class="sw" style="background:${n.on&&k>=0?cssv(SERIES[k%6]):cssv("--ink-3")}"></i>${famNome(n.nome)}`;
-    b.onclick = ()=>{ n.on = !n.on; drawCurva(); };
+    b.className = "sc"; b.type = "button";
+    b.title = `Tirar ${famNome(n.nome)} do gráfico`;
+    b.innerHTML = `<i class="sw" style="background:${cssv(SERIES[k%6])}"></i>`
+      + `<span>${famNome(n.nome)}</span><em aria-hidden="true">×</em>`;
+    b.onclick = ()=>{ n.on = false; drawCurva(); };
     lg.appendChild(b);
   });
+  const med2 = document.createElement("span");
+  med2.className = "sc fixa";
+  med2.innerHTML = `<i class="sw tracejada"></i><span>Mediana do mercado</span>`;
+  lg.appendChild(med2);
+
+  if(act.length < 6){
+    const sel = document.createElement("select");
+    sel.className = "addserie";
+    sel.setAttribute("aria-label", "Adicionar modelo ao gráfico");
+    const restantes = S.curvas.filter(n => !n.on)
+      .sort((a,b)=>famNome(a.nome).localeCompare(famNome(b.nome),"pt-BR"));
+    sel.innerHTML = `<option value="">+ Comparar outro modelo</option>`
+      + restantes.map(n=>`<option value="${n.nome}">${famNome(n.nome)}</option>`).join("");
+    sel.onchange = e => { const alvo = S.curvas.find(n=>n.nome===e.target.value);
+      if(alvo){ alvo.on = true; drawCurva(); } };
+    lg.appendChild(sel);
+  } else {
+    const aviso = document.createElement("span");
+    aviso.className = "sclim";
+    aviso.textContent = "Máximo de 6. Tire um para comparar outro.";
+    lg.appendChild(aviso);
+  }
 
 }

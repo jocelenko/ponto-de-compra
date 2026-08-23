@@ -1,6 +1,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ponto de Compra</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2080%2096%22%3E%3Ccircle%20cx%3D%2226%22%20cy%3D%2224%22%20r%3D%2213%22%20fill%3D%22none%22%20stroke%3D%22%230B72F0%22%20stroke-width%3D%228.5%22%2F%3E%3Cpath%20d%3D%22M10%208%20L44%2042%22%20stroke%3D%22%23C5221F%22%20stroke-width%3D%228.5%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M5%2060%20H22%20C36%2060%2032%2086%2046%2086%20H57%22%20fill%3D%22none%22%20stroke%3D%22%230B72F0%22%20stroke-width%3D%228.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3Ccircle%20cx%3D%2264%22%20cy%3D%2286%22%20r%3D%227%22%20fill%3D%22%230B72F0%22%2F%3E%3C%2Fsvg%3E">
 <!--
   THESIS: o preço da vitrine não é o custo do carro. Cada número aparece explicado onde é lido.
   OWN-WORLD: cânone big tech editorial (régua Apple e Airbnb, pinada pelo autor). Branco e quase-preto,
@@ -87,7 +88,13 @@ a:hover{text-decoration:underline; text-underline-offset:3px}
   border-bottom:1px solid var(--line-2)}
 .topo .in{display:flex; align-items:center; gap:10px; height:60px; max-width:1120px; margin:0 auto; padding:0 20px}
 @media(min-width:900px){ .topo .in{padding:0 32px} }
-.topo .marca{font-weight:800; font-size:16px; letter-spacing:-.03em; white-space:nowrap; margin-right:auto; color:var(--ink)}
+.topo .marca{display:inline-flex; align-items:center; gap:9px; margin-right:auto; text-decoration:none;
+  color:var(--ink); white-space:nowrap}
+.topo .marca:hover{text-decoration:none; opacity:.82}
+.topo .marca .mk{width:22px; height:26px; flex:0 0 auto}
+.topo .marca .nome{font-weight:800; font-size:16.5px; letter-spacing:-.035em; line-height:1}
+.topo .marca .nome .de{font-weight:500; color:var(--ink-3)}
+@media(max-width:400px){ .topo .marca .nome{font-size:15px} }
 .topo nav{display:none; gap:2px; margin-right:auto}
 @media(min-width:1040px){ .topo nav{display:flex} .topo .marca{margin-right:26px} }
 .topo nav a{font-size:13.5px; font-weight:500; color:var(--ink-2); padding:7px 10px; border-radius:99px}
@@ -171,6 +178,13 @@ a:hover{text-decoration:underline; text-underline-offset:3px}
 }
 .soDesk{display:none}
 @media(min-width:520px){ .soDesk{display:inline} }
+/* em tela muito estreita a barra nao cabe: o botao de filtros fica so com icone e contador */
+@media(max-width:439px){
+  .topo .in{gap:7px; padding:0 14px}
+  .tbtn{padding:0 11px}
+  .tbtn.forte .rotulo{display:none}
+  .topo .marca{gap:7px}
+}
 
 /* ============ herói ============ */
 .hero{padding:56px 0 20px; position:relative; overflow:hidden}
@@ -281,7 +295,7 @@ main{padding-bottom:80px}
 .stat .n b{color:var(--ink); font-weight:650}
 
 /* ============ gráficos ============ */
-.quadro{background:var(--card); border:1px solid var(--line-2); border-radius:var(--r-m); padding:20px 14px 8px;
+.quadro{background:var(--card); border:1px solid var(--line-2); border-radius:var(--r-m); padding:20px 12px 8px;
   box-shadow:var(--sh-1); min-width:0}
 @media(min-width:760px){ .quadro{padding:24px 22px 10px} }
 .quadro .tit{font-size:19px; font-weight:700; letter-spacing:-.028em; margin-bottom:4px}
@@ -315,7 +329,7 @@ main{padding-bottom:80px}
 /* leitura em rolagem: gráfico fixo, texto avança */
 .conta{display:grid; gap:24px}
 @media(min-width:980px){
-  .conta{grid-template-columns:minmax(0,330px) minmax(0,1fr); gap:56px; align-items:start}
+  .conta{grid-template-columns:minmax(0,286px) minmax(0,1fr); gap:40px; align-items:start}
   .conta .passos{display:grid; gap:46vh; padding:8vh 0 22vh}
   .conta .fixo{position:sticky; top:92px}
 }
@@ -325,7 +339,14 @@ main{padding-bottom:80px}
 .passo p{font-size:16px; line-height:1.6; color:var(--ink-2)}
 .passo p b{color:var(--ink); font-weight:650}
 .passo .cif{display:block; font-size:52px; font-weight:800; letter-spacing:-.045em; color:var(--ink); margin:6px 0 8px}
-@media(max-width:979px){ .conta .passos{display:grid; gap:26px; margin-top:8px} .passo{opacity:1} }
+@media(max-width:979px){
+  /* sem coluna fixa: o grafico vem primeiro, e as etapas explicam abaixo dele */
+  .conta .fixo{order:-1}
+  .conta .passos{display:grid; gap:22px; margin-top:20px}
+  .passo{opacity:1; padding-top:18px; border-top:1px solid var(--line-2)}
+  .passo:first-child{border-top:0; padding-top:0}
+  .passo .cif{font-size:44px}
+}
 
 /* ============ matriz ============ */
 .hmwrap{overflow-x:auto; -webkit-overflow-scrolling:touch; margin:0 -14px; padding:0 14px}
@@ -416,11 +437,50 @@ footer{border-top:1px solid var(--line-2); padding:28px 0 48px; font-size:13px; 
   h1 .ris::after{transform:scaleX(1)}
 }
 
+/* ---------- seletor de séries do gráfico de curva ---------- */
+.serie{display:flex; gap:8px; flex-wrap:wrap; align-items:center; padding:16px 2px 10px}
+.serie .sc{display:inline-flex; align-items:center; gap:8px; font:inherit; font-size:13.5px;
+  font-weight:600; padding:0 6px 0 11px; min-height:38px; border-radius:99px;
+  border:1px solid var(--line); background:var(--card); color:var(--ink); cursor:pointer}
+.serie .sc:hover{border-color:var(--ink-3); background:var(--bg-2)}
+.serie .sc em{font-style:normal; font-size:17px; line-height:1; color:var(--ink-3);
+  width:24px; height:24px; display:inline-flex; align-items:center; justify-content:center;
+  border-radius:99px}
+.serie .sc:hover em{background:var(--bg-3); color:var(--ink)}
+.serie .sc.fixa{cursor:default; padding-right:13px; color:var(--ink-2); background:transparent; border-style:dashed}
+.serie .sc.fixa:hover{border-color:var(--line); background:transparent}
+.serie .sw{width:12px; height:12px; border-radius:4px; flex:0 0 auto}
+.serie .sw.tracejada{border-radius:0; height:0; border-top:2px dashed var(--ink-3); width:16px}
+.serie .addserie{font:inherit; font-size:13.5px; font-weight:600; min-height:38px; padding:0 34px 0 14px;
+  border-radius:99px; border:1px dashed var(--line); background:transparent; color:var(--acc-ink);
+  cursor:pointer; appearance:none; max-width:100%;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M1 1l4 4 4-4' fill='none' stroke='%230071E3' stroke-width='1.7'/></svg>");
+  background-repeat:no-repeat; background-position:right 13px center}
+.serie .addserie:hover{border-color:var(--acc); background-color:var(--acc-soft)}
+.serie .sclim{font-size:12.5px; color:var(--ink-3)}
+@media (pointer:coarse){ .serie .sc, .serie .addserie{min-height:44px} }
+
+/* Telas grandes: as secoes de grafico ganham medida propria, mais larga que o texto.
+   Sem isso o grafico da curva fica preso em ~680px mesmo num monitor de 1440. */
+@media(min-width:1320px){
+  #s-curva > .wrap, #s-modelo > .wrap, #s-matriz > .wrap,
+  #s-detalhe > .wrap, #s-dinheiro > .wrap, #s-fronteira > .wrap{ max-width:1300px }
+  .conta{ grid-template-columns:minmax(0,300px) minmax(0,1fr); gap:52px }
+}
+
 </style>
 
 <header class="topo">
   <div class="in">
-    <span class="marca">Ponto de Compra</span>
+    <a class="marca" href="#topo" aria-label="Ponto de Compra, ir para o topo">
+      <svg class="mk" viewBox="0 0 80 96" fill="none" aria-hidden="true">
+        <circle cx="26" cy="24" r="13" stroke="#0B72F0" stroke-width="7.5"/>
+        <path d="M10 8 L44 42" stroke="#C5221F" stroke-width="7.5" stroke-linecap="round"/>
+        <path d="M5 60 H22 C36 60 32 86 46 86 H57" stroke="#0B72F0" stroke-width="7.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="64" cy="86" r="6.5" fill="#0B72F0"/>
+      </svg>
+      <span class="nome">ponto<span class="de"> de </span>compra</span>
+    </a>
     <nav id="navTopo">
       <a href="#s-veredito">O que comprar</a>
       <a href="#s-criterios">Por que esses</a>
@@ -438,7 +498,7 @@ footer{border-top:1px solid var(--line-2); padding:28px 0 48px; font-size:13px; 
     </button>
     <button class="tbtn forte" id="btnFiltros" aria-expanded="false" aria-controls="drawer">
       <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M1 3h12M3.5 7h7M6 11h2"/></svg>
-      Filtros <span class="cont" id="contFiltros">0</span>
+      <span class="rotulo">Filtros</span> <span class="cont" id="contFiltros">0</span>
     </button>
     <div class="progresso" id="progresso"></div>
   </div>
@@ -924,10 +984,27 @@ function tipFor(box){
 }
 const path = pts => pts.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join(" ");
 
+/* Desenha no tamanho real do container. Antes o SVG era autorado em 900px e exibido
+   em ~700, o que encolhia todo texto em 22%. Agora 11px de rotulo sao 11px na tela. */
+function dimChart(box, opt){
+  opt = opt || {};
+  const larg = Math.max(280, Math.round(box.getBoundingClientRect().width) || 900);
+  const estreito = larg < 560, medio = larg < 900;
+  const razao = opt.razao || (estreito ? 1.12 : medio ? 0.78 : 0.56);
+  let H = Math.round(larg * razao);
+  H = Math.max(opt.minH || 320, Math.min(opt.maxH || 640, H));
+  return {W: larg, H, estreito, medio};
+}
+
 /* ============ 1. curva de retencao ============ */
 function drawCurva(){
   const box = document.getElementById("cCurva");
-  const W = 900, H = 430, L = 58, R = 140, T = 20, B = 46;
+  const dim = dimChart(box, {minH: 360, maxH: 620});
+  const W = dim.W, H = dim.H;
+  const rotuloDireto = !dim.estreito;                 // em tela estreita a identidade vem dos chips
+  const L = dim.estreito ? 42 : 54;
+  const R = rotuloDireto ? (dim.medio ? 108 : 132) : 14;
+  const T = 22, B = dim.estreito ? 52 : 48;
   const s = svgFor(box, W, H), tip = tipFor(box);
   const xs = i => L + (i/12) * (W-L-R);
   const ys = v => T + (1 - (v-0.15)/(1.0-0.15)) * (H-T-B);
@@ -937,11 +1014,12 @@ function drawCurva(){
     el("text",{x:L-9,y:ys(v)+3.5,class:"tk","text-anchor":"end"},s).textContent = Math.round(v*100)+"%";
   }
   el("line",{x1:L,x2:W-R,y1:ys(0.15),y2:ys(0.15),class:"ax"},s);
-  for(let i=0;i<=12;i+=2){
-    el("text",{x:xs(i),y:H-B+18,class:"tk","text-anchor":"middle"},s).textContent = i;
+  const passoX = dim.estreito ? 3 : 2;
+  for(let i=0;i<=12;i+=passoX){
+    el("text",{x:xs(i),y:H-B+20,class:"tk","text-anchor":"middle"},s).textContent = i;
   }
-  el("text",{x:L,y:H-4,class:"axlab"},s).textContent = "Idade do carro (anos)";
-  el("text",{x:L-42,y:T-4,class:"axlab"},s).textContent = "% do valor de 0 km";
+  el("text",{x:L,y:H-6,class:"axlab"},s).textContent = "Idade do carro (anos)";
+  el("text",{x:L-(dim.estreito?34:42),y:T-6,class:"axlab"},s).textContent = "% do valor de 0 km";
 
   // mediana de mercado
   const med = [];
@@ -989,7 +1067,7 @@ function drawCurva(){
   for(let i=1;i<rot.length;i++) if(rot[i].y - rot[i-1].y < GAP) rot[i].y = rot[i-1].y + GAP;
   const excesso = rot.length ? rot[rot.length-1].y - (H-B) : 0;
   if(excesso > 0) rot.forEach(r => r.y -= excesso);
-  rot.forEach(r=>{
+  if(rotuloDireto) rot.forEach(r=>{
     el("text",{x:xs(12)+10, y:r.y+4, class:"dlab", fill:r.col},s).textContent = r.txt;
   });
 
@@ -1013,24 +1091,53 @@ function drawCurva(){
   hit.addEventListener("pointerleave", ()=>{ cross.setAttribute("opacity",0); tip.classList.remove("on"); });
 
   // legenda
+  // Chips do que esta no grafico, mais um seletor para trocar.
+  // Antes eram 22 botoes empilhados, que ocupavam mais altura que o proprio grafico.
   const lg = document.getElementById("lgCurva");
   lg.innerHTML = "";
-  const disp = S.curvas.filter(n => n.on || (S.elegiveis && S.elegiveis.has(n.nome))).slice(0, 26);
-  disp.forEach((n,i)=>{
+  lg.className = "serie";
+  act.forEach((n,k)=>{
     const b = document.createElement("button");
-    b.setAttribute("aria-pressed", n.on);
-    const k = act.indexOf(n);
-    b.innerHTML = `<i class="sw" style="background:${n.on&&k>=0?cssv(SERIES[k%6]):cssv("--ink-3")}"></i>${famNome(n.nome)}`;
-    b.onclick = ()=>{ n.on = !n.on; drawCurva(); };
+    b.className = "sc"; b.type = "button";
+    b.title = `Tirar ${famNome(n.nome)} do gráfico`;
+    b.innerHTML = `<i class="sw" style="background:${cssv(SERIES[k%6])}"></i>`
+      + `<span>${famNome(n.nome)}</span><em aria-hidden="true">×</em>`;
+    b.onclick = ()=>{ n.on = false; drawCurva(); };
     lg.appendChild(b);
   });
+  const med2 = document.createElement("span");
+  med2.className = "sc fixa";
+  med2.innerHTML = `<i class="sw tracejada"></i><span>Mediana do mercado</span>`;
+  lg.appendChild(med2);
+
+  if(act.length < 6){
+    const sel = document.createElement("select");
+    sel.className = "addserie";
+    sel.setAttribute("aria-label", "Adicionar modelo ao gráfico");
+    const restantes = S.curvas.filter(n => !n.on)
+      .sort((a,b)=>famNome(a.nome).localeCompare(famNome(b.nome),"pt-BR"));
+    sel.innerHTML = `<option value="">+ Comparar outro modelo</option>`
+      + restantes.map(n=>`<option value="${n.nome}">${famNome(n.nome)}</option>`).join("");
+    sel.onchange = e => { const alvo = S.curvas.find(n=>n.nome===e.target.value);
+      if(alvo){ alvo.on = true; drawCurva(); } };
+    lg.appendChild(sel);
+  } else {
+    const aviso = document.createElement("span");
+    aviso.className = "sclim";
+    aviso.textContent = "Máximo de 6. Tire um para comparar outro.";
+    lg.appendChild(aviso);
+  }
 
 }
 
 /* ============ 3. amplitude do custo por idade: modelo pesa mais que ano ============ */
 function drawRange(cs){
   const box = document.getElementById("cRange");
-  const W = 900, H = 400, L = 66, R = 152, T = 22, B = 50;
+  const dim = dimChart(box, {minH: 340, maxH: 560});
+  const W = dim.W, H = dim.H;
+  const L = dim.estreito ? 52 : 64;
+  const R = dim.estreito ? 14 : (dim.medio ? 116 : 150);
+  const T = 22, B = dim.estreito ? 54 : 50;
   const s = svgFor(box, W, H), tip = tipFor(box);
   const byI = {};
   cs.forEach(c => (byI[c.idade] = byI[c.idade] || []).push(c));
@@ -1086,12 +1193,14 @@ function drawRange(cs){
   const varIdade = 100*(Math.max(...meds)/Math.min(...meds)-1);
   const varModelo = stats.reduce((a,d)=>a+100*(d.hi/d.lo-1),0)/stats.length;
   const xe = xs(idades[idades.length-1]);
+  if(!dim.estreito){
   el("text",{x:xe+18,y:ys(meds[meds.length-1])-4,class:"dlab",fill:cssv("--s1")},s).textContent = "mediana";
   el("text",{x:xe+18,y:ys(meds[meds.length-1])+12,class:"ann"},s).textContent = `varia só ${varIdade.toFixed(0)}%`;
   const dh = stats[stats.length-1];
   el("text",{x:xe+18,y:ys(dh.hi)+4,class:"dlab",fill:cssv("--ink-2")},s).textContent = "mais caro";
   el("text",{x:xe+18,y:ys(dh.lo)+4,class:"dlab",fill:cssv("--ink-2")},s).textContent = "mais barato";
   el("text",{x:xe+18,y:ys(dh.lo)+18,class:"ann"},s).textContent = `distância média ${varModelo.toFixed(0)}%`;
+  }
 
   document.getElementById("varIdade").textContent = varIdade.toFixed(0)+"%";
   document.getElementById("varModelo").textContent = varModelo.toFixed(0)+"%";
@@ -1116,7 +1225,10 @@ function drawU(){
   document.getElementById("uFam").textContent = famNome(f.nome);
   const rows = Object.keys(f.serie).map(Number).filter(a => a <= D.anoRef)
     .sort((a,b)=>a-b).map(a => tco(f, a)).filter(Boolean);
-  const W = 900, H = 390, L = 70, R = 26, T = 20, B = 50;
+  const dim = dimChart(box, {minH: 330, maxH: 540});
+  const W = dim.W, H = dim.H;
+  const L = dim.estreito ? 54 : 68, R = dim.estreito ? 14 : 26;
+  const T = 20, B = dim.estreito ? 54 : 50;
   const s = svgFor(box, W, H), tip = tipFor(box);
   if (rows.length < 2){ el("text",{x:W/2,y:H/2,class:"ann","text-anchor":"middle"},s)
     .textContent = "Dados insuficientes para esta família."; return; }
@@ -1299,7 +1411,13 @@ function drawHeat(top){
 function drawStack(top){
   const box = document.getElementById("cStack");
   const rows = top.slice(0, 12);
-  const W = 900, H = 40 + rows.length*34, L = 214, R = 92, T = 26, B = 8;
+  const dim = dimChart(box, {razao: 0.01});
+  const W = dim.W;
+  const alturaLinha = dim.estreito ? 46 : 36;
+  const H = 40 + rows.length*alturaLinha;
+  const L = dim.estreito ? 8 : 200, R = dim.estreito ? 10 : 92;
+  const T = dim.estreito ? 30 : 26, B = 8;
+  const rotuloDentro = dim.estreito;
   const s = svgFor(box, W, H), tip = tipFor(box);
   if(!rows.length){ el("text",{x:W/2,y:40,class:"ann","text-anchor":"middle"},s)
     .textContent = "Nenhum candidato na faixa selecionada."; return; }
@@ -1311,10 +1429,15 @@ function drawStack(top){
     el("text",{x:xs(v),y:T-12,class:"tk","text-anchor":"middle"},s).textContent = v?BRLk(v):"0";
   }
   rows.forEach((r,i)=>{
-    const y = T + i*34, h = 21;
-    el("text",{x:0,y:y+11,class:"tk",fill:cssv("--ink"),"font-size":12.5,
-      "font-family":'"Archivo",sans-serif'},s).textContent = (x=>x.length>28?x.slice(0,27)+"…":x)(famNome(r.fam));
-    el("text",{x:0,y:y+23,class:"tk"},s).textContent = `${r.ano} · ${BRL(r.preco)}`;
+    const y = T + i*alturaLinha + (rotuloDentro?12:0), h = dim.estreito ? 18 : 22;
+    if(rotuloDentro){
+      el("text",{x:L,y:y-6,class:"tk",fill:cssv("--ink"),"font-size":13,"font-weight":700},s)
+        .textContent = `${famNome(r.fam)} ${r.ano}`;
+    } else {
+      el("text",{x:0,y:y+11,class:"tk",fill:cssv("--ink"),"font-size":13,"font-weight":600},s)
+        .textContent = (x=>x.length>26?x.slice(0,25)+"…":x)(famNome(r.fam));
+      el("text",{x:0,y:y+24,class:"tk"},s).textContent = `${r.ano} · ${BRL(r.preco)}`;
+    }
     let acc = 0;
     COMPS.forEach(c=>{
       const w = (r[c.k]/maxT)*(W-L-R);
@@ -1330,7 +1453,7 @@ function drawStack(top){
       rect.addEventListener("pointerleave",()=>tip.classList.remove("on"));
       acc += r[c.k];
     });
-    el("text",{x:xs(r.total)+9, y:y+15, class:"tk", fill:cssv("--ink"), "font-weight":600},s)
+    if(!dim.estreito) el("text",{x:xs(r.total)+9, y:y+15, class:"tk", fill:cssv("--ink"), "font-weight":700},s)
       .textContent = BRL(r.total);
   });
   document.getElementById("lgStack").innerHTML = COMPS.map(c=>
@@ -1340,7 +1463,10 @@ function drawStack(top){
 /* ============ 5. fronteira: preço de compra x custo anual ============ */
 function drawScatter(cs, top){
   const box = document.getElementById("cScat");
-  const W = 900, H = 440, L = 70, R = 28, T = 22, B = 50;
+  const dim = dimChart(box, {minH: 340, maxH: 560});
+  const W = dim.W, H = dim.H;
+  const L = dim.estreito ? 54 : 68, R = dim.estreito ? 14 : 28;
+  const T = 22, B = dim.estreito ? 54 : 50;
   const s = svgFor(box, W, H), tip = tipFor(box);
   if(!cs.length){ el("text",{x:W/2,y:H/2,class:"ann","text-anchor":"middle"},s)
     .textContent = "Nenhum candidato na faixa."; return; }

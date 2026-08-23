@@ -1,5 +1,5 @@
 /* ============ gráficos ============ */
-.quadro{background:var(--card); border:1px solid var(--line-2); border-radius:var(--r-m); padding:20px 14px 8px;
+.quadro{background:var(--card); border:1px solid var(--line-2); border-radius:var(--r-m); padding:20px 12px 8px;
   box-shadow:var(--sh-1); min-width:0}
 @media(min-width:760px){ .quadro{padding:24px 22px 10px} }
 .quadro .tit{font-size:19px; font-weight:700; letter-spacing:-.028em; margin-bottom:4px}
@@ -33,7 +33,7 @@
 /* leitura em rolagem: gráfico fixo, texto avança */
 .conta{display:grid; gap:24px}
 @media(min-width:980px){
-  .conta{grid-template-columns:minmax(0,330px) minmax(0,1fr); gap:56px; align-items:start}
+  .conta{grid-template-columns:minmax(0,286px) minmax(0,1fr); gap:40px; align-items:start}
   .conta .passos{display:grid; gap:46vh; padding:8vh 0 22vh}
   .conta .fixo{position:sticky; top:92px}
 }
@@ -43,7 +43,14 @@
 .passo p{font-size:16px; line-height:1.6; color:var(--ink-2)}
 .passo p b{color:var(--ink); font-weight:650}
 .passo .cif{display:block; font-size:52px; font-weight:800; letter-spacing:-.045em; color:var(--ink); margin:6px 0 8px}
-@media(max-width:979px){ .conta .passos{display:grid; gap:26px; margin-top:8px} .passo{opacity:1} }
+@media(max-width:979px){
+  /* sem coluna fixa: o grafico vem primeiro, e as etapas explicam abaixo dele */
+  .conta .fixo{order:-1}
+  .conta .passos{display:grid; gap:22px; margin-top:20px}
+  .passo{opacity:1; padding-top:18px; border-top:1px solid var(--line-2)}
+  .passo:first-child{border-top:0; padding-top:0}
+  .passo .cif{font-size:44px}
+}
 
 /* ============ matriz ============ */
 .hmwrap{overflow-x:auto; -webkit-overflow-scrolling:touch; margin:0 -14px; padding:0 14px}
@@ -132,4 +139,35 @@ footer{border-top:1px solid var(--line-2); padding:28px 0 48px; font-size:13px; 
   .rev{opacity:1; transform:none}
   .passo{opacity:1}
   h1 .ris::after{transform:scaleX(1)}
+}
+
+/* ---------- seletor de séries do gráfico de curva ---------- */
+.serie{display:flex; gap:8px; flex-wrap:wrap; align-items:center; padding:16px 2px 10px}
+.serie .sc{display:inline-flex; align-items:center; gap:8px; font:inherit; font-size:13.5px;
+  font-weight:600; padding:0 6px 0 11px; min-height:38px; border-radius:99px;
+  border:1px solid var(--line); background:var(--card); color:var(--ink); cursor:pointer}
+.serie .sc:hover{border-color:var(--ink-3); background:var(--bg-2)}
+.serie .sc em{font-style:normal; font-size:17px; line-height:1; color:var(--ink-3);
+  width:24px; height:24px; display:inline-flex; align-items:center; justify-content:center;
+  border-radius:99px}
+.serie .sc:hover em{background:var(--bg-3); color:var(--ink)}
+.serie .sc.fixa{cursor:default; padding-right:13px; color:var(--ink-2); background:transparent; border-style:dashed}
+.serie .sc.fixa:hover{border-color:var(--line); background:transparent}
+.serie .sw{width:12px; height:12px; border-radius:4px; flex:0 0 auto}
+.serie .sw.tracejada{border-radius:0; height:0; border-top:2px dashed var(--ink-3); width:16px}
+.serie .addserie{font:inherit; font-size:13.5px; font-weight:600; min-height:38px; padding:0 34px 0 14px;
+  border-radius:99px; border:1px dashed var(--line); background:transparent; color:var(--acc-ink);
+  cursor:pointer; appearance:none; max-width:100%;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M1 1l4 4 4-4' fill='none' stroke='%230071E3' stroke-width='1.7'/></svg>");
+  background-repeat:no-repeat; background-position:right 13px center}
+.serie .addserie:hover{border-color:var(--acc); background-color:var(--acc-soft)}
+.serie .sclim{font-size:12.5px; color:var(--ink-3)}
+@media (pointer:coarse){ .serie .sc, .serie .addserie{min-height:44px} }
+
+/* Telas grandes: as secoes de grafico ganham medida propria, mais larga que o texto.
+   Sem isso o grafico da curva fica preso em ~680px mesmo num monitor de 1440. */
+@media(min-width:1320px){
+  #s-curva > .wrap, #s-modelo > .wrap, #s-matriz > .wrap,
+  #s-detalhe > .wrap, #s-dinheiro > .wrap, #s-fronteira > .wrap{ max-width:1300px }
+  .conta{ grid-template-columns:minmax(0,300px) minmax(0,1fr); gap:52px }
 }

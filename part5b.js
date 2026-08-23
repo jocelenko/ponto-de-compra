@@ -1,7 +1,11 @@
 /* ============ 3. amplitude do custo por idade: modelo pesa mais que ano ============ */
 function drawRange(cs){
   const box = document.getElementById("cRange");
-  const W = 900, H = 400, L = 66, R = 152, T = 22, B = 50;
+  const dim = dimChart(box, {minH: 340, maxH: 560});
+  const W = dim.W, H = dim.H;
+  const L = dim.estreito ? 52 : 64;
+  const R = dim.estreito ? 14 : (dim.medio ? 116 : 150);
+  const T = 22, B = dim.estreito ? 54 : 50;
   const s = svgFor(box, W, H), tip = tipFor(box);
   const byI = {};
   cs.forEach(c => (byI[c.idade] = byI[c.idade] || []).push(c));
@@ -57,12 +61,14 @@ function drawRange(cs){
   const varIdade = 100*(Math.max(...meds)/Math.min(...meds)-1);
   const varModelo = stats.reduce((a,d)=>a+100*(d.hi/d.lo-1),0)/stats.length;
   const xe = xs(idades[idades.length-1]);
+  if(!dim.estreito){
   el("text",{x:xe+18,y:ys(meds[meds.length-1])-4,class:"dlab",fill:cssv("--s1")},s).textContent = "mediana";
   el("text",{x:xe+18,y:ys(meds[meds.length-1])+12,class:"ann"},s).textContent = `varia só ${varIdade.toFixed(0)}%`;
   const dh = stats[stats.length-1];
   el("text",{x:xe+18,y:ys(dh.hi)+4,class:"dlab",fill:cssv("--ink-2")},s).textContent = "mais caro";
   el("text",{x:xe+18,y:ys(dh.lo)+4,class:"dlab",fill:cssv("--ink-2")},s).textContent = "mais barato";
   el("text",{x:xe+18,y:ys(dh.lo)+18,class:"ann"},s).textContent = `distância média ${varModelo.toFixed(0)}%`;
+  }
 
   document.getElementById("varIdade").textContent = varIdade.toFixed(0)+"%";
   document.getElementById("varModelo").textContent = varModelo.toFixed(0)+"%";

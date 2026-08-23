@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 96" fill="none" role="img" aria-label="Ponto de Compra">
+  <circle cx="26" cy="24" r="13" stroke="#0B72F0" stroke-width="7.5"/>
+  <path d="M10 8 L44 42" stroke="#C5221F" stroke-width="7.5" stroke-linecap="round"/>
+  <path d="M5 60 H22 C36 60 32 86 46 86 H57" stroke="#0B72F0" stroke-width="7.5"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="64" cy="86" r="6.5" fill="#0B72F0"/>
+</svg>

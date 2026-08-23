@@ -13,7 +13,10 @@ function drawU(){
   document.getElementById("uFam").textContent = famNome(f.nome);
   const rows = Object.keys(f.serie).map(Number).filter(a => a <= D.anoRef)
     .sort((a,b)=>a-b).map(a => tco(f, a)).filter(Boolean);
-  const W = 900, H = 390, L = 70, R = 26, T = 20, B = 50;
+  const dim = dimChart(box, {minH: 330, maxH: 540});
+  const W = dim.W, H = dim.H;
+  const L = dim.estreito ? 54 : 68, R = dim.estreito ? 14 : 26;
+  const T = 20, B = dim.estreito ? 54 : 50;
   const s = svgFor(box, W, H), tip = tipFor(box);
   if (rows.length < 2){ el("text",{x:W/2,y:H/2,class:"ann","text-anchor":"middle"},s)
     .textContent = "Dados insuficientes para esta família."; return; }

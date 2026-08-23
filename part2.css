@@ -4,7 +4,13 @@
   border-bottom:1px solid var(--line-2)}
 .topo .in{display:flex; align-items:center; gap:10px; height:60px; max-width:1120px; margin:0 auto; padding:0 20px}
 @media(min-width:900px){ .topo .in{padding:0 32px} }
-.topo .marca{font-weight:800; font-size:16px; letter-spacing:-.03em; white-space:nowrap; margin-right:auto; color:var(--ink)}
+.topo .marca{display:inline-flex; align-items:center; gap:9px; margin-right:auto; text-decoration:none;
+  color:var(--ink); white-space:nowrap}
+.topo .marca:hover{text-decoration:none; opacity:.82}
+.topo .marca .mk{width:22px; height:26px; flex:0 0 auto}
+.topo .marca .nome{font-weight:800; font-size:16.5px; letter-spacing:-.035em; line-height:1}
+.topo .marca .nome .de{font-weight:500; color:var(--ink-3)}
+@media(max-width:400px){ .topo .marca .nome{font-size:15px} }
 .topo nav{display:none; gap:2px; margin-right:auto}
 @media(min-width:1040px){ .topo nav{display:flex} .topo .marca{margin-right:26px} }
 .topo nav a{font-size:13.5px; font-weight:500; color:var(--ink-2); padding:7px 10px; border-radius:99px}
@@ -88,3 +94,10 @@
 }
 .soDesk{display:none}
 @media(min-width:520px){ .soDesk{display:inline} }
+/* em tela muito estreita a barra nao cabe: o botao de filtros fica so com icone e contador */
+@media(max-width:439px){
+  .topo .in{gap:7px; padding:0 14px}
+  .tbtn{padding:0 11px}
+  .tbtn.forte .rotulo{display:none}
+  .topo .marca{gap:7px}
+}
