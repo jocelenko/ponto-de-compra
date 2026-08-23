@@ -150,7 +150,7 @@ function drawTable(cs){
   const maxT = Math.max(...cs.map(c=>c.total), 1);
   let h = `<table class="rk"${estreito?' style="min-width:0"':""}><thead><tr>` + COLS_USO.map(c=>
     `<th class="${c.l?"l":""}" ${k===c.k?`aria-sort="${d<0?"descending":"ascending"}"`:""}><button type="button" data-k="${c.k}">${c.n}${k===c.k?` <span class="ar">${d<0?"▼":"▲"}</span>`:""}</button></th>`).join("") + `</tr></thead><tbody>`;
-  const LIM_T = estreito ? (S.verMaisTbl ? 90 : 20) : 90;
+  const LIM_T = Math.min(S.listaN, rows.length);
   rows.slice(0,LIM_T).forEach(c=>{
     const sel = S.sel && S.sel.fam===c.fam && S.sel.ano===c.ano;
     h += `<tr class="${sel?"sel":""}" data-f="${c.fam}" data-a="${c.ano}">
@@ -164,12 +164,29 @@ function drawTable(cs){
   h += `</tbody></table>`;
   const host = document.getElementById("tbl");
   host.innerHTML = cs.length ? h : `<p style="padding:20px;color:var(--ink-2)">Nenhum candidato passa nesse filtro.</p>`;
-  if(estreito && !S.verMaisTbl && cs.length > LIM_T){
+  if(rows.length > LIM_T){
+    const resta = rows.length - LIM_T;
+    const bloco = document.createElement("div");
+    bloco.className = "maisLista";
+    bloco.innerHTML = `<span>Mostrando ${LIM_T} de ${rows.length}</span>`;
     const mais = document.createElement("button");
-    mais.className = "tbtn"; mais.style.cssText = "width:100%;margin-top:14px";
-    mais.textContent = `Ver mais ${Math.min(cs.length,90) - LIM_T} candidatos`;
-    mais.onclick = () => { S.verMaisTbl = true; render(); };
-    host.appendChild(mais);
+    mais.className = "tbtn"; mais.type = "button";
+    mais.textContent = resta > 10 ? "Ver mais 10" : `Ver os últimos ${resta}`;
+    mais.onclick = () => {
+      S.listaN += 10;
+      const y = host.getBoundingClientRect().top;
+      drawTable(cs);                                  // so a lista, sem redesenhar a pagina toda
+      window.scrollBy(0, host.getBoundingClientRect().top - y);
+    };
+    bloco.appendChild(mais);
+    if(resta > 10){
+      const todos = document.createElement("button");
+      todos.className = "tbtn"; todos.type = "button";
+      todos.textContent = `Ver todos os ${rows.length}`;
+      todos.onclick = () => { S.listaN = rows.length; drawTable(cs); };
+      bloco.appendChild(todos);
+    }
+    host.appendChild(bloco);
   }
   host.querySelectorAll("th button").forEach(b=>b.onclick = ()=>{
     const kk = b.dataset.k;

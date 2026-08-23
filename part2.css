@@ -12,7 +12,12 @@
 .topo .marca .nome .de{font-weight:500; color:var(--ink-3)}
 @media(max-width:400px){ .topo .marca .nome{font-size:15px} }
 .topo nav{display:none; gap:2px; margin-right:auto}
-@media(min-width:1040px){ .topo nav{display:flex} .topo .marca{margin-right:26px} }
+@media(min-width:1040px){
+  .topo nav{display:flex}
+  .topo .marca{margin-right:26px}
+  /* o menu do topo ja lista as secoes: o botao seria repeticao */
+  #btnSecoes{display:none}
+}
 .topo nav a{font-size:13.5px; font-weight:500; color:var(--ink-2); padding:7px 10px; border-radius:99px}
 .topo nav a:hover{background:var(--bg-2); color:var(--ink); text-decoration:none}
 .topo nav a.atual{color:var(--ink); font-weight:650; background:var(--bg-2)}

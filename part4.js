@@ -1,8 +1,8 @@
 /* ============ estado ============ */
 const S = {
-  budMin: 50000, budMax: 120000, H: 5, km: 12000, ipva: 0.04, comb: 6.20, kwh: 0.95, bat: 0.025, mmult: 1.0,
+  budMin: 10000, budMax: 500000, H: 5, km: 12000, ipva: 0.02, comb: 6.20, kwh: 0.95, bat: 0.025, mmult: 1.0,
   seg: "todos", marca: "todas", ene: "todas", busca: "", sel: null,
-  idadeMin: 0, idadeMax: 10, tetoCusto: 80000, verMaisHeat: false, verMaisTbl: false,
+  idadeMin: 0, idadeMax: 16, tetoCusto: 150000, verMaisHeat: false, listaN: 10,
   soGarantia: false, soConfiavel: false, soLiquido: false, soCambio: false, sort: {k:"score", d:-1},
   w: { custo:34, manut:12, gar:16, conf:10, liq:16, camb:12 },
   curvas: null
@@ -29,16 +29,18 @@ function inkPara(varName){
   const L = 0.2126*lin[0] + 0.7152*lin[1] + 0.0722*lin[2];
   return L > 0.17 ? "#0E1013" : "#F4F6F8";
 }
+const PADRAO = {budMin:10000, budMax:500000, idadeMin:0, idadeMax:16, tetoCusto:150000,
+  km:12000, ipva:0.02, comb:6.20, kwh:0.95, bat:0.025, mmult:1.0};
 function filtrosAtivos(){
   let n = 0;
-  if (S.budMin !== 50000 || S.budMax !== 120000) n++;
-  if (S.idadeMin !== 0 || S.idadeMax !== 10) n++;
-  if (S.tetoCusto !== 80000) n++;
+  if (S.budMin !== PADRAO.budMin || S.budMax !== PADRAO.budMax) n++;
+  if (S.idadeMin !== PADRAO.idadeMin || S.idadeMax !== PADRAO.idadeMax) n++;
+  if (S.tetoCusto !== PADRAO.tetoCusto) n++;
   ["soGarantia","soConfiavel","soLiquido","soCambio"].forEach(k=>{ if(S[k]) n++; });
   if (S.seg !== "todos") n++; if (S.marca !== "todas") n++; if (S.ene !== "todas") n++;
   if (S.busca) n++;
-  if (S.km !== 12000 || S.ipva !== 0.04 || S.comb !== 6.20 || S.kwh !== 0.95
-      || S.bat !== 0.025 || S.mmult !== 1.0) n++;
+  if (S.km !== PADRAO.km || S.ipva !== PADRAO.ipva || S.comb !== PADRAO.comb
+      || S.kwh !== PADRAO.kwh || S.bat !== PADRAO.bat || S.mmult !== PADRAO.mmult) n++;
   return n;
 }
 const est = (txt, motivo) => `<span class="est" title="Estimado. ${motivo}">${txt}</span>`;

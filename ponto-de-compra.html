@@ -96,7 +96,12 @@ a:hover{text-decoration:underline; text-underline-offset:3px}
 .topo .marca .nome .de{font-weight:500; color:var(--ink-3)}
 @media(max-width:400px){ .topo .marca .nome{font-size:15px} }
 .topo nav{display:none; gap:2px; margin-right:auto}
-@media(min-width:1040px){ .topo nav{display:flex} .topo .marca{margin-right:26px} }
+@media(min-width:1040px){
+  .topo nav{display:flex}
+  .topo .marca{margin-right:26px}
+  /* o menu do topo ja lista as secoes: o botao seria repeticao */
+  #btnSecoes{display:none}
+}
 .topo nav a{font-size:13.5px; font-weight:500; color:var(--ink-2); padding:7px 10px; border-radius:99px}
 .topo nav a:hover{background:var(--bg-2); color:var(--ink); text-decoration:none}
 .topo nav a.atual{color:var(--ink); font-weight:650; background:var(--bg-2)}
@@ -381,7 +386,7 @@ main{padding-bottom:80px}
 .tblwrap{overflow-x:auto; -webkit-overflow-scrolling:touch; margin:0 -14px; padding:0 14px}
 @media(min-width:760px){ .tblwrap{margin:0; padding:0} }
 table.rk{width:100%; border-collapse:collapse; font-size:14px; min-width:860px}
-table.rk th{padding:0; border-bottom:1px solid var(--line); position:sticky; top:60px; background:var(--card); z-index:1}
+table.rk th{padding:0; border-bottom:1px solid var(--line); background:var(--card)}
 table.rk th button{font:inherit; font-size:11.5px; letter-spacing:.02em; color:var(--ink-3); font-weight:700;
   background:none; border:0; cursor:pointer; padding:11px 10px; width:100%; text-align:right; white-space:nowrap;
   display:block; min-height:42px}
@@ -468,6 +473,16 @@ footer{border-top:1px solid var(--line-2); padding:28px 0 48px; font-size:13px; 
   .conta{ grid-template-columns:minmax(0,300px) minmax(0,1fr); gap:52px }
 }
 
+/* rodape da lista com carregamento incremental */
+.maisLista{display:flex; align-items:center; gap:12px; flex-wrap:wrap; padding:18px 2px 6px;
+  border-top:1px solid var(--line-2); margin-top:2px}
+.maisLista span{font-size:13.5px; color:var(--ink-3); margin-right:auto}
+@media(max-width:559px){
+  .maisLista{flex-direction:column; align-items:stretch}
+  .maisLista span{margin:0 0 4px; text-align:center}
+  .maisLista .tbtn{width:100%}
+}
+
 </style>
 
 <header class="topo">
@@ -533,7 +548,7 @@ footer{border-top:1px solid var(--line-2); padding:28px 0 48px; font-size:13px; 
       <div class="campo"><label>Idade do carro</label>
         <div class="dupla"><select id="idadeMin" aria-label="Idade mínima"></select><select id="idadeMax" aria-label="Idade máxima"></select></div></div>
       <div class="campo"><label for="tetoCusto">Custo por ano até <span class="val" id="vTeto"></span></label>
-        <input type="range" id="tetoCusto" min="10000" max="80000" step="1000" value="80000"></div>
+        <input type="range" id="tetoCusto" min="10000" max="150000" step="2500" value="150000"></div>
       <div class="campo"><label for="seg">Segmento</label><select id="seg"></select></div>
       <div class="campo"><label for="marca">Marca</label><select id="marca"></select></div>
       <div class="campo"><label for="ene">Combustível</label><select id="ene"></select></div>
@@ -559,7 +574,7 @@ footer{border-top:1px solid var(--line-2); padding:28px 0 48px; font-size:13px; 
       <div class="campo"><label for="km">Rodagem por ano <span class="val" id="vKm"></span></label>
         <input type="range" id="km" min="5000" max="40000" step="1000" value="12000"></div>
       <div class="campo"><label for="ipva">IPVA do seu estado <span class="val" id="vIpva"></span></label>
-        <input type="range" id="ipva" min="0" max="60" step="5" value="40"></div>
+        <input type="range" id="ipva" min="0" max="60" step="5" value="20"></div>
       <div class="campo"><label for="comb">Gasolina <span class="val" id="vComb"></span></label>
         <input type="range" id="comb" min="450" max="900" step="10" value="620"></div>
       <div class="campo"><label for="kwh">Energia elétrica <span class="val" id="vKwh"></span></label>
@@ -802,9 +817,9 @@ const D = {"anoRef":2026,"mesRef":"agosto/2026","tabelaFipe":336,"multIdade":[[3
 
 /* ============ estado ============ */
 const S = {
-  budMin: 50000, budMax: 120000, H: 5, km: 12000, ipva: 0.04, comb: 6.20, kwh: 0.95, bat: 0.025, mmult: 1.0,
+  budMin: 10000, budMax: 500000, H: 5, km: 12000, ipva: 0.02, comb: 6.20, kwh: 0.95, bat: 0.025, mmult: 1.0,
   seg: "todos", marca: "todas", ene: "todas", busca: "", sel: null,
-  idadeMin: 0, idadeMax: 10, tetoCusto: 80000, verMaisHeat: false, verMaisTbl: false,
+  idadeMin: 0, idadeMax: 16, tetoCusto: 150000, verMaisHeat: false, listaN: 10,
   soGarantia: false, soConfiavel: false, soLiquido: false, soCambio: false, sort: {k:"score", d:-1},
   w: { custo:34, manut:12, gar:16, conf:10, liq:16, camb:12 },
   curvas: null
@@ -831,16 +846,18 @@ function inkPara(varName){
   const L = 0.2126*lin[0] + 0.7152*lin[1] + 0.0722*lin[2];
   return L > 0.17 ? "#0E1013" : "#F4F6F8";
 }
+const PADRAO = {budMin:10000, budMax:500000, idadeMin:0, idadeMax:16, tetoCusto:150000,
+  km:12000, ipva:0.02, comb:6.20, kwh:0.95, bat:0.025, mmult:1.0};
 function filtrosAtivos(){
   let n = 0;
-  if (S.budMin !== 50000 || S.budMax !== 120000) n++;
-  if (S.idadeMin !== 0 || S.idadeMax !== 10) n++;
-  if (S.tetoCusto !== 80000) n++;
+  if (S.budMin !== PADRAO.budMin || S.budMax !== PADRAO.budMax) n++;
+  if (S.idadeMin !== PADRAO.idadeMin || S.idadeMax !== PADRAO.idadeMax) n++;
+  if (S.tetoCusto !== PADRAO.tetoCusto) n++;
   ["soGarantia","soConfiavel","soLiquido","soCambio"].forEach(k=>{ if(S[k]) n++; });
   if (S.seg !== "todos") n++; if (S.marca !== "todas") n++; if (S.ene !== "todas") n++;
   if (S.busca) n++;
-  if (S.km !== 12000 || S.ipva !== 0.04 || S.comb !== 6.20 || S.kwh !== 0.95
-      || S.bat !== 0.025 || S.mmult !== 1.0) n++;
+  if (S.km !== PADRAO.km || S.ipva !== PADRAO.ipva || S.comb !== PADRAO.comb
+      || S.kwh !== PADRAO.kwh || S.bat !== PADRAO.bat || S.mmult !== PADRAO.mmult) n++;
   return n;
 }
 const est = (txt, motivo) => `<span class="est" title="Estimado. ${motivo}">${txt}</span>`;
@@ -1688,7 +1705,7 @@ function drawTable(cs){
   const maxT = Math.max(...cs.map(c=>c.total), 1);
   let h = `<table class="rk"${estreito?' style="min-width:0"':""}><thead><tr>` + COLS_USO.map(c=>
     `<th class="${c.l?"l":""}" ${k===c.k?`aria-sort="${d<0?"descending":"ascending"}"`:""}><button type="button" data-k="${c.k}">${c.n}${k===c.k?` <span class="ar">${d<0?"▼":"▲"}</span>`:""}</button></th>`).join("") + `</tr></thead><tbody>`;
-  const LIM_T = estreito ? (S.verMaisTbl ? 90 : 20) : 90;
+  const LIM_T = Math.min(S.listaN, rows.length);
   rows.slice(0,LIM_T).forEach(c=>{
     const sel = S.sel && S.sel.fam===c.fam && S.sel.ano===c.ano;
     h += `<tr class="${sel?"sel":""}" data-f="${c.fam}" data-a="${c.ano}">
@@ -1702,12 +1719,29 @@ function drawTable(cs){
   h += `</tbody></table>`;
   const host = document.getElementById("tbl");
   host.innerHTML = cs.length ? h : `<p style="padding:20px;color:var(--ink-2)">Nenhum candidato passa nesse filtro.</p>`;
-  if(estreito && !S.verMaisTbl && cs.length > LIM_T){
+  if(rows.length > LIM_T){
+    const resta = rows.length - LIM_T;
+    const bloco = document.createElement("div");
+    bloco.className = "maisLista";
+    bloco.innerHTML = `<span>Mostrando ${LIM_T} de ${rows.length}</span>`;
     const mais = document.createElement("button");
-    mais.className = "tbtn"; mais.style.cssText = "width:100%;margin-top:14px";
-    mais.textContent = `Ver mais ${Math.min(cs.length,90) - LIM_T} candidatos`;
-    mais.onclick = () => { S.verMaisTbl = true; render(); };
-    host.appendChild(mais);
+    mais.className = "tbtn"; mais.type = "button";
+    mais.textContent = resta > 10 ? "Ver mais 10" : `Ver os últimos ${resta}`;
+    mais.onclick = () => {
+      S.listaN += 10;
+      const y = host.getBoundingClientRect().top;
+      drawTable(cs);                                  // so a lista, sem redesenhar a pagina toda
+      window.scrollBy(0, host.getBoundingClientRect().top - y);
+    };
+    bloco.appendChild(mais);
+    if(resta > 10){
+      const todos = document.createElement("button");
+      todos.className = "tbtn"; todos.type = "button";
+      todos.textContent = `Ver todos os ${rows.length}`;
+      todos.onclick = () => { S.listaN = rows.length; drawTable(cs); };
+      bloco.appendChild(todos);
+    }
+    host.appendChild(bloco);
   }
   host.querySelectorAll("th button").forEach(b=>b.onclick = ()=>{
     const kk = b.dataset.k;
@@ -1725,6 +1759,8 @@ function drawTable(cs){
 /* ============ orquestração ============ */
 function render(){
   const cs = pontuar(candidatos(false));
+  if(S.listaN > 10 && S._ultimoN !== cs.length){ S.listaN = 10; }   // filtro mudou: recomeca a lista
+  S._ultimoN = cs.length;
   const top = cs.slice().sort((a,b)=>b.score-a.score);
   if(!S.curvas){
     const seed = [];
@@ -1759,7 +1795,7 @@ function render(){
 }
 
 /* ============ controles ============ */
-const FAIXAS = [20000,30000,40000,50000,60000,70000,80000,100000,120000,150000,200000,250000,300000];
+const FAIXAS = [10000,15000,20000,30000,40000,50000,60000,80000,100000,120000,150000,200000,250000,300000,400000,500000];
 function bind(){
   const q = id => document.getElementById(id);
   const opt = (v,t) => `<option value="${v}">${t}</option>`;
@@ -1767,8 +1803,8 @@ function bind(){
   q("budMin").innerHTML = FAIXAS.slice(0,-1).map(v=>opt(v,`de R$ ${(v/1000).toLocaleString("pt-BR")} mil`)).join("");
   q("budMax").innerHTML = FAIXAS.slice(1).map(v=>opt(v,`até R$ ${(v/1000).toLocaleString("pt-BR")} mil`)).join("");
   q("budMin").value = S.budMin; q("budMax").value = S.budMax;
-  q("idadeMin").innerHTML = [0,1,2,3,4,5,6,7,8].map(v=>opt(v, v===0?"de 0 km":`de ${v} ano${v>1?"s":""}`)).join("");
-  q("idadeMax").innerHTML = [1,2,3,4,5,6,7,8,9,10].map(v=>opt(v,`até ${v} anos`)).join("");
+  q("idadeMin").innerHTML = [0,1,2,3,4,5,6,8,10,12].map(v=>opt(v, v===0?"de 0 km":`de ${v} ano${v>1?"s":""}`)).join("");
+  q("idadeMax").innerHTML = [2,3,4,5,6,8,10,12,14,16].map(v=>opt(v, v>=16?"sem limite de idade":`até ${v} anos`)).join("");
   q("idadeMin").value = S.idadeMin; q("idadeMax").value = S.idadeMax;
   q("buscaSel").innerHTML = `<option value="">Todos os modelos</option>` +
     [...new Set(D.familias.map(f=>famNome(f.nome)))].sort((a,b)=>a.localeCompare(b,"pt-BR"))
@@ -1787,11 +1823,11 @@ function bind(){
     q("vKwh").textContent  = `R$ ${S.kwh.toFixed(2).replace(".",",")}`;
     q("vBat").textContent  = `${(S.bat*100).toFixed(1).replace(".",",")}% a.a.`;
     q("vMm").textContent   = S.mmult === 1 ? "como estimei" : (S.mmult>1?"+":"") + Math.round((S.mmult-1)*100) + "%";
-    q("vTeto").textContent = S.tetoCusto >= 80000 ? "sem limite" : BRL(S.tetoCusto);
+    q("vTeto").textContent = S.tetoCusto >= 150000 ? "sem limite" : BRL(S.tetoCusto);
   };
 
   q("budMin").onchange = e => { S.budMin = +e.target.value;
-    if(S.budMax <= S.budMin){ S.budMax = FAIXAS[FAIXAS.indexOf(S.budMin)+1] || 300000; q("budMax").value = S.budMax; }
+    if(S.budMax <= S.budMin){ S.budMax = FAIXAS[FAIXAS.indexOf(S.budMin)+1] || 500000; q("budMax").value = S.budMax; }
     render(); };
   q("budMax").onchange = e => { S.budMax = +e.target.value;
     if(S.budMin >= S.budMax){ S.budMin = FAIXAS[Math.max(0,FAIXAS.indexOf(S.budMax)-1)]; q("budMin").value = S.budMin; }
@@ -1823,13 +1859,12 @@ function bind(){
   q("wcusto").onclick = () => { S.w = { custo:50, manut:0, gar:0, conf:0, liq:0, camb:0 }; render(); };
 
   q("limparTudo").onclick = () => {
-    Object.assign(S, {budMin:50000, budMax:120000, idadeMin:0, idadeMax:10, tetoCusto:80000,
-      soGarantia:false, soConfiavel:false, soLiquido:false, soCambio:false,
-      seg:"todos", marca:"todas", ene:"todas", busca:"", sel:null,
-      km:12000, ipva:0.04, comb:6.20, kwh:0.95, bat:0.025, mmult:1.0});
-    q("budMin").value=50000; q("budMax").value=120000; q("idadeMin").value=0; q("idadeMax").value=10;
-    q("tetoCusto").value=80000; q("buscaSel").value=""; q("seg").value="todos"; q("marca").value="todas";
-    q("ene").value="todas"; q("km").value=12000; q("ipva").value=40; q("comb").value=620;
+    Object.assign(S, PADRAO, {soGarantia:false, soConfiavel:false, soLiquido:false, soCambio:false,
+      seg:"todos", marca:"todas", ene:"todas", busca:"", sel:null, listaN:10, verMaisHeat:false});
+    q("budMin").value=PADRAO.budMin; q("budMax").value=PADRAO.budMax;
+    q("idadeMin").value=PADRAO.idadeMin; q("idadeMax").value=PADRAO.idadeMax;
+    q("tetoCusto").value=PADRAO.tetoCusto; q("buscaSel").value=""; q("seg").value="todos"; q("marca").value="todas";
+    q("ene").value="todas"; q("km").value=12000; q("ipva").value=20; q("comb").value=620;
     q("kwh").value=95; q("bat").value=25; q("mm").value=100;
     ["soGarantia","soConfiavel","soLiquido","soCambio"].forEach(id=>q(id).checked=false);
     upd(); render();

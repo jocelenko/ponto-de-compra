@@ -1,6 +1,8 @@
 /* ============ orquestração ============ */
 function render(){
   const cs = pontuar(candidatos(false));
+  if(S.listaN > 10 && S._ultimoN !== cs.length){ S.listaN = 10; }   // filtro mudou: recomeca a lista
+  S._ultimoN = cs.length;
   const top = cs.slice().sort((a,b)=>b.score-a.score);
   if(!S.curvas){
     const seed = [];
@@ -35,7 +37,7 @@ function render(){
 }
 
 /* ============ controles ============ */
-const FAIXAS = [20000,30000,40000,50000,60000,70000,80000,100000,120000,150000,200000,250000,300000];
+const FAIXAS = [10000,15000,20000,30000,40000,50000,60000,80000,100000,120000,150000,200000,250000,300000,400000,500000];
 function bind(){
   const q = id => document.getElementById(id);
   const opt = (v,t) => `<option value="${v}">${t}</option>`;
@@ -43,8 +45,8 @@ function bind(){
   q("budMin").innerHTML = FAIXAS.slice(0,-1).map(v=>opt(v,`de R$ ${(v/1000).toLocaleString("pt-BR")} mil`)).join("");
   q("budMax").innerHTML = FAIXAS.slice(1).map(v=>opt(v,`até R$ ${(v/1000).toLocaleString("pt-BR")} mil`)).join("");
   q("budMin").value = S.budMin; q("budMax").value = S.budMax;
-  q("idadeMin").innerHTML = [0,1,2,3,4,5,6,7,8].map(v=>opt(v, v===0?"de 0 km":`de ${v} ano${v>1?"s":""}`)).join("");
-  q("idadeMax").innerHTML = [1,2,3,4,5,6,7,8,9,10].map(v=>opt(v,`até ${v} anos`)).join("");
+  q("idadeMin").innerHTML = [0,1,2,3,4,5,6,8,10,12].map(v=>opt(v, v===0?"de 0 km":`de ${v} ano${v>1?"s":""}`)).join("");
+  q("idadeMax").innerHTML = [2,3,4,5,6,8,10,12,14,16].map(v=>opt(v, v>=16?"sem limite de idade":`até ${v} anos`)).join("");
   q("idadeMin").value = S.idadeMin; q("idadeMax").value = S.idadeMax;
   q("buscaSel").innerHTML = `<option value="">Todos os modelos</option>` +
     [...new Set(D.familias.map(f=>famNome(f.nome)))].sort((a,b)=>a.localeCompare(b,"pt-BR"))
@@ -63,11 +65,11 @@ function bind(){
     q("vKwh").textContent  = `R$ ${S.kwh.toFixed(2).replace(".",",")}`;
     q("vBat").textContent  = `${(S.bat*100).toFixed(1).replace(".",",")}% a.a.`;
     q("vMm").textContent   = S.mmult === 1 ? "como estimei" : (S.mmult>1?"+":"") + Math.round((S.mmult-1)*100) + "%";
-    q("vTeto").textContent = S.tetoCusto >= 80000 ? "sem limite" : BRL(S.tetoCusto);
+    q("vTeto").textContent = S.tetoCusto >= 150000 ? "sem limite" : BRL(S.tetoCusto);
   };
 
   q("budMin").onchange = e => { S.budMin = +e.target.value;
-    if(S.budMax <= S.budMin){ S.budMax = FAIXAS[FAIXAS.indexOf(S.budMin)+1] || 300000; q("budMax").value = S.budMax; }
+    if(S.budMax <= S.budMin){ S.budMax = FAIXAS[FAIXAS.indexOf(S.budMin)+1] || 500000; q("budMax").value = S.budMax; }
     render(); };
   q("budMax").onchange = e => { S.budMax = +e.target.value;
     if(S.budMin >= S.budMax){ S.budMin = FAIXAS[Math.max(0,FAIXAS.indexOf(S.budMax)-1)]; q("budMin").value = S.budMin; }
@@ -99,13 +101,12 @@ function bind(){
   q("wcusto").onclick = () => { S.w = { custo:50, manut:0, gar:0, conf:0, liq:0, camb:0 }; render(); };
 
   q("limparTudo").onclick = () => {
-    Object.assign(S, {budMin:50000, budMax:120000, idadeMin:0, idadeMax:10, tetoCusto:80000,
-      soGarantia:false, soConfiavel:false, soLiquido:false, soCambio:false,
-      seg:"todos", marca:"todas", ene:"todas", busca:"", sel:null,
-      km:12000, ipva:0.04, comb:6.20, kwh:0.95, bat:0.025, mmult:1.0});
-    q("budMin").value=50000; q("budMax").value=120000; q("idadeMin").value=0; q("idadeMax").value=10;
-    q("tetoCusto").value=80000; q("buscaSel").value=""; q("seg").value="todos"; q("marca").value="todas";
-    q("ene").value="todas"; q("km").value=12000; q("ipva").value=40; q("comb").value=620;
+    Object.assign(S, PADRAO, {soGarantia:false, soConfiavel:false, soLiquido:false, soCambio:false,
+      seg:"todos", marca:"todas", ene:"todas", busca:"", sel:null, listaN:10, verMaisHeat:false});
+    q("budMin").value=PADRAO.budMin; q("budMax").value=PADRAO.budMax;
+    q("idadeMin").value=PADRAO.idadeMin; q("idadeMax").value=PADRAO.idadeMax;
+    q("tetoCusto").value=PADRAO.tetoCusto; q("buscaSel").value=""; q("seg").value="todos"; q("marca").value="todas";
+    q("ene").value="todas"; q("km").value=12000; q("ipva").value=20; q("comb").value=620;
     q("kwh").value=95; q("bat").value=25; q("mm").value=100;
     ["soGarantia","soConfiavel","soLiquido","soCambio"].forEach(id=>q(id).checked=false);
     upd(); render();

@@ -85,7 +85,7 @@
 .tblwrap{overflow-x:auto; -webkit-overflow-scrolling:touch; margin:0 -14px; padding:0 14px}
 @media(min-width:760px){ .tblwrap{margin:0; padding:0} }
 table.rk{width:100%; border-collapse:collapse; font-size:14px; min-width:860px}
-table.rk th{padding:0; border-bottom:1px solid var(--line); position:sticky; top:60px; background:var(--card); z-index:1}
+table.rk th{padding:0; border-bottom:1px solid var(--line); background:var(--card)}
 table.rk th button{font:inherit; font-size:11.5px; letter-spacing:.02em; color:var(--ink-3); font-weight:700;
   background:none; border:0; cursor:pointer; padding:11px 10px; width:100%; text-align:right; white-space:nowrap;
   display:block; min-height:42px}
@@ -170,4 +170,14 @@ footer{border-top:1px solid var(--line-2); padding:28px 0 48px; font-size:13px; 
   #s-curva > .wrap, #s-modelo > .wrap, #s-matriz > .wrap,
   #s-detalhe > .wrap, #s-dinheiro > .wrap, #s-fronteira > .wrap{ max-width:1300px }
   .conta{ grid-template-columns:minmax(0,300px) minmax(0,1fr); gap:52px }
+}
+
+/* rodape da lista com carregamento incremental */
+.maisLista{display:flex; align-items:center; gap:12px; flex-wrap:wrap; padding:18px 2px 6px;
+  border-top:1px solid var(--line-2); margin-top:2px}
+.maisLista span{font-size:13.5px; color:var(--ink-3); margin-right:auto}
+@media(max-width:559px){
+  .maisLista{flex-direction:column; align-items:stretch}
+  .maisLista span{margin:0 0 4px; text-align:center}
+  .maisLista .tbtn{width:100%}
 }
