@@ -163,7 +163,7 @@
             <p class="exp">É o que a Tabela FIPE diz que esse carro vale hoje, e mais ou menos o que você vai ver pedindo no anúncio. <b>Esse número não é calculado aqui, apenas coletado.</b></p>
           </div>
           <div class="val est">
-            <span class="tag">Estimado pelo Ponto de Compra</span>
+            <span class="tag">Estimado pelo Ponto de Compra</span><button class="ajuda" type="button" data-ajuda="custoAno" aria-expanded="false" aria-label="O que entra no custo por ano">?</button>
             <div class="cifra" id="topCusto"></div>
             <p class="exp">É quanto ele consome <b>por ano</b> se você ficar <span id="topAnos"></span> anos com ele. Soma o que ele perde de valor, mais IPVA, seguro, manutenção, combustível e, se for financiado, os juros. <b>Depende de premissas que você pode mexer nos filtros.</b></p>
           </div>
@@ -235,7 +235,7 @@
     <div class="wrap">
       <div class="sec-cab rev"><span class="papel">Os preços</span>
         <h2>Quanto custa cada modelo, em cada ano</h2>
-        <p>Em cima o preço FIPE de hoje. Embaixo, em cinza, o custo estimado por ano. Quanto mais escura a célula, mais caro o carro. Toque em qualquer uma para abrir o modelo no detalhe.</p></div>
+        <p>Em cima o preço FIPE de hoje. Embaixo, em cinza, o custo estimado por ano, que soma depreciação, IPVA, seguro, manutenção, energia e juros. Quanto mais escura a célula, mais caro o carro. Toque em qualquer uma para abrir o modelo no detalhe.</p></div>
       <div class="quadro rev"><div class="hmwrap" id="heat"></div><div class="escala" id="hmScale"></div></div>
     </div>
   </section>
@@ -283,7 +283,7 @@
     <div class="wrap">
       <div class="sec-cab rev"><span class="papel">Tudo</span>
         <h2>A lista completa</h2>
-        <p><span id="tblCount"></span> candidatos no seu filtro. Toque no cabeçalho para reordenar e na linha para mandar o carro aos gráficos.</p></div>
+        <p><span id="tblCount"></span> candidatos no seu filtro. Toque no cabeçalho para reordenar e na linha para mandar o carro aos gráficos. O <b>custo por ano</b> soma depreciação, IPVA, seguro, manutenção, energia e juros.</p></div>
       <div class="quadro rev"><div class="tblwrap" id="tbl"></div></div>
     </div>
   </section>

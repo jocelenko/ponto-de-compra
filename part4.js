@@ -72,6 +72,27 @@ function filtrosAtivos(){
       || S.kwh !== PADRAO.kwh || S.bat !== PADRAO.bat || S.mmult !== PADRAO.mmult) n++;
   return n;
 }
+/* Ajuda contextual. Um unico balao no body, posicionado por JS, para nunca ser
+   cortado por container com overflow. */
+const AJUDA = {
+  custoAno: `<b>O custo por ano de posse soma seis coisas.</b>
+    <ul><li>O que o carro <b>perde de valor</b>, medido na curva da FIPE</li>
+    <li><b>IPVA</b>, pela alíquota do seu estado</li>
+    <li><b>Seguro</b></li>
+    <li><b>Manutenção</b>, mais provisão de bateria se for elétrico</li>
+    <li><b>Energia</b>: combustível ou eletricidade</li>
+    <li><b>Juros</b>, se você marcar financiado</li></ul>
+    Tudo dividido pelo tempo que você fica com o carro. Não entram entrada,
+    licenciamento, multas nem estacionamento.`,
+  precoFipe: `<b>É o valor da Tabela FIPE de hoje</b> para uma versão típica desse modelo e ano.
+    Não é preço de loja: negociação, cor, quilometragem e estado real mexem uns 10% para cada lado.`,
+  score: `<b>Nota de 0 a 100</b> na média ponderada dos seis critérios, sempre relativa aos candidatos
+    do seu filtro atual. Abra <b>Critérios</b> no topo para mexer nos pesos.`
+};
+function ajuda(chave, rotulo){
+  return `<button class="ajuda" type="button" data-ajuda="${chave}" aria-expanded="false"` +
+    ` aria-label="${rotulo || "O que entra nesse número"}">?</button>`;
+}
 const est = (txt, motivo) => `<span class="est" title="Estimado pelo Ponto de Compra. ${motivo}">${txt}</span>`;
 const norm = s => (s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
 const DIMS = [["custo","Custo"],["manut","Manut"],["gar","Garan"],

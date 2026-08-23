@@ -204,6 +204,53 @@ function bind(){
   pintaMarcas(); upd();
 }
 
+/* ============ balão de ajuda ============ */
+function ajudaBind(){
+  let bal = document.getElementById("balao");
+  if(!bal){ bal = document.createElement("div"); bal.id = "balao"; bal.setAttribute("role","tooltip");
+    document.body.appendChild(bal); }
+  let atual = null;
+  const esconder = () => { bal.classList.remove("on");
+    if(atual) atual.setAttribute("aria-expanded", false); atual = null; };
+  const mostrar = b => {
+    const txt = AJUDA[b.dataset.ajuda]; if(!txt) return;
+    if(atual === b){ esconder(); return; }
+    if(atual) atual.setAttribute("aria-expanded", false);
+    atual = b; b.setAttribute("aria-expanded", true);
+    bal.innerHTML = txt;
+    bal.style.left = "0px"; bal.style.top = "0px";      // mede sem influencia da posicao anterior
+    bal.classList.add("on");
+    const r = b.getBoundingClientRect();
+    const bw = bal.offsetWidth, bh = bal.offsetHeight;   // offset ignora a transformacao
+    let x = r.left + r.width/2 - bw/2;
+    x = Math.max(12, Math.min(x, innerWidth - bw - 12));
+    let y = r.bottom + 9;
+    if(y + bh > innerHeight - 12) y = Math.max(12, r.top - bh - 9);
+    bal.style.left = Math.round(x) + "px"; bal.style.top = Math.round(y) + "px";
+  };
+  document.addEventListener("pointerover", e => {
+    const b = e.target.closest && e.target.closest(".ajuda");
+    if(b && matchMedia("(hover:hover)").matches) mostrar(b);
+  });
+  document.addEventListener("pointerout", e => {
+    const b = e.target.closest && e.target.closest(".ajuda");
+    if(b && matchMedia("(hover:hover)").matches && !bal.matches(":hover")) esconder();
+  });
+  document.addEventListener("click", e => {
+    const b = e.target.closest && e.target.closest(".ajuda");
+    if(b){ e.preventDefault(); e.stopPropagation(); mostrar(b); }
+    else if(!e.target.closest || !e.target.closest("#balao")) esconder();
+  });
+  document.addEventListener("focusin", e => {
+    const b = e.target.closest && e.target.closest(".ajuda");
+    if(b) mostrar(b);
+  });
+  addEventListener("keydown", e => { if(e.key === "Escape") esconder(); });
+  let ignoraScroll = 0;
+  addEventListener("scroll", () => { if(Date.now() > ignoraScroll) esconder(); }, {passive:true});
+  window._ajudaIgnoraScroll = () => { ignoraScroll = Date.now() + 400; };
+}
+
 /* ============ rolagem: revelação, progresso, seção atual, parallax ============ */
 let obsRev;
 function revelar(){
@@ -241,7 +288,7 @@ function rolagem(){
   onScroll();
 }
 
-bind(); render(); rolagem();
+bind(); render(); rolagem(); ajudaBind();
 addEventListener("resize", () => { clearTimeout(window._rz); window._rz = setTimeout(render, 220); });
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
   if(!document.documentElement.getAttribute("data-theme")) requestAnimationFrame(render);

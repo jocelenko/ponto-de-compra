@@ -62,11 +62,11 @@ function drawPicks(top, cs){
     <article class="cartao${i?"":" top"} rev d${i}">
       <span class="pos">${i+1}º</span>
       <h3>${famNome(c.fam)} <span class="ano">${c.ano}</span></h3>
-      <div class="big"><span class="v">${est(BRL(c.total),"Estimado pelo Ponto de Compra. Soma depreciação, IPVA, seguro, manutenção, energia e juros sob as premissas atuais.")}</span><span class="u">por ano</span></div>
+      <div class="big"><span class="v">${est(BRL(c.total),"Estimado pelo Ponto de Compra. Soma depreciação, IPVA, seguro, manutenção, energia e juros sob as premissas atuais.")}</span><span class="u">por ano${ajuda("custoAno","O que entra no custo por ano")}</span></div>
       <p class="motivo">${motivoDe(c, cs)}</p>
       <div class="selos">${garSelo(c)}${eneSelo(c)}${riscoSelo(c)}${avisoSelos(c)}</div>
       <dl class="ficha">
-        <dt>Preço FIPE hoje</dt><dd>${BRL(c.preco)}</dd>
+        <dt>Preço FIPE hoje${ajuda("precoFipe","O que é o preço FIPE")}</dt><dd>${BRL(c.preco)}</dd>
         <dt>Revenda em ${S.H} anos</dt><dd>${est(BRL(c.revenda),"Projeção. Assume que a curva de hoje continua valendo.")}</dd>
         <dt>Perde no período</dt><dd>${est(PCT(c.depPct),"Projeção sobre a curva medida na FIPE.")}</dd>
         <dt>Manutenção</dt><dd>${est(BRL(c.manut)+"/ano","Base por marca, corrigida por idade, porte e trem de força.")}</dd>
@@ -97,7 +97,7 @@ function drawTiles(cs, top){
   const comGar = cs.filter(c=>c.garMeses>0).length;
   const razao = varIdade>0 ? (varModelo/varIdade) : null;
   document.getElementById("tiles").innerHTML = `
-    <div class="stat"><div class="lab">Mais barato de ter</div>
+    <div class="stat"><div class="lab">Mais barato de ter${ajuda("custoAno","O que entra no custo por ano")}</div>
       <div class="v">${barato?BRL(barato.total):"–"}</div>
       <div class="n">${barato?`<b>${famNome(barato.fam)} ${barato.ano}</b>, comprando por ${BRL(barato.preco)}. Nem sempre o mais barato de comprar é o mais barato de ter.`:""}</div></div>
     <div class="stat"><div class="lab">Modelo contra ano</div>
@@ -136,9 +136,9 @@ function drawCriterios(){
 /* ============ 7. tabela ============ */
 const COLS = [
   {k:"fam",   n:"Modelo",     l:1}, {k:"ano", n:"Ano"}, {k:"idade", n:"Idade"},
-  {k:"preco", n:"Preço FIPE"}, {k:"total", n:"Custo/ano", bar:1},
+  {k:"preco", n:"Preço FIPE", aj:"precoFipe"}, {k:"total", n:"Custo/ano", bar:1, aj:"custoAno"},
   {k:"deprec",n:"Deprec."},    {k:"manut", n:"Manut."},  {k:"depPct", n:"% perdido"},
-  {k:"garMeses", n:"Garantia"},{k:"liq", n:"Liquidez"},  {k:"score", n:"Score"}
+  {k:"garMeses", n:"Garantia"},{k:"liq", n:"Liquidez"},  {k:"score", n:"Score", aj:"score"}
 ];
 function drawTable(cs){
   const estreito = window.innerWidth < 760;
@@ -149,7 +149,9 @@ function drawTable(cs){
   const rows = cs.slice().sort((a,b)=> typeof a[k]==="string" ? d*a[k].localeCompare(b[k]) : d*(a[k]-b[k]));
   const maxT = Math.max(...cs.map(c=>c.total), 1);
   let h = `<table class="rk"${estreito?' style="min-width:0"':""}><thead><tr>` + COLS_USO.map(c=>
-    `<th class="${c.l?"l":""}" ${k===c.k?`aria-sort="${d<0?"descending":"ascending"}"`:""}><button type="button" data-k="${c.k}">${c.n}${k===c.k?` <span class="ar">${d<0?"▼":"▲"}</span>`:""}</button></th>`).join("") + `</tr></thead><tbody>`;
+    `<th class="${c.l?"l":""}" ${k===c.k?`aria-sort="${d<0?"descending":"ascending"}"`:""}>` +
+    `<span class="thin"><button type="button" data-k="${c.k}">${c.n}${k===c.k?` <span class="ar">${d<0?"▼":"▲"}</span>`:""}</button>` +
+    `${c.aj?ajuda(c.aj):""}</span></th>`).join("") + `</tr></thead><tbody>`;
   const LIM_T = Math.min(S.listaN, rows.length);
   rows.slice(0,LIM_T).forEach(c=>{
     const sel = S.sel && S.sel.fam===c.fam && S.sel.ano===c.ano;

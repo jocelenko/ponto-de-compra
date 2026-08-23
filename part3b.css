@@ -181,3 +181,25 @@ footer{border-top:1px solid var(--line-2); padding:28px 0 48px; font-size:13px; 
   .maisLista span{margin:0 0 4px; text-align:center}
   .maisLista .tbtn{width:100%}
 }
+
+/* ---------- ajuda contextual (?) ---------- */
+.ajuda{display:inline-flex; align-items:center; justify-content:center; width:17px; height:17px;
+  border-radius:50%; border:1px solid var(--line); background:var(--card); color:var(--ink-3);
+  font:inherit; font-size:11px; font-weight:800; line-height:1; cursor:help; padding:0;
+  vertical-align:middle; margin-left:5px; flex:0 0 auto; position:relative; top:-1px}
+.ajuda:hover,.ajuda[aria-expanded=true]{border-color:var(--acc); color:var(--acc); background:var(--acc-soft)}
+@media (pointer:coarse){ .ajuda{width:24px; height:24px; font-size:13px} }
+#balao{position:fixed; z-index:120; width:max-content; min-width:230px; max-width:320px; background:var(--card);
+  color:var(--ink-2); border:1px solid var(--line); border-radius:var(--r-s); box-shadow:var(--sh-3);
+  padding:12px 14px; font-size:13.5px; line-height:1.5; opacity:0; pointer-events:none;
+  transform:translateY(4px); transition:opacity .14s, transform .14s}
+#balao.on{opacity:1; transform:none; pointer-events:auto}
+#balao b{color:var(--ink); font-weight:650}
+#balao ul{margin:7px 0 0; padding-left:17px}
+#balao li{margin-bottom:3px}
+#balao .fecha{display:block; margin-top:9px; font-size:12.5px; color:var(--acc-ink); font-weight:600}
+table.rk th .thin{display:flex; align-items:center; justify-content:flex-end; padding-right:8px}
+table.rk th.l .thin{justify-content:flex-start; padding-right:0; padding-left:2px}
+table.rk th .thin button{width:auto}
+
+@media(max-width:360px){ #balao{max-width:calc(100vw - 24px); min-width:0} }

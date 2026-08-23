@@ -534,6 +534,28 @@ footer{border-top:1px solid var(--line-2); padding:28px 0 48px; font-size:13px; 
   .maisLista .tbtn{width:100%}
 }
 
+/* ---------- ajuda contextual (?) ---------- */
+.ajuda{display:inline-flex; align-items:center; justify-content:center; width:17px; height:17px;
+  border-radius:50%; border:1px solid var(--line); background:var(--card); color:var(--ink-3);
+  font:inherit; font-size:11px; font-weight:800; line-height:1; cursor:help; padding:0;
+  vertical-align:middle; margin-left:5px; flex:0 0 auto; position:relative; top:-1px}
+.ajuda:hover,.ajuda[aria-expanded=true]{border-color:var(--acc); color:var(--acc); background:var(--acc-soft)}
+@media (pointer:coarse){ .ajuda{width:24px; height:24px; font-size:13px} }
+#balao{position:fixed; z-index:120; width:max-content; min-width:230px; max-width:320px; background:var(--card);
+  color:var(--ink-2); border:1px solid var(--line); border-radius:var(--r-s); box-shadow:var(--sh-3);
+  padding:12px 14px; font-size:13.5px; line-height:1.5; opacity:0; pointer-events:none;
+  transform:translateY(4px); transition:opacity .14s, transform .14s}
+#balao.on{opacity:1; transform:none; pointer-events:auto}
+#balao b{color:var(--ink); font-weight:650}
+#balao ul{margin:7px 0 0; padding-left:17px}
+#balao li{margin-bottom:3px}
+#balao .fecha{display:block; margin-top:9px; font-size:12.5px; color:var(--acc-ink); font-weight:600}
+table.rk th .thin{display:flex; align-items:center; justify-content:flex-end; padding-right:8px}
+table.rk th.l .thin{justify-content:flex-start; padding-right:0; padding-left:2px}
+table.rk th .thin button{width:auto}
+
+@media(max-width:360px){ #balao{max-width:calc(100vw - 24px); min-width:0} }
+
 </style>
 
 <header class="topo">
@@ -701,7 +723,7 @@ footer{border-top:1px solid var(--line-2); padding:28px 0 48px; font-size:13px; 
             <p class="exp">É o que a Tabela FIPE diz que esse carro vale hoje, e mais ou menos o que você vai ver pedindo no anúncio. <b>Esse número não é calculado aqui, apenas coletado.</b></p>
           </div>
           <div class="val est">
-            <span class="tag">Estimado pelo Ponto de Compra</span>
+            <span class="tag">Estimado pelo Ponto de Compra</span><button class="ajuda" type="button" data-ajuda="custoAno" aria-expanded="false" aria-label="O que entra no custo por ano">?</button>
             <div class="cifra" id="topCusto"></div>
             <p class="exp">É quanto ele consome <b>por ano</b> se você ficar <span id="topAnos"></span> anos com ele. Soma o que ele perde de valor, mais IPVA, seguro, manutenção, combustível e, se for financiado, os juros. <b>Depende de premissas que você pode mexer nos filtros.</b></p>
           </div>
@@ -773,7 +795,7 @@ footer{border-top:1px solid var(--line-2); padding:28px 0 48px; font-size:13px; 
     <div class="wrap">
       <div class="sec-cab rev"><span class="papel">Os preços</span>
         <h2>Quanto custa cada modelo, em cada ano</h2>
-        <p>Em cima o preço FIPE de hoje. Embaixo, em cinza, o custo estimado por ano. Quanto mais escura a célula, mais caro o carro. Toque em qualquer uma para abrir o modelo no detalhe.</p></div>
+        <p>Em cima o preço FIPE de hoje. Embaixo, em cinza, o custo estimado por ano, que soma depreciação, IPVA, seguro, manutenção, energia e juros. Quanto mais escura a célula, mais caro o carro. Toque em qualquer uma para abrir o modelo no detalhe.</p></div>
       <div class="quadro rev"><div class="hmwrap" id="heat"></div><div class="escala" id="hmScale"></div></div>
     </div>
   </section>
@@ -821,7 +843,7 @@ footer{border-top:1px solid var(--line-2); padding:28px 0 48px; font-size:13px; 
     <div class="wrap">
       <div class="sec-cab rev"><span class="papel">Tudo</span>
         <h2>A lista completa</h2>
-        <p><span id="tblCount"></span> candidatos no seu filtro. Toque no cabeçalho para reordenar e na linha para mandar o carro aos gráficos.</p></div>
+        <p><span id="tblCount"></span> candidatos no seu filtro. Toque no cabeçalho para reordenar e na linha para mandar o carro aos gráficos. O <b>custo por ano</b> soma depreciação, IPVA, seguro, manutenção, energia e juros.</p></div>
       <div class="quadro rev"><div class="tblwrap" id="tbl"></div></div>
     </div>
   </section>
@@ -968,6 +990,27 @@ function filtrosAtivos(){
   if (S.km !== PADRAO.km || S.ipva !== PADRAO.ipva || S.comb !== PADRAO.comb
       || S.kwh !== PADRAO.kwh || S.bat !== PADRAO.bat || S.mmult !== PADRAO.mmult) n++;
   return n;
+}
+/* Ajuda contextual. Um unico balao no body, posicionado por JS, para nunca ser
+   cortado por container com overflow. */
+const AJUDA = {
+  custoAno: `<b>O custo por ano de posse soma seis coisas.</b>
+    <ul><li>O que o carro <b>perde de valor</b>, medido na curva da FIPE</li>
+    <li><b>IPVA</b>, pela alíquota do seu estado</li>
+    <li><b>Seguro</b></li>
+    <li><b>Manutenção</b>, mais provisão de bateria se for elétrico</li>
+    <li><b>Energia</b>: combustível ou eletricidade</li>
+    <li><b>Juros</b>, se você marcar financiado</li></ul>
+    Tudo dividido pelo tempo que você fica com o carro. Não entram entrada,
+    licenciamento, multas nem estacionamento.`,
+  precoFipe: `<b>É o valor da Tabela FIPE de hoje</b> para uma versão típica desse modelo e ano.
+    Não é preço de loja: negociação, cor, quilometragem e estado real mexem uns 10% para cada lado.`,
+  score: `<b>Nota de 0 a 100</b> na média ponderada dos seis critérios, sempre relativa aos candidatos
+    do seu filtro atual. Abra <b>Critérios</b> no topo para mexer nos pesos.`
+};
+function ajuda(chave, rotulo){
+  return `<button class="ajuda" type="button" data-ajuda="${chave}" aria-expanded="false"` +
+    ` aria-label="${rotulo || "O que entra nesse número"}">?</button>`;
 }
 const est = (txt, motivo) => `<span class="est" title="Estimado pelo Ponto de Compra. ${motivo}">${txt}</span>`;
 const norm = s => (s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
@@ -1727,11 +1770,11 @@ function drawPicks(top, cs){
     <article class="cartao${i?"":" top"} rev d${i}">
       <span class="pos">${i+1}º</span>
       <h3>${famNome(c.fam)} <span class="ano">${c.ano}</span></h3>
-      <div class="big"><span class="v">${est(BRL(c.total),"Estimado pelo Ponto de Compra. Soma depreciação, IPVA, seguro, manutenção, energia e juros sob as premissas atuais.")}</span><span class="u">por ano</span></div>
+      <div class="big"><span class="v">${est(BRL(c.total),"Estimado pelo Ponto de Compra. Soma depreciação, IPVA, seguro, manutenção, energia e juros sob as premissas atuais.")}</span><span class="u">por ano${ajuda("custoAno","O que entra no custo por ano")}</span></div>
       <p class="motivo">${motivoDe(c, cs)}</p>
       <div class="selos">${garSelo(c)}${eneSelo(c)}${riscoSelo(c)}${avisoSelos(c)}</div>
       <dl class="ficha">
-        <dt>Preço FIPE hoje</dt><dd>${BRL(c.preco)}</dd>
+        <dt>Preço FIPE hoje${ajuda("precoFipe","O que é o preço FIPE")}</dt><dd>${BRL(c.preco)}</dd>
         <dt>Revenda em ${S.H} anos</dt><dd>${est(BRL(c.revenda),"Projeção. Assume que a curva de hoje continua valendo.")}</dd>
         <dt>Perde no período</dt><dd>${est(PCT(c.depPct),"Projeção sobre a curva medida na FIPE.")}</dd>
         <dt>Manutenção</dt><dd>${est(BRL(c.manut)+"/ano","Base por marca, corrigida por idade, porte e trem de força.")}</dd>
@@ -1762,7 +1805,7 @@ function drawTiles(cs, top){
   const comGar = cs.filter(c=>c.garMeses>0).length;
   const razao = varIdade>0 ? (varModelo/varIdade) : null;
   document.getElementById("tiles").innerHTML = `
-    <div class="stat"><div class="lab">Mais barato de ter</div>
+    <div class="stat"><div class="lab">Mais barato de ter${ajuda("custoAno","O que entra no custo por ano")}</div>
       <div class="v">${barato?BRL(barato.total):"–"}</div>
       <div class="n">${barato?`<b>${famNome(barato.fam)} ${barato.ano}</b>, comprando por ${BRL(barato.preco)}. Nem sempre o mais barato de comprar é o mais barato de ter.`:""}</div></div>
     <div class="stat"><div class="lab">Modelo contra ano</div>
@@ -1801,9 +1844,9 @@ function drawCriterios(){
 /* ============ 7. tabela ============ */
 const COLS = [
   {k:"fam",   n:"Modelo",     l:1}, {k:"ano", n:"Ano"}, {k:"idade", n:"Idade"},
-  {k:"preco", n:"Preço FIPE"}, {k:"total", n:"Custo/ano", bar:1},
+  {k:"preco", n:"Preço FIPE", aj:"precoFipe"}, {k:"total", n:"Custo/ano", bar:1, aj:"custoAno"},
   {k:"deprec",n:"Deprec."},    {k:"manut", n:"Manut."},  {k:"depPct", n:"% perdido"},
-  {k:"garMeses", n:"Garantia"},{k:"liq", n:"Liquidez"},  {k:"score", n:"Score"}
+  {k:"garMeses", n:"Garantia"},{k:"liq", n:"Liquidez"},  {k:"score", n:"Score", aj:"score"}
 ];
 function drawTable(cs){
   const estreito = window.innerWidth < 760;
@@ -1814,7 +1857,9 @@ function drawTable(cs){
   const rows = cs.slice().sort((a,b)=> typeof a[k]==="string" ? d*a[k].localeCompare(b[k]) : d*(a[k]-b[k]));
   const maxT = Math.max(...cs.map(c=>c.total), 1);
   let h = `<table class="rk"${estreito?' style="min-width:0"':""}><thead><tr>` + COLS_USO.map(c=>
-    `<th class="${c.l?"l":""}" ${k===c.k?`aria-sort="${d<0?"descending":"ascending"}"`:""}><button type="button" data-k="${c.k}">${c.n}${k===c.k?` <span class="ar">${d<0?"▼":"▲"}</span>`:""}</button></th>`).join("") + `</tr></thead><tbody>`;
+    `<th class="${c.l?"l":""}" ${k===c.k?`aria-sort="${d<0?"descending":"ascending"}"`:""}>` +
+    `<span class="thin"><button type="button" data-k="${c.k}">${c.n}${k===c.k?` <span class="ar">${d<0?"▼":"▲"}</span>`:""}</button>` +
+    `${c.aj?ajuda(c.aj):""}</span></th>`).join("") + `</tr></thead><tbody>`;
   const LIM_T = Math.min(S.listaN, rows.length);
   rows.slice(0,LIM_T).forEach(c=>{
     const sel = S.sel && S.sel.fam===c.fam && S.sel.ano===c.ano;
@@ -2072,6 +2117,53 @@ function bind(){
   pintaMarcas(); upd();
 }
 
+/* ============ balão de ajuda ============ */
+function ajudaBind(){
+  let bal = document.getElementById("balao");
+  if(!bal){ bal = document.createElement("div"); bal.id = "balao"; bal.setAttribute("role","tooltip");
+    document.body.appendChild(bal); }
+  let atual = null;
+  const esconder = () => { bal.classList.remove("on");
+    if(atual) atual.setAttribute("aria-expanded", false); atual = null; };
+  const mostrar = b => {
+    const txt = AJUDA[b.dataset.ajuda]; if(!txt) return;
+    if(atual === b){ esconder(); return; }
+    if(atual) atual.setAttribute("aria-expanded", false);
+    atual = b; b.setAttribute("aria-expanded", true);
+    bal.innerHTML = txt;
+    bal.style.left = "0px"; bal.style.top = "0px";      // mede sem influencia da posicao anterior
+    bal.classList.add("on");
+    const r = b.getBoundingClientRect();
+    const bw = bal.offsetWidth, bh = bal.offsetHeight;   // offset ignora a transformacao
+    let x = r.left + r.width/2 - bw/2;
+    x = Math.max(12, Math.min(x, innerWidth - bw - 12));
+    let y = r.bottom + 9;
+    if(y + bh > innerHeight - 12) y = Math.max(12, r.top - bh - 9);
+    bal.style.left = Math.round(x) + "px"; bal.style.top = Math.round(y) + "px";
+  };
+  document.addEventListener("pointerover", e => {
+    const b = e.target.closest && e.target.closest(".ajuda");
+    if(b && matchMedia("(hover:hover)").matches) mostrar(b);
+  });
+  document.addEventListener("pointerout", e => {
+    const b = e.target.closest && e.target.closest(".ajuda");
+    if(b && matchMedia("(hover:hover)").matches && !bal.matches(":hover")) esconder();
+  });
+  document.addEventListener("click", e => {
+    const b = e.target.closest && e.target.closest(".ajuda");
+    if(b){ e.preventDefault(); e.stopPropagation(); mostrar(b); }
+    else if(!e.target.closest || !e.target.closest("#balao")) esconder();
+  });
+  document.addEventListener("focusin", e => {
+    const b = e.target.closest && e.target.closest(".ajuda");
+    if(b) mostrar(b);
+  });
+  addEventListener("keydown", e => { if(e.key === "Escape") esconder(); });
+  let ignoraScroll = 0;
+  addEventListener("scroll", () => { if(Date.now() > ignoraScroll) esconder(); }, {passive:true});
+  window._ajudaIgnoraScroll = () => { ignoraScroll = Date.now() + 400; };
+}
+
 /* ============ rolagem: revelação, progresso, seção atual, parallax ============ */
 let obsRev;
 function revelar(){
@@ -2109,7 +2201,7 @@ function rolagem(){
   onScroll();
 }
 
-bind(); render(); rolagem();
+bind(); render(); rolagem(); ajudaBind();
 addEventListener("resize", () => { clearTimeout(window._rz); window._rz = setTimeout(render, 220); });
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
   if(!document.documentElement.getAttribute("data-theme")) requestAnimationFrame(render);
