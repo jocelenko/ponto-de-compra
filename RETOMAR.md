@@ -195,3 +195,19 @@ provisão de bateria. Acima disso o combustível vira o item dominante e o elét
 
 Isso significa que **o controle de rodagem é o filtro que mais muda a resposta**, e hoje ele
 está enterrado na gaveta sob "Premissas estimadas". Vale considerar promovê-lo.
+
+## Financiamento no motor de custo
+
+`jurosPorAno(preco)` em `part4.js`. Tabela Price: entrada em percentual, taxa mensal, prazo em meses.
+Os juros totais são diluídos pelos anos de posse, e se o prazo passar do tempo de posse entra só a
+fração paga no período. Vira uma camada própria no gráfico de composição.
+
+Exemplo conferido na mão: Chery iCar a R$ 79.141, entrada 20%, 1,8% ao mês, 48 parcelas.
+PV = 63.313, parcela = 1.980,90, total pago = 95.083, juros = 31.770, dividido por 5 anos = **R$ 6.355 por ano**.
+O custo anual do carro sai de R$ 11.861 para R$ 18.216, um salto de 54%.
+
+## IPVA por estado
+
+`IPVA_UF` em `part4.js`, alíquota de automóvel de passeio a gasolina ou flex nas 27 unidades da
+federação. O padrão é "não informado" com 2%, para não assumir estado. Escolher o estado preenche
+a alíquota, e o slider continua disponível para ajuste fino.

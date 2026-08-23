@@ -1,7 +1,8 @@
 /* ============ estado ============ */
 const S = {
   budMin: 10000, budMax: 500000, H: 5, km: 12000, ipva: 0.02, comb: 6.20, kwh: 0.95, bat: 0.025, mmult: 1.0,
-  seg: "todos", marca: "todas", ene: "todas", busca: "", sel: null,
+  segs: new Set(), marcas: new Set(), ene: "todas", busca: "", sel: null,
+  pagamento: "avista", entrada: 0.20, jurosAM: 0.018, prazo: 48, uf: "",
   idadeMin: 0, idadeMax: 16, tetoCusto: 150000, verMaisHeat: false, listaN: 10,
   soGarantia: false, soConfiavel: false, soLiquido: false, soCambio: false, sort: {k:"score", d:-1},
   w: { custo:34, manut:12, gar:16, conf:10, liq:16, camb:12 },
@@ -11,6 +12,33 @@ const BRL = n => "R$ " + Math.round(n).toLocaleString("pt-BR");
 const BRLk = n => "R$ " + (Math.round(n/100)/10).toFixed(1).replace(".",",") + "k";
 const PCT = n => n.toFixed(0) + "%";
 const SERIES = ["--s1","--s2","--s3","--s4","--s5","--s6"];
+/* Aliquota de IPVA para automovel de passeio a gasolina ou flex, por unidade da federacao.
+   Varia por combustivel e por lei estadual, entao serve de ponto de partida ajustavel. */
+const IPVA_UF = {
+  AC:0.02, AL:0.03, AP:0.03, AM:0.03, BA:0.025, CE:0.03, DF:0.035, ES:0.02, GO:0.0375,
+  MA:0.025, MT:0.03, MS:0.03, MG:0.04, PA:0.025, PB:0.025, PR:0.035, PE:0.03, PI:0.025,
+  RJ:0.04, RN:0.03, RS:0.03, RO:0.03, RR:0.03, SC:0.02, SP:0.04, SE:0.025, TO:0.02
+};
+const UF_NOME = {AC:"Acre",AL:"Alagoas",AP:"Amapá",AM:"Amazonas",BA:"Bahia",CE:"Ceará",
+  DF:"Distrito Federal",ES:"Espírito Santo",GO:"Goiás",MA:"Maranhão",MT:"Mato Grosso",
+  MS:"Mato Grosso do Sul",MG:"Minas Gerais",PA:"Pará",PB:"Paraíba",PR:"Paraná",
+  PE:"Pernambuco",PI:"Piauí",RJ:"Rio de Janeiro",RN:"Rio Grande do Norte",
+  RS:"Rio Grande do Sul",RO:"Rondônia",RR:"Roraima",SC:"Santa Catarina",SP:"São Paulo",
+  SE:"Sergipe",TO:"Tocantins"};
+
+/* Juros do financiamento diluidos no periodo de posse.
+   Price system: parcela fixa, entrada em percentual, prazo em meses. */
+function jurosPorAno(preco){
+  if (S.pagamento !== "financiado") return 0;
+  const pv = preco * (1 - S.entrada);
+  const i = S.jurosAM, n = S.prazo;
+  if (pv <= 0 || n <= 0) return 0;
+  const pmt = i > 0 ? pv * i / (1 - Math.pow(1+i, -n)) : pv / n;
+  const jurosTotal = pmt * n - pv;
+  const anosDeParcela = n / 12;
+  const pagosNoPeriodo = Math.min(anosDeParcela, S.H) / anosDeParcela;   // se vender antes, quita o saldo
+  return jurosTotal * pagosNoPeriodo / S.H;
+}
 const SEGN = {"Hatch compacto":"Hatch compacto","Sedan compacto":"Sedã compacto",
   "SUV compacto":"SUV compacto","Monovolume 7L":"Monovolume 7 lugares",
   "Sedan medio":"Sedã médio","SUV medio":"SUV médio","Compacto":"Compacto",
@@ -37,7 +65,8 @@ function filtrosAtivos(){
   if (S.idadeMin !== PADRAO.idadeMin || S.idadeMax !== PADRAO.idadeMax) n++;
   if (S.tetoCusto !== PADRAO.tetoCusto) n++;
   ["soGarantia","soConfiavel","soLiquido","soCambio"].forEach(k=>{ if(S[k]) n++; });
-  if (S.seg !== "todos") n++; if (S.marca !== "todas") n++; if (S.ene !== "todas") n++;
+  if (S.segs.size) n++; if (S.marcas.size) n++; if (S.ene !== "todas") n++;
+  if (S.pagamento !== "avista") n++;
   if (S.busca) n++;
   if (S.km !== PADRAO.km || S.ipva !== PADRAO.ipva || S.comb !== PADRAO.comb
       || S.kwh !== PADRAO.kwh || S.bat !== PADRAO.bat || S.mmult !== PADRAO.mmult) n++;
@@ -109,9 +138,10 @@ function tco(f, ano, H){
   const vmed = soma / H;
   const ipva = vmed * S.ipva, seguro = vmed * f.seguroPct, manut = mn / H;
   const combu = energiaCusto(f);
-  const total = deprec + ipva + seguro + manut + combu;
+  const juros = jurosPorAno(P);
+  const total = deprec + ipva + seguro + manut + combu + juros;
   return { fam:f.nome, marca:f.marca, seg:f.segmento, ano, idade, preco:P,
-    lo:p.lo, hi:p.hi, nv:p.n, revenda, deprec, ipva, seguro, manut, comb:combu, total,
+    lo:p.lo, hi:p.hi, nv:p.n, revenda, deprec, ipva, seguro, manut, comb:combu, juros, total,
     depPct: 100*(P-revenda)/P, garMeses: Math.max(0, f.garantiaAnos*12 - idade*12),
     garAnos:f.garantiaAnos, cambio:f.cambio, risco:f.risco, liq:f.liq,
     equip: equipScore(f.segmento, ano), custoKm: total/S.km,
@@ -125,8 +155,8 @@ function candidatos(ignoreBudget){
   if (alvo) ignoreBudget = true;         // buscou pelo nome: mostra o carro mesmo fora do orçamento
   for (const f of D.familias){
     if (alvo && !norm(f.nome).includes(alvo) && !norm(f.marca).includes(alvo)) continue;
-    if (S.seg !== "todos" && f.segmento !== S.seg) continue;
-    if (S.marca !== "todas" && f.marca !== S.marca) continue;
+    if (S.segs.size && !S.segs.has(f.segmento)) continue;
+    if (S.marcas.size && !S.marcas.has(f.marca)) continue;
     if (S.ene !== "todas" && f.energia !== S.ene) continue;
     for (const ano in f.serie){
       const a = +ano;

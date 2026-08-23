@@ -191,6 +191,43 @@ a:hover{text-decoration:underline; text-underline-offset:3px}
   .topo .marca{gap:7px}
 }
 
+/* ---------- megamenu de critérios ---------- */
+.mega{position:fixed; top:60px; left:0; right:0; z-index:80; background:var(--card);
+  border-bottom:1px solid var(--line); box-shadow:var(--sh-3);
+  max-height:calc(100vh - 60px); overflow-y:auto;
+  transform:translateY(-8px); opacity:0; pointer-events:none;
+  transition:transform .22s cubic-bezier(.2,.8,.25,1), opacity .18s}
+.mega.on{transform:none; opacity:1; pointer-events:auto}
+.mega .wrap{padding-top:22px; padding-bottom:24px}
+.megaCab{display:flex; gap:16px; align-items:flex-start; margin-bottom:18px}
+.megaCab h3{font-size:21px; letter-spacing:-.03em}
+.megaCab p{margin-top:8px; font-size:14.5px; line-height:1.5; color:var(--ink-2); max-width:74ch}
+.megaCab p b{color:var(--ink); font-weight:650}
+.megaCab .fechar{margin-left:auto; flex:0 0 auto}
+.megaPe{display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; padding-top:16px;
+  border-top:1px solid var(--line-2)}
+@media(max-width:700px){
+  .mega{top:60px; height:calc(100dvh - 60px); max-height:none}
+  .megaCab h3{font-size:19px}
+}
+
+/* ---------- lista de marcas com busca ---------- */
+input.mini{width:100%; font:inherit; font-size:14.5px; padding:9px 12px; min-height:42px;
+  border:1px solid var(--line); border-radius:var(--r-s); background:var(--card-2); color:var(--ink)}
+.listaMarcas{margin-top:8px; max-height:210px; overflow-y:auto; border:1px solid var(--line-2);
+  border-radius:var(--r-s); background:var(--card-2)}
+.listaMarcas label{display:flex; align-items:center; gap:10px; padding:9px 12px; min-height:42px;
+  cursor:pointer; font-size:14.5px; border-bottom:1px solid var(--line-2)}
+.listaMarcas label:last-child{border-bottom:0}
+.listaMarcas label:hover{background:var(--bg-2)}
+.listaMarcas input{width:18px; height:18px; accent-color:var(--acc); flex:0 0 auto}
+.listaMarcas .n{margin-left:auto; font-size:12.5px; color:var(--ink-3)}
+.listaMarcas .vazio{padding:14px 12px; font-size:13.5px; color:var(--ink-3)}
+.campo .dica{font-size:12.5px; line-height:1.45; color:var(--ink-3); margin-top:7px}
+#camposFin .dica{margin-top:10px; padding:10px 12px; background:var(--bg-2); border-radius:var(--r-s);
+  font-size:13px; color:var(--ink-2)}
+#camposFin .dica b{color:var(--ink)}
+
 /* ============ herói ============ */
 .hero{padding:22px 0 14px; position:relative; overflow:hidden}
 @media(min-width:900px){ .hero{padding:44px 0 26px} }
@@ -512,12 +549,15 @@ footer{border-top:1px solid var(--line-2); padding:28px 0 48px; font-size:13px; 
     </a>
     <nav id="navTopo">
       <a href="#s-veredito">O que comprar</a>
-      <a href="#s-criterios">Por que esses</a>
       <a href="#s-curva">A curva</a>
       <a href="#s-matriz">Preços</a>
       <a href="#s-lista">Lista</a>
       <a href="#s-metodo">Método</a>
     </nav>
+    <button class="tbtn" id="btnCriterios" aria-expanded="false" aria-controls="mega">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 10.5h3M2 7h6M2 3.5h10"/></svg>
+      <span class="soDesk">Critérios</span>
+    </button>
     <button class="tbtn" id="btnSecoes" aria-label="Seções">
       <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M1 3h12M1 7h12M1 11h12"/></svg>
       <span class="soDesk">Seções</span>
@@ -533,18 +573,34 @@ footer{border-top:1px solid var(--line-2); padding:28px 0 48px; font-size:13px; 
   </div>
 </header>
 
+<div class="mega" id="mega" role="region" aria-label="Critérios do ranking">
+  <div class="wrap">
+    <div class="megaCab">
+      <div>
+        <h3>Como o ranking é montado</h3>
+        <p>Cada carro leva nota de 0 a 100 em seis critérios, sempre <b>relativa aos <span id="pesoN"></span> candidatos do seu filtro</b>. A média ponderada define a ordem. Arraste um peso e a lista se refaz na hora.</p>
+      </div>
+      <button class="fechar" id="fecharMega" aria-label="Fechar critérios">&times;</button>
+    </div>
+    <div class="criterios" id="critGrade"></div>
+    <div class="megaPe">
+      <button class="tbtn" id="wreset">Voltar ao equilíbrio</button>
+      <button class="tbtn" id="wcusto">Ordenar só por custo</button>
+    </div>
+  </div>
+</div>
+
 <div class="sheet" id="sheetSecoes"><div class="fundo" data-fecha></div>
   <div class="painel"><div class="pega"></div>
     <a href="#s-veredito"><i>1</i>O que comprar</a>
-    <a href="#s-criterios"><i>2</i>Por que esses ganharam</a>
-    <a href="#s-curva"><i>3</i>A curva de desvalorização</a>
-    <a href="#s-modelo"><i>4</i>Modelo pesa mais que ano</a>
-    <a href="#s-matriz"><i>5</i>Preço por ano modelo</a>
-    <a href="#s-detalhe"><i>6</i>Um modelo de perto</a>
-    <a href="#s-dinheiro"><i>7</i>Onde vai o dinheiro</a>
-    <a href="#s-fronteira"><i>8</i>Preço contra custo</a>
-    <a href="#s-lista"><i>9</i>A lista completa</a>
-    <a href="#s-metodo"><i>10</i>Como a conta foi feita</a>
+    <a href="#s-curva"><i>2</i>A curva de desvalorização</a>
+    <a href="#s-modelo"><i>3</i>Modelo pesa mais que ano</a>
+    <a href="#s-matriz"><i>4</i>Preço por ano modelo</a>
+    <a href="#s-detalhe"><i>5</i>Um modelo de perto</a>
+    <a href="#s-dinheiro"><i>6</i>Onde vai o dinheiro</a>
+    <a href="#s-fronteira"><i>7</i>Preço contra custo</a>
+    <a href="#s-lista"><i>8</i>A lista completa</a>
+    <a href="#s-metodo"><i>9</i>Como a conta foi feita</a>
   </div>
 </div>
 
@@ -554,6 +610,22 @@ footer{border-top:1px solid var(--line-2); padding:28px 0 48px; font-size:13px; 
     <button class="tbtn" id="limparTudo">Limpar</button>
     <button class="fechar" id="fecharDrawer" aria-label="Fechar filtros">&times;</button></div>
   <div class="corpo">
+    <div class="grupo"><h4>Como você vai pagar</h4>
+      <div class="chips" id="chipsPag">
+        <button class="chip" data-pag="avista" aria-pressed="true">À vista</button>
+        <button class="chip" data-pag="financiado" aria-pressed="false">Financiado</button>
+      </div>
+      <div id="camposFin" hidden>
+        <div class="campo" style="margin-top:14px"><label for="entrada">Entrada <span class="val" id="vEntrada"></span></label>
+          <input type="range" id="entrada" min="0" max="80" step="5" value="20"></div>
+        <div class="campo"><label for="jurosAM">Juros <span class="val" id="vJuros"></span></label>
+          <input type="range" id="jurosAM" min="50" max="400" step="5" value="180"></div>
+        <div class="campo"><label for="prazo">Prazo <span class="val" id="vPrazo"></span></label>
+          <input type="range" id="prazo" min="12" max="72" step="6" value="48"></div>
+        <p class="dica" id="dicaFin"></p>
+      </div>
+    </div>
+
     <div class="grupo"><h4>O carro</h4>
       <div class="campo"><label for="busca">Procurar modelo</label>
         <select id="buscaSel"></select></div>
@@ -563,8 +635,11 @@ footer{border-top:1px solid var(--line-2); padding:28px 0 48px; font-size:13px; 
         <div class="dupla"><select id="idadeMin" aria-label="Idade mínima"></select><select id="idadeMax" aria-label="Idade máxima"></select></div></div>
       <div class="campo"><label for="tetoCusto">Custo por ano até <span class="val" id="vTeto"></span></label>
         <input type="range" id="tetoCusto" min="10000" max="150000" step="2500" value="150000"></div>
-      <div class="campo"><label for="seg">Segmento</label><select id="seg"></select></div>
-      <div class="campo"><label for="marca">Marca</label><select id="marca"></select></div>
+      <div class="campo"><label>Segmento <span class="val" id="vSegs"></span></label>
+        <div class="chips" id="chipsSeg"></div></div>
+      <div class="campo"><label for="buscaMarca">Marca <span class="val" id="vMarcas"></span></label>
+        <input type="search" id="buscaMarca" class="mini" placeholder="Filtrar marcas..." autocomplete="off">
+        <div class="listaMarcas" id="listaMarcas"></div></div>
       <div class="campo"><label for="ene">Combustível</label><select id="ene"></select></div>
     </div>
     <div class="grupo"><h4>Exigências</h4>
@@ -587,8 +662,10 @@ footer{border-top:1px solid var(--line-2); padding:28px 0 48px; font-size:13px; 
     <div class="grupo"><h4>Premissas estimadas</h4>
       <div class="campo"><label for="km">Rodagem por ano <span class="val" id="vKm"></span></label>
         <input type="range" id="km" min="5000" max="40000" step="1000" value="12000"></div>
-      <div class="campo"><label for="ipva">IPVA do seu estado <span class="val" id="vIpva"></span></label>
-        <input type="range" id="ipva" min="0" max="60" step="5" value="20"></div>
+      <div class="campo"><label for="uf">Estado, para a alíquota de IPVA <span class="val" id="vIpva"></span></label>
+        <select id="uf"></select>
+        <p class="dica">Alíquota de automóvel de passeio a gasolina ou flex. Varia por combustível e por lei estadual, então dá para ajustar na mão abaixo.</p>
+        <input type="range" id="ipva" min="0" max="60" step="1" value="40" aria-label="Ajuste fino da alíquota de IPVA"></div>
       <div class="campo"><label for="comb">Gasolina <span class="val" id="vComb"></span></label>
         <input type="range" id="comb" min="450" max="900" step="10" value="620"></div>
       <div class="campo"><label for="kwh">Energia elétrica <span class="val" id="vKwh"></span></label>
@@ -626,12 +703,12 @@ footer{border-top:1px solid var(--line-2); padding:28px 0 48px; font-size:13px; 
           <div class="val est">
             <span class="tag">Estimado pelo Ponto de Compra</span>
             <div class="cifra" id="topCusto"></div>
-            <p class="exp">É quanto ele consome <b>por ano</b> se você ficar <span id="topAnos"></span> anos com ele. Soma o que ele perde de valor, mais IPVA, seguro, manutenção e combustível. <b>Depende de premissas que você pode mexer nos filtros.</b></p>
+            <p class="exp">É quanto ele consome <b>por ano</b> se você ficar <span id="topAnos"></span> anos com ele. Soma o que ele perde de valor, mais IPVA, seguro, manutenção, combustível e, se for financiado, os juros. <b>Depende de premissas que você pode mexer nos filtros.</b></p>
           </div>
         </div>
         <div class="acoes">
           <a class="tbtn forte" href="#s-veredito">Ver os três primeiros</a>
-          <a class="tbtn" href="#s-criterios">Por que esse ganhou</a>
+          <button class="tbtn" id="verCriterios">Por que esse ganhou</button>
         </div>
       </div>
     </div>
@@ -646,19 +723,6 @@ footer{border-top:1px solid var(--line-2); padding:28px 0 48px; font-size:13px; 
         <p><span id="cCount"></span> combinações de modelo e ano passam pelo que você pediu. Estas três ficam na frente depois de pesar custo por ano, garantia, manutenção, conforto, facilidade de revenda e risco de câmbio.</p></div>
       <div class="grade g3" id="picks"></div>
       <div class="grade g4 rev" id="tiles" style="margin-top:20px"></div>
-    </div>
-  </section>
-
-  <section class="sec" id="s-criterios">
-    <div class="wrap">
-      <div class="sec-cab rev"><span class="papel">Por que esses ganharam</span>
-        <h2>Seis critérios, e você manda no peso de cada um</h2>
-        <p>Cada carro leva nota de 0 a 100 em seis critérios. A nota é <b>relativa ao seu filtro de agora</b>, ou seja, 100 é o melhor entre os <span id="pesoN"></span> candidatos atuais, não uma nota absoluta. A média ponderada dessas seis notas é o que define a ordem. Arraste qualquer peso e a lista se refaz na hora.</p></div>
-      <div class="criterios" id="critGrade"></div>
-      <div class="acoes" style="margin-top:18px">
-        <button class="tbtn" id="wreset">Voltar ao equilíbrio</button>
-        <button class="tbtn" id="wcusto">Ordenar só por custo</button>
-      </div>
     </div>
   </section>
 
@@ -786,6 +850,8 @@ footer{border-top:1px solid var(--line-2); padding:28px 0 48px; font-size:13px; 
               <li><b>Seguro:</b> percentual do valor FIPE por ano, variando por marca e modelo.</li>
               <li><b>Energia:</b> flex e híbrido em km por litro, diesel a 95% do preço da gasolina, elétrico em kWh por 100 km.</li>
               <li><b>Provisão de bateria:</b> reserva anual para elétrico, que dobra a partir do oitavo ano.</li>
+              <li><b>Financiamento:</b> quando ligado, calcula a parcela pela tabela Price com a entrada, a taxa mensal e o prazo que você definir, e dilui os juros totais pelos anos de posse. Se o prazo passar do tempo de posse, entra só a parte paga no período.</li>
+              <li><b>IPVA por estado:</b> alíquota de automóvel de passeio a gasolina ou flex, conforme a lei de cada unidade da federação. Varia por combustível e muda com o tempo, então continua ajustável na mão.</li>
               <li><b>Revenda futura:</b> assume que a curva de hoje continua valendo. Tudo em reais de hoje, sem inflação e sem juros.</li>
               <li><b>Risco de câmbio, liquidez, porte e conforto:</b> notas por marca e modelo, a partir do histórico de mercado.</li>
             </ul>
@@ -832,7 +898,8 @@ const D = {"anoRef":2026,"mesRef":"agosto/2026","tabelaFipe":336,"multIdade":[[3
 /* ============ estado ============ */
 const S = {
   budMin: 10000, budMax: 500000, H: 5, km: 12000, ipva: 0.02, comb: 6.20, kwh: 0.95, bat: 0.025, mmult: 1.0,
-  seg: "todos", marca: "todas", ene: "todas", busca: "", sel: null,
+  segs: new Set(), marcas: new Set(), ene: "todas", busca: "", sel: null,
+  pagamento: "avista", entrada: 0.20, jurosAM: 0.018, prazo: 48, uf: "",
   idadeMin: 0, idadeMax: 16, tetoCusto: 150000, verMaisHeat: false, listaN: 10,
   soGarantia: false, soConfiavel: false, soLiquido: false, soCambio: false, sort: {k:"score", d:-1},
   w: { custo:34, manut:12, gar:16, conf:10, liq:16, camb:12 },
@@ -842,6 +909,33 @@ const BRL = n => "R$ " + Math.round(n).toLocaleString("pt-BR");
 const BRLk = n => "R$ " + (Math.round(n/100)/10).toFixed(1).replace(".",",") + "k";
 const PCT = n => n.toFixed(0) + "%";
 const SERIES = ["--s1","--s2","--s3","--s4","--s5","--s6"];
+/* Aliquota de IPVA para automovel de passeio a gasolina ou flex, por unidade da federacao.
+   Varia por combustivel e por lei estadual, entao serve de ponto de partida ajustavel. */
+const IPVA_UF = {
+  AC:0.02, AL:0.03, AP:0.03, AM:0.03, BA:0.025, CE:0.03, DF:0.035, ES:0.02, GO:0.0375,
+  MA:0.025, MT:0.03, MS:0.03, MG:0.04, PA:0.025, PB:0.025, PR:0.035, PE:0.03, PI:0.025,
+  RJ:0.04, RN:0.03, RS:0.03, RO:0.03, RR:0.03, SC:0.02, SP:0.04, SE:0.025, TO:0.02
+};
+const UF_NOME = {AC:"Acre",AL:"Alagoas",AP:"Amapá",AM:"Amazonas",BA:"Bahia",CE:"Ceará",
+  DF:"Distrito Federal",ES:"Espírito Santo",GO:"Goiás",MA:"Maranhão",MT:"Mato Grosso",
+  MS:"Mato Grosso do Sul",MG:"Minas Gerais",PA:"Pará",PB:"Paraíba",PR:"Paraná",
+  PE:"Pernambuco",PI:"Piauí",RJ:"Rio de Janeiro",RN:"Rio Grande do Norte",
+  RS:"Rio Grande do Sul",RO:"Rondônia",RR:"Roraima",SC:"Santa Catarina",SP:"São Paulo",
+  SE:"Sergipe",TO:"Tocantins"};
+
+/* Juros do financiamento diluidos no periodo de posse.
+   Price system: parcela fixa, entrada em percentual, prazo em meses. */
+function jurosPorAno(preco){
+  if (S.pagamento !== "financiado") return 0;
+  const pv = preco * (1 - S.entrada);
+  const i = S.jurosAM, n = S.prazo;
+  if (pv <= 0 || n <= 0) return 0;
+  const pmt = i > 0 ? pv * i / (1 - Math.pow(1+i, -n)) : pv / n;
+  const jurosTotal = pmt * n - pv;
+  const anosDeParcela = n / 12;
+  const pagosNoPeriodo = Math.min(anosDeParcela, S.H) / anosDeParcela;   // se vender antes, quita o saldo
+  return jurosTotal * pagosNoPeriodo / S.H;
+}
 const SEGN = {"Hatch compacto":"Hatch compacto","Sedan compacto":"Sedã compacto",
   "SUV compacto":"SUV compacto","Monovolume 7L":"Monovolume 7 lugares",
   "Sedan medio":"Sedã médio","SUV medio":"SUV médio","Compacto":"Compacto",
@@ -868,7 +962,8 @@ function filtrosAtivos(){
   if (S.idadeMin !== PADRAO.idadeMin || S.idadeMax !== PADRAO.idadeMax) n++;
   if (S.tetoCusto !== PADRAO.tetoCusto) n++;
   ["soGarantia","soConfiavel","soLiquido","soCambio"].forEach(k=>{ if(S[k]) n++; });
-  if (S.seg !== "todos") n++; if (S.marca !== "todas") n++; if (S.ene !== "todas") n++;
+  if (S.segs.size) n++; if (S.marcas.size) n++; if (S.ene !== "todas") n++;
+  if (S.pagamento !== "avista") n++;
   if (S.busca) n++;
   if (S.km !== PADRAO.km || S.ipva !== PADRAO.ipva || S.comb !== PADRAO.comb
       || S.kwh !== PADRAO.kwh || S.bat !== PADRAO.bat || S.mmult !== PADRAO.mmult) n++;
@@ -940,9 +1035,10 @@ function tco(f, ano, H){
   const vmed = soma / H;
   const ipva = vmed * S.ipva, seguro = vmed * f.seguroPct, manut = mn / H;
   const combu = energiaCusto(f);
-  const total = deprec + ipva + seguro + manut + combu;
+  const juros = jurosPorAno(P);
+  const total = deprec + ipva + seguro + manut + combu + juros;
   return { fam:f.nome, marca:f.marca, seg:f.segmento, ano, idade, preco:P,
-    lo:p.lo, hi:p.hi, nv:p.n, revenda, deprec, ipva, seguro, manut, comb:combu, total,
+    lo:p.lo, hi:p.hi, nv:p.n, revenda, deprec, ipva, seguro, manut, comb:combu, juros, total,
     depPct: 100*(P-revenda)/P, garMeses: Math.max(0, f.garantiaAnos*12 - idade*12),
     garAnos:f.garantiaAnos, cambio:f.cambio, risco:f.risco, liq:f.liq,
     equip: equipScore(f.segmento, ano), custoKm: total/S.km,
@@ -956,8 +1052,8 @@ function candidatos(ignoreBudget){
   if (alvo) ignoreBudget = true;         // buscou pelo nome: mostra o carro mesmo fora do orçamento
   for (const f of D.familias){
     if (alvo && !norm(f.nome).includes(alvo) && !norm(f.marca).includes(alvo)) continue;
-    if (S.seg !== "todos" && f.segmento !== S.seg) continue;
-    if (S.marca !== "todas" && f.marca !== S.marca) continue;
+    if (S.segs.size && !S.segs.has(f.segmento)) continue;
+    if (S.marcas.size && !S.marcas.has(f.marca)) continue;
     if (S.ene !== "todas" && f.energia !== S.ene) continue;
     for (const ano in f.serie){
       const a = +ano;
@@ -1245,7 +1341,7 @@ function drawRange(cs){
 const COMPS = [
   {k:"deprec", n:"Depreciação", v:"--s1"}, {k:"manut", n:"Manutenção", v:"--s2"},
   {k:"seguro", n:"Seguro",      v:"--s3"}, {k:"ipva",  n:"IPVA",       v:"--s4"},
-  {k:"comb",   n:"Combustível", v:"--s5"}
+  {k:"comb",   n:"Combustível", v:"--s5"}, {k:"juros", n:"Juros", v:"--s6"}
 ];
 function drawU(){
   const box = document.getElementById("cU");
@@ -1593,7 +1689,7 @@ function avisoSelos(c){
 
 /* ---------- por que este carro ganhou, em uma frase ---------- */
 const DIM_FRASE = {
-  custo: c => `custa ${BRL(c.total)} por ano, um dos mais baratos de manter da sua faixa`,
+  custo: c => `custa ${BRL(c.total)} por ano${c.juros>0?", já com os juros do financiamento":""}, um dos mais baratos de manter da sua faixa`,
   manut: c => `a manutenção sai por volta de ${BRL(c.manut)} ao ano, abaixo da média`,
   gar:   c => `ainda chega com ${c.garMeses} meses de garantia de fábrica`,
   conf:  c => `entrega bom nível de conforto e itens para o preço`,
@@ -1631,7 +1727,7 @@ function drawPicks(top, cs){
     <article class="cartao${i?"":" top"} rev d${i}">
       <span class="pos">${i+1}º</span>
       <h3>${famNome(c.fam)} <span class="ano">${c.ano}</span></h3>
-      <div class="big"><span class="v">${est(BRL(c.total),"Estimado. Soma depreciação, IPVA, seguro, manutenção e energia sob as premissas atuais.")}</span><span class="u">por ano</span></div>
+      <div class="big"><span class="v">${est(BRL(c.total),"Estimado pelo Ponto de Compra. Soma depreciação, IPVA, seguro, manutenção, energia e juros sob as premissas atuais.")}</span><span class="u">por ano</span></div>
       <p class="motivo">${motivoDe(c, cs)}</p>
       <div class="selos">${garSelo(c)}${eneSelo(c)}${riscoSelo(c)}${avisoSelos(c)}</div>
       <dl class="ficha">
@@ -1682,7 +1778,7 @@ function drawTiles(cs, top){
 
 /* ---------- critérios, com peso ajustável ---------- */
 const CRIT_INFO = [
-  ["custo","Custo por ano","Soma depreciação, IPVA, seguro, manutenção e energia, dividido pelos anos de posse. É o número grande de cada cartão.","FIPE mais estimativas"],
+  ["custo","Custo por ano","Soma depreciação, IPVA, seguro, manutenção, energia e, se for financiado, os juros. Dividido pelos anos de posse. É o número grande de cada cartão.","FIPE mais estimativas"],
   ["manut","Manutenção barata","Só a linha de oficina e revisão, separada do custo total. Base por marca, corrigida por idade, porte e trem de força.","Estimativa de mercado"],
   ["gar","Garantia de fábrica","Meses de garantia que ainda sobram quando o carro chega na sua mão. Hyundai e as chinesas largam na frente por darem 5 e 6 anos.","Política de cada marca"],
   ["conf","Conforto e itens","Aproximação por porte do carro somada ao ano, já que multimídia, câmera e assistentes viraram série em épocas diferentes.","Aproximação, o critério mais fraco"],
@@ -1821,24 +1917,63 @@ function bind(){
   q("idadeMax").innerHTML = [2,3,4,5,6,8,10,12,14,16].map(v=>opt(v, v>=16?"sem limite de idade":`até ${v} anos`)).join("");
   q("idadeMin").value = S.idadeMin; q("idadeMax").value = S.idadeMax;
   q("buscaSel").innerHTML = `<option value="">Todos os modelos</option>` +
-    [...new Set(D.familias.map(f=>famNome(f.nome)))].sort((a,b)=>a.localeCompare(b,"pt-BR"))
-      .map(n=>opt(n,n)).join("");
-  const segs = [...new Set(D.familias.map(f=>f.segmento))].sort();
-  q("seg").innerHTML = opt("todos","Todos os segmentos") + segs.map(s=>opt(s,segNome(s))).join("");
-  const mks = [...new Set(D.familias.map(f=>f.marca))].sort((a,b)=>a.localeCompare(b,"pt-BR"));
-  q("marca").innerHTML = opt("todas","Todas as marcas") + mks.map(s=>opt(s,s)).join("");
+    [...new Set(D.familias.map(f=>famNome(f.nome)))].sort((a,b)=>a.localeCompare(b,"pt-BR")).map(n=>opt(n,n)).join("");
   q("ene").innerHTML = opt("todas","Todos os combustíveis") +
     ["flex","hibrido","eletrico","diesel"].map(e=>opt(e,ENERGIA_NOME[e])).join("");
+  q("uf").innerHTML = opt("", "Não informado, usando 2%") +
+    Object.keys(IPVA_UF).sort((a,b)=>UF_NOME[a].localeCompare(UF_NOME[b],"pt-BR"))
+    .map(u=>opt(u, `${UF_NOME[u]} · ${(IPVA_UF[u]*100).toFixed(2).replace(".",",")}%`)).join("");
+  q("uf").value = S.uf; q("ipva").value = Math.round(S.ipva*1000);
 
-  const upd = () => {
+  // segmentos: multipla escolha
+  const segsTodos = [...new Set(D.familias.map(f=>f.segmento))].sort();
+  q("chipsSeg").innerHTML = segsTodos.map(sg=>
+    `<button class="chip" type="button" data-seg="${sg}" aria-pressed="false">${segNome(sg)}</button>`).join("");
+  q("chipsSeg").querySelectorAll(".chip").forEach(b => b.onclick = () => {
+    const k = b.dataset.seg;
+    S.segs.has(k) ? S.segs.delete(k) : S.segs.add(k);
+    b.setAttribute("aria-pressed", S.segs.has(k)); S.sel=null; upd(); render();
+  });
+
+  // marcas: multipla escolha com busca
+  const marcasTodas = [...new Set(D.familias.map(f=>f.marca))].sort((a,b)=>a.localeCompare(b,"pt-BR"));
+  const contaPorMarca = {}; D.familias.forEach(f => contaPorMarca[f.marca] = (contaPorMarca[f.marca]||0)+1);
+  function pintaMarcas(){
+    const termo = norm(q("buscaMarca").value);
+    const vis = marcasTodas.filter(m => !termo || norm(m).includes(termo));
+    q("listaMarcas").innerHTML = vis.length ? vis.map(m =>
+      `<label><input type="checkbox" data-marca="${m}"${S.marcas.has(m)?" checked":""}>` +
+      `<span>${m}</span><span class="n">${contaPorMarca[m]}</span></label>`).join("")
+      : `<p class="vazio">Nenhuma marca com esse nome.</p>`;
+    q("listaMarcas").querySelectorAll("input").forEach(c => c.onchange = () => {
+      const m = c.dataset.marca;
+      c.checked ? S.marcas.add(m) : S.marcas.delete(m);
+      S.sel=null; upd(); render();
+    });
+  }
+  q("buscaMarca").oninput = pintaMarcas;
+
+  function upd(){
     q("vKm").textContent   = `${S.km.toLocaleString("pt-BR")} km`;
-    q("vIpva").textContent = `${(S.ipva*100).toFixed(1).replace(".",",")}%`;
+    q("vIpva").textContent = `${(S.ipva*100).toFixed(2).replace(".",",")}%`;
     q("vComb").textContent = `R$ ${S.comb.toFixed(2).replace(".",",")}`;
     q("vKwh").textContent  = `R$ ${S.kwh.toFixed(2).replace(".",",")}`;
     q("vBat").textContent  = `${(S.bat*100).toFixed(1).replace(".",",")}% a.a.`;
     q("vMm").textContent   = S.mmult === 1 ? "como estimado" : (S.mmult>1?"+":"") + Math.round((S.mmult-1)*100) + "%";
     q("vTeto").textContent = S.tetoCusto >= 150000 ? "sem limite" : BRL(S.tetoCusto);
-  };
+    q("vSegs").textContent = S.segs.size ? `${S.segs.size} selecionado${S.segs.size>1?"s":""}` : "todos";
+    q("vMarcas").textContent = S.marcas.size ? `${S.marcas.size} selecionada${S.marcas.size>1?"s":""}` : "todas";
+    q("vEntrada").textContent = `${Math.round(S.entrada*100)}%`;
+    q("vJuros").textContent = `${(S.jurosAM*100).toFixed(2).replace(".",",")}% ao mês`;
+    q("vPrazo").textContent = `${S.prazo} meses`;
+    q("camposFin").hidden = S.pagamento !== "financiado";
+    if(S.pagamento === "financiado"){
+      const aa = (Math.pow(1+S.jurosAM,12)-1)*100;
+      q("dicaFin").innerHTML = `Equivale a <b>${aa.toFixed(1).replace(".",",")}% ao ano</b>. ` +
+        `Os juros entram no custo anual e aparecem como camada própria no gráfico de composição.`;
+    }
+  }
+  window._upd = upd;
 
   q("budMin").onchange = e => { S.budMin = +e.target.value;
     if(S.budMax <= S.budMin){ S.budMax = FAIXAS[FAIXAS.indexOf(S.budMin)+1] || 500000; q("budMax").value = S.budMax; }
@@ -1852,21 +1987,28 @@ function bind(){
     if(S.idadeMin > S.idadeMax){ S.idadeMin = Math.max(0,S.idadeMax-1); q("idadeMin").value = S.idadeMin; } render(); };
   q("buscaSel").onchange = e => { S.busca = e.target.value; S.sel = null; render(); };
   q("tetoCusto").oninput = e => { S.tetoCusto = +e.target.value; upd(); render(); };
+  q("ene").onchange = e => { S.ene = e.target.value; S.sel=null; render(); };
+
+  q("uf").onchange = e => { S.uf = e.target.value; S.ipva = IPVA_UF[S.uf] ?? PADRAO.ipva;
+    q("ipva").value = Math.round(S.ipva*1000); upd(); render(); };
 
   [["km",v=>S.km=+v],["ipva",v=>S.ipva=+v/1000],["comb",v=>S.comb=+v/100],
-   ["kwh",v=>S.kwh=+v/100],["bat",v=>S.bat=+v/1000],["mm",v=>S.mmult=+v/100]]
-    .forEach(([id,set])=>{ q(id).oninput = e => { set(e.target.value); upd(); render(); }; });
-
-  ["seg","marca","ene"].forEach(id=>{ q(id).onchange = e => {
-    S[id === "seg" ? "seg" : id] = e.target.value; S.sel=null; render(); }; });
+   ["kwh",v=>S.kwh=+v/100],["bat",v=>S.bat=+v/1000],["mm",v=>S.mmult=+v/100],
+   ["entrada",v=>S.entrada=+v/100],["jurosAM",v=>S.jurosAM=+v/10000],["prazo",v=>S.prazo=+v]]
+    .forEach(([id,set])=>{ const e=q(id); if(e) e.oninput = ev => { set(ev.target.value); upd(); render(); }; });
 
   [["soGarantia","soGarantia"],["soConfiavel","soConfiavel"],["soLiquido","soLiquido"],["soCambio","soCambio"]]
     .forEach(([id,k])=>{ q(id).onchange = e => { S[k] = e.target.checked; render(); }; });
 
+  document.querySelectorAll("#chipsPag .chip").forEach(b => b.onclick = () => {
+    S.pagamento = b.dataset.pag;
+    document.querySelectorAll("#chipsPag .chip").forEach(x => x.setAttribute("aria-pressed", x===b));
+    upd(); render();
+  });
   document.querySelectorAll("#chipsH .chip").forEach(b => b.onclick = () => {
     S.H = +b.dataset.h;
     document.querySelectorAll("#chipsH .chip").forEach(x => x.setAttribute("aria-pressed", x===b));
-    render();
+    upd(); render();
   });
 
   q("wreset").onclick = () => { S.w = { custo:34, manut:12, gar:16, conf:10, liq:16, camb:12 }; render(); };
@@ -1874,14 +2016,19 @@ function bind(){
 
   q("limparTudo").onclick = () => {
     Object.assign(S, PADRAO, {soGarantia:false, soConfiavel:false, soLiquido:false, soCambio:false,
-      seg:"todos", marca:"todas", ene:"todas", busca:"", sel:null, listaN:10, verMaisHeat:false});
+      ene:"todas", busca:"", sel:null, listaN:10, verMaisHeat:false,
+      pagamento:"avista", entrada:0.20, jurosAM:0.018, prazo:48, uf:""});
+    S.segs = new Set(); S.marcas = new Set();
     q("budMin").value=PADRAO.budMin; q("budMax").value=PADRAO.budMax;
     q("idadeMin").value=PADRAO.idadeMin; q("idadeMax").value=PADRAO.idadeMax;
-    q("tetoCusto").value=PADRAO.tetoCusto; q("buscaSel").value=""; q("seg").value="todos"; q("marca").value="todas";
-    q("ene").value="todas"; q("km").value=12000; q("ipva").value=20; q("comb").value=620;
-    q("kwh").value=95; q("bat").value=25; q("mm").value=100;
+    q("tetoCusto").value=PADRAO.tetoCusto; q("buscaSel").value=""; q("ene").value="todas";
+    q("uf").value=""; q("ipva").value=Math.round(PADRAO.ipva*1000);
+    q("km").value=12000; q("comb").value=620; q("kwh").value=95; q("bat").value=25; q("mm").value=100;
+    q("entrada").value=20; q("jurosAM").value=180; q("prazo").value=48; q("buscaMarca").value="";
     ["soGarantia","soConfiavel","soLiquido","soCambio"].forEach(id=>q(id).checked=false);
-    upd(); render();
+    document.querySelectorAll("#chipsPag .chip").forEach(x=>x.setAttribute("aria-pressed", x.dataset.pag==="avista"));
+    document.querySelectorAll("#chipsSeg .chip").forEach(x=>x.setAttribute("aria-pressed", false));
+    pintaMarcas(); upd(); render();
   };
 
   // gaveta de filtros
@@ -1889,12 +2036,24 @@ function bind(){
   const abrir = on => { dr.classList.toggle("on", on); velo.classList.toggle("on", on);
     bf.setAttribute("aria-expanded", on); document.body.style.overflow = on ? "hidden" : "";
     if(on) dr.querySelector("select,input,button").focus(); };
-  bf.onclick = () => abrir(!dr.classList.contains("on"));
+  bf.onclick = () => { fecharMega(); abrir(!dr.classList.contains("on")); };
   q("fecharDrawer").onclick = () => abrir(false);
   q("verResultados").onclick = () => { abrir(false);
     document.getElementById("s-veredito").scrollIntoView({behavior:"smooth"}); };
   velo.onclick = () => abrir(false);
-  addEventListener("keydown", e => { if(e.key === "Escape"){ abrir(false); folha(false); } });
+
+  // megamenu de criterios
+  const mega = q("mega"), bc = q("btnCriterios");
+  function fecharMega(){ mega.classList.remove("on"); bc.setAttribute("aria-expanded", false); }
+  function abrirMega(){ abrir(false); mega.classList.add("on"); bc.setAttribute("aria-expanded", true);
+    mega.scrollTop = 0; }
+  bc.onclick = () => mega.classList.contains("on") ? fecharMega() : abrirMega();
+  q("fecharMega").onclick = fecharMega;
+  if(q("verCriterios")) q("verCriterios").onclick = abrirMega;
+  document.addEventListener("click", e => {
+    if(mega.classList.contains("on") && !mega.contains(e.target) && !bc.contains(e.target)) fecharMega();
+  });
+  addEventListener("keydown", e => { if(e.key === "Escape"){ abrir(false); fecharMega(); folha(false); } });
 
   // folha de seções
   const sh = q("sheetSecoes");
@@ -1909,7 +2068,8 @@ function bind(){
     document.documentElement.setAttribute("data-theme", cur ? (cur==="dark"?"light":"dark") : (sysDark?"light":"dark"));
     requestAnimationFrame(render);
   };
-  upd();
+
+  pintaMarcas(); upd();
 }
 
 /* ============ rolagem: revelação, progresso, seção atual, parallax ============ */

@@ -11,12 +11,15 @@
     </a>
     <nav id="navTopo">
       <a href="#s-veredito">O que comprar</a>
-      <a href="#s-criterios">Por que esses</a>
       <a href="#s-curva">A curva</a>
       <a href="#s-matriz">Preços</a>
       <a href="#s-lista">Lista</a>
       <a href="#s-metodo">Método</a>
     </nav>
+    <button class="tbtn" id="btnCriterios" aria-expanded="false" aria-controls="mega">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 10.5h3M2 7h6M2 3.5h10"/></svg>
+      <span class="soDesk">Critérios</span>
+    </button>
     <button class="tbtn" id="btnSecoes" aria-label="Seções">
       <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M1 3h12M1 7h12M1 11h12"/></svg>
       <span class="soDesk">Seções</span>
@@ -32,18 +35,34 @@
   </div>
 </header>
 
+<div class="mega" id="mega" role="region" aria-label="Critérios do ranking">
+  <div class="wrap">
+    <div class="megaCab">
+      <div>
+        <h3>Como o ranking é montado</h3>
+        <p>Cada carro leva nota de 0 a 100 em seis critérios, sempre <b>relativa aos <span id="pesoN"></span> candidatos do seu filtro</b>. A média ponderada define a ordem. Arraste um peso e a lista se refaz na hora.</p>
+      </div>
+      <button class="fechar" id="fecharMega" aria-label="Fechar critérios">&times;</button>
+    </div>
+    <div class="criterios" id="critGrade"></div>
+    <div class="megaPe">
+      <button class="tbtn" id="wreset">Voltar ao equilíbrio</button>
+      <button class="tbtn" id="wcusto">Ordenar só por custo</button>
+    </div>
+  </div>
+</div>
+
 <div class="sheet" id="sheetSecoes"><div class="fundo" data-fecha></div>
   <div class="painel"><div class="pega"></div>
     <a href="#s-veredito"><i>1</i>O que comprar</a>
-    <a href="#s-criterios"><i>2</i>Por que esses ganharam</a>
-    <a href="#s-curva"><i>3</i>A curva de desvalorização</a>
-    <a href="#s-modelo"><i>4</i>Modelo pesa mais que ano</a>
-    <a href="#s-matriz"><i>5</i>Preço por ano modelo</a>
-    <a href="#s-detalhe"><i>6</i>Um modelo de perto</a>
-    <a href="#s-dinheiro"><i>7</i>Onde vai o dinheiro</a>
-    <a href="#s-fronteira"><i>8</i>Preço contra custo</a>
-    <a href="#s-lista"><i>9</i>A lista completa</a>
-    <a href="#s-metodo"><i>10</i>Como a conta foi feita</a>
+    <a href="#s-curva"><i>2</i>A curva de desvalorização</a>
+    <a href="#s-modelo"><i>3</i>Modelo pesa mais que ano</a>
+    <a href="#s-matriz"><i>4</i>Preço por ano modelo</a>
+    <a href="#s-detalhe"><i>5</i>Um modelo de perto</a>
+    <a href="#s-dinheiro"><i>6</i>Onde vai o dinheiro</a>
+    <a href="#s-fronteira"><i>7</i>Preço contra custo</a>
+    <a href="#s-lista"><i>8</i>A lista completa</a>
+    <a href="#s-metodo"><i>9</i>Como a conta foi feita</a>
   </div>
 </div>
 
@@ -53,6 +72,22 @@
     <button class="tbtn" id="limparTudo">Limpar</button>
     <button class="fechar" id="fecharDrawer" aria-label="Fechar filtros">&times;</button></div>
   <div class="corpo">
+    <div class="grupo"><h4>Como você vai pagar</h4>
+      <div class="chips" id="chipsPag">
+        <button class="chip" data-pag="avista" aria-pressed="true">À vista</button>
+        <button class="chip" data-pag="financiado" aria-pressed="false">Financiado</button>
+      </div>
+      <div id="camposFin" hidden>
+        <div class="campo" style="margin-top:14px"><label for="entrada">Entrada <span class="val" id="vEntrada"></span></label>
+          <input type="range" id="entrada" min="0" max="80" step="5" value="20"></div>
+        <div class="campo"><label for="jurosAM">Juros <span class="val" id="vJuros"></span></label>
+          <input type="range" id="jurosAM" min="50" max="400" step="5" value="180"></div>
+        <div class="campo"><label for="prazo">Prazo <span class="val" id="vPrazo"></span></label>
+          <input type="range" id="prazo" min="12" max="72" step="6" value="48"></div>
+        <p class="dica" id="dicaFin"></p>
+      </div>
+    </div>
+
     <div class="grupo"><h4>O carro</h4>
       <div class="campo"><label for="busca">Procurar modelo</label>
         <select id="buscaSel"></select></div>
@@ -62,8 +97,11 @@
         <div class="dupla"><select id="idadeMin" aria-label="Idade mínima"></select><select id="idadeMax" aria-label="Idade máxima"></select></div></div>
       <div class="campo"><label for="tetoCusto">Custo por ano até <span class="val" id="vTeto"></span></label>
         <input type="range" id="tetoCusto" min="10000" max="150000" step="2500" value="150000"></div>
-      <div class="campo"><label for="seg">Segmento</label><select id="seg"></select></div>
-      <div class="campo"><label for="marca">Marca</label><select id="marca"></select></div>
+      <div class="campo"><label>Segmento <span class="val" id="vSegs"></span></label>
+        <div class="chips" id="chipsSeg"></div></div>
+      <div class="campo"><label for="buscaMarca">Marca <span class="val" id="vMarcas"></span></label>
+        <input type="search" id="buscaMarca" class="mini" placeholder="Filtrar marcas..." autocomplete="off">
+        <div class="listaMarcas" id="listaMarcas"></div></div>
       <div class="campo"><label for="ene">Combustível</label><select id="ene"></select></div>
     </div>
     <div class="grupo"><h4>Exigências</h4>
@@ -86,8 +124,10 @@
     <div class="grupo"><h4>Premissas estimadas</h4>
       <div class="campo"><label for="km">Rodagem por ano <span class="val" id="vKm"></span></label>
         <input type="range" id="km" min="5000" max="40000" step="1000" value="12000"></div>
-      <div class="campo"><label for="ipva">IPVA do seu estado <span class="val" id="vIpva"></span></label>
-        <input type="range" id="ipva" min="0" max="60" step="5" value="20"></div>
+      <div class="campo"><label for="uf">Estado, para a alíquota de IPVA <span class="val" id="vIpva"></span></label>
+        <select id="uf"></select>
+        <p class="dica">Alíquota de automóvel de passeio a gasolina ou flex. Varia por combustível e por lei estadual, então dá para ajustar na mão abaixo.</p>
+        <input type="range" id="ipva" min="0" max="60" step="1" value="40" aria-label="Ajuste fino da alíquota de IPVA"></div>
       <div class="campo"><label for="comb">Gasolina <span class="val" id="vComb"></span></label>
         <input type="range" id="comb" min="450" max="900" step="10" value="620"></div>
       <div class="campo"><label for="kwh">Energia elétrica <span class="val" id="vKwh"></span></label>
@@ -125,12 +165,12 @@
           <div class="val est">
             <span class="tag">Estimado pelo Ponto de Compra</span>
             <div class="cifra" id="topCusto"></div>
-            <p class="exp">É quanto ele consome <b>por ano</b> se você ficar <span id="topAnos"></span> anos com ele. Soma o que ele perde de valor, mais IPVA, seguro, manutenção e combustível. <b>Depende de premissas que você pode mexer nos filtros.</b></p>
+            <p class="exp">É quanto ele consome <b>por ano</b> se você ficar <span id="topAnos"></span> anos com ele. Soma o que ele perde de valor, mais IPVA, seguro, manutenção, combustível e, se for financiado, os juros. <b>Depende de premissas que você pode mexer nos filtros.</b></p>
           </div>
         </div>
         <div class="acoes">
           <a class="tbtn forte" href="#s-veredito">Ver os três primeiros</a>
-          <a class="tbtn" href="#s-criterios">Por que esse ganhou</a>
+          <button class="tbtn" id="verCriterios">Por que esse ganhou</button>
         </div>
       </div>
     </div>
@@ -145,19 +185,6 @@
         <p><span id="cCount"></span> combinações de modelo e ano passam pelo que você pediu. Estas três ficam na frente depois de pesar custo por ano, garantia, manutenção, conforto, facilidade de revenda e risco de câmbio.</p></div>
       <div class="grade g3" id="picks"></div>
       <div class="grade g4 rev" id="tiles" style="margin-top:20px"></div>
-    </div>
-  </section>
-
-  <section class="sec" id="s-criterios">
-    <div class="wrap">
-      <div class="sec-cab rev"><span class="papel">Por que esses ganharam</span>
-        <h2>Seis critérios, e você manda no peso de cada um</h2>
-        <p>Cada carro leva nota de 0 a 100 em seis critérios. A nota é <b>relativa ao seu filtro de agora</b>, ou seja, 100 é o melhor entre os <span id="pesoN"></span> candidatos atuais, não uma nota absoluta. A média ponderada dessas seis notas é o que define a ordem. Arraste qualquer peso e a lista se refaz na hora.</p></div>
-      <div class="criterios" id="critGrade"></div>
-      <div class="acoes" style="margin-top:18px">
-        <button class="tbtn" id="wreset">Voltar ao equilíbrio</button>
-        <button class="tbtn" id="wcusto">Ordenar só por custo</button>
-      </div>
     </div>
   </section>
 
@@ -285,6 +312,8 @@
               <li><b>Seguro:</b> percentual do valor FIPE por ano, variando por marca e modelo.</li>
               <li><b>Energia:</b> flex e híbrido em km por litro, diesel a 95% do preço da gasolina, elétrico em kWh por 100 km.</li>
               <li><b>Provisão de bateria:</b> reserva anual para elétrico, que dobra a partir do oitavo ano.</li>
+              <li><b>Financiamento:</b> quando ligado, calcula a parcela pela tabela Price com a entrada, a taxa mensal e o prazo que você definir, e dilui os juros totais pelos anos de posse. Se o prazo passar do tempo de posse, entra só a parte paga no período.</li>
+              <li><b>IPVA por estado:</b> alíquota de automóvel de passeio a gasolina ou flex, conforme a lei de cada unidade da federação. Varia por combustível e muda com o tempo, então continua ajustável na mão.</li>
               <li><b>Revenda futura:</b> assume que a curva de hoje continua valendo. Tudo em reais de hoje, sem inflação e sem juros.</li>
               <li><b>Risco de câmbio, liquidez, porte e conforto:</b> notas por marca e modelo, a partir do histórico de mercado.</li>
             </ul>

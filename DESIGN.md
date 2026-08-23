@@ -55,6 +55,8 @@ Regras duráveis:
 
 - **`.topo`**: barra fixa de 60px, translúcida com `backdrop-filter`. Contém navegação inline (some abaixo de 1040px), tema, seções e o botão de filtros com contador de filtros ativos.
 - **`.drawer`**: gaveta de filtros à direita, recolhível, `transform: translateX(100%)` quando fechada. Largura `min(420px, 100%)`, então ocupa a tela inteira no celular. **Nunca virar coluna permanente.**
+- **`.mega`**: megamenu dos critérios, ancorado abaixo da barra. Os critérios saíram do scroll
+  porque precisam estar claros desde o início, e não depois de rolar meia página.
 - **`.sheet`**: folha de seções que sobe de baixo no celular.
 - **`.placa`**: o campeão dentro do herói, com o motivo em uma frase e os dois números explicados lado a lado.
 - **`.cartao`**: item de resultado. Traz cifra, motivo, selos, ficha e as seis notas por critério.

@@ -24,7 +24,7 @@ function avisoSelos(c){
 
 /* ---------- por que este carro ganhou, em uma frase ---------- */
 const DIM_FRASE = {
-  custo: c => `custa ${BRL(c.total)} por ano, um dos mais baratos de manter da sua faixa`,
+  custo: c => `custa ${BRL(c.total)} por ano${c.juros>0?", já com os juros do financiamento":""}, um dos mais baratos de manter da sua faixa`,
   manut: c => `a manutenção sai por volta de ${BRL(c.manut)} ao ano, abaixo da média`,
   gar:   c => `ainda chega com ${c.garMeses} meses de garantia de fábrica`,
   conf:  c => `entrega bom nível de conforto e itens para o preço`,
@@ -62,7 +62,7 @@ function drawPicks(top, cs){
     <article class="cartao${i?"":" top"} rev d${i}">
       <span class="pos">${i+1}º</span>
       <h3>${famNome(c.fam)} <span class="ano">${c.ano}</span></h3>
-      <div class="big"><span class="v">${est(BRL(c.total),"Estimado. Soma depreciação, IPVA, seguro, manutenção e energia sob as premissas atuais.")}</span><span class="u">por ano</span></div>
+      <div class="big"><span class="v">${est(BRL(c.total),"Estimado pelo Ponto de Compra. Soma depreciação, IPVA, seguro, manutenção, energia e juros sob as premissas atuais.")}</span><span class="u">por ano</span></div>
       <p class="motivo">${motivoDe(c, cs)}</p>
       <div class="selos">${garSelo(c)}${eneSelo(c)}${riscoSelo(c)}${avisoSelos(c)}</div>
       <dl class="ficha">
@@ -113,7 +113,7 @@ function drawTiles(cs, top){
 
 /* ---------- critérios, com peso ajustável ---------- */
 const CRIT_INFO = [
-  ["custo","Custo por ano","Soma depreciação, IPVA, seguro, manutenção e energia, dividido pelos anos de posse. É o número grande de cada cartão.","FIPE mais estimativas"],
+  ["custo","Custo por ano","Soma depreciação, IPVA, seguro, manutenção, energia e, se for financiado, os juros. Dividido pelos anos de posse. É o número grande de cada cartão.","FIPE mais estimativas"],
   ["manut","Manutenção barata","Só a linha de oficina e revisão, separada do custo total. Base por marca, corrigida por idade, porte e trem de força.","Estimativa de mercado"],
   ["gar","Garantia de fábrica","Meses de garantia que ainda sobram quando o carro chega na sua mão. Hyundai e as chinesas largam na frente por darem 5 e 6 anos.","Política de cada marca"],
   ["conf","Conforto e itens","Aproximação por porte do carro somada ao ano, já que multimídia, câmera e assistentes viraram série em épocas diferentes.","Aproximação, o critério mais fraco"],

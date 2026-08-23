@@ -2,7 +2,7 @@
 const COMPS = [
   {k:"deprec", n:"Depreciação", v:"--s1"}, {k:"manut", n:"Manutenção", v:"--s2"},
   {k:"seguro", n:"Seguro",      v:"--s3"}, {k:"ipva",  n:"IPVA",       v:"--s4"},
-  {k:"comb",   n:"Combustível", v:"--s5"}
+  {k:"comb",   n:"Combustível", v:"--s5"}, {k:"juros", n:"Juros", v:"--s6"}
 ];
 function drawU(){
   const box = document.getElementById("cU");

@@ -49,24 +49,63 @@ function bind(){
   q("idadeMax").innerHTML = [2,3,4,5,6,8,10,12,14,16].map(v=>opt(v, v>=16?"sem limite de idade":`até ${v} anos`)).join("");
   q("idadeMin").value = S.idadeMin; q("idadeMax").value = S.idadeMax;
   q("buscaSel").innerHTML = `<option value="">Todos os modelos</option>` +
-    [...new Set(D.familias.map(f=>famNome(f.nome)))].sort((a,b)=>a.localeCompare(b,"pt-BR"))
-      .map(n=>opt(n,n)).join("");
-  const segs = [...new Set(D.familias.map(f=>f.segmento))].sort();
-  q("seg").innerHTML = opt("todos","Todos os segmentos") + segs.map(s=>opt(s,segNome(s))).join("");
-  const mks = [...new Set(D.familias.map(f=>f.marca))].sort((a,b)=>a.localeCompare(b,"pt-BR"));
-  q("marca").innerHTML = opt("todas","Todas as marcas") + mks.map(s=>opt(s,s)).join("");
+    [...new Set(D.familias.map(f=>famNome(f.nome)))].sort((a,b)=>a.localeCompare(b,"pt-BR")).map(n=>opt(n,n)).join("");
   q("ene").innerHTML = opt("todas","Todos os combustíveis") +
     ["flex","hibrido","eletrico","diesel"].map(e=>opt(e,ENERGIA_NOME[e])).join("");
+  q("uf").innerHTML = opt("", "Não informado, usando 2%") +
+    Object.keys(IPVA_UF).sort((a,b)=>UF_NOME[a].localeCompare(UF_NOME[b],"pt-BR"))
+    .map(u=>opt(u, `${UF_NOME[u]} · ${(IPVA_UF[u]*100).toFixed(2).replace(".",",")}%`)).join("");
+  q("uf").value = S.uf; q("ipva").value = Math.round(S.ipva*1000);
 
-  const upd = () => {
+  // segmentos: multipla escolha
+  const segsTodos = [...new Set(D.familias.map(f=>f.segmento))].sort();
+  q("chipsSeg").innerHTML = segsTodos.map(sg=>
+    `<button class="chip" type="button" data-seg="${sg}" aria-pressed="false">${segNome(sg)}</button>`).join("");
+  q("chipsSeg").querySelectorAll(".chip").forEach(b => b.onclick = () => {
+    const k = b.dataset.seg;
+    S.segs.has(k) ? S.segs.delete(k) : S.segs.add(k);
+    b.setAttribute("aria-pressed", S.segs.has(k)); S.sel=null; upd(); render();
+  });
+
+  // marcas: multipla escolha com busca
+  const marcasTodas = [...new Set(D.familias.map(f=>f.marca))].sort((a,b)=>a.localeCompare(b,"pt-BR"));
+  const contaPorMarca = {}; D.familias.forEach(f => contaPorMarca[f.marca] = (contaPorMarca[f.marca]||0)+1);
+  function pintaMarcas(){
+    const termo = norm(q("buscaMarca").value);
+    const vis = marcasTodas.filter(m => !termo || norm(m).includes(termo));
+    q("listaMarcas").innerHTML = vis.length ? vis.map(m =>
+      `<label><input type="checkbox" data-marca="${m}"${S.marcas.has(m)?" checked":""}>` +
+      `<span>${m}</span><span class="n">${contaPorMarca[m]}</span></label>`).join("")
+      : `<p class="vazio">Nenhuma marca com esse nome.</p>`;
+    q("listaMarcas").querySelectorAll("input").forEach(c => c.onchange = () => {
+      const m = c.dataset.marca;
+      c.checked ? S.marcas.add(m) : S.marcas.delete(m);
+      S.sel=null; upd(); render();
+    });
+  }
+  q("buscaMarca").oninput = pintaMarcas;
+
+  function upd(){
     q("vKm").textContent   = `${S.km.toLocaleString("pt-BR")} km`;
-    q("vIpva").textContent = `${(S.ipva*100).toFixed(1).replace(".",",")}%`;
+    q("vIpva").textContent = `${(S.ipva*100).toFixed(2).replace(".",",")}%`;
     q("vComb").textContent = `R$ ${S.comb.toFixed(2).replace(".",",")}`;
     q("vKwh").textContent  = `R$ ${S.kwh.toFixed(2).replace(".",",")}`;
     q("vBat").textContent  = `${(S.bat*100).toFixed(1).replace(".",",")}% a.a.`;
     q("vMm").textContent   = S.mmult === 1 ? "como estimado" : (S.mmult>1?"+":"") + Math.round((S.mmult-1)*100) + "%";
     q("vTeto").textContent = S.tetoCusto >= 150000 ? "sem limite" : BRL(S.tetoCusto);
-  };
+    q("vSegs").textContent = S.segs.size ? `${S.segs.size} selecionado${S.segs.size>1?"s":""}` : "todos";
+    q("vMarcas").textContent = S.marcas.size ? `${S.marcas.size} selecionada${S.marcas.size>1?"s":""}` : "todas";
+    q("vEntrada").textContent = `${Math.round(S.entrada*100)}%`;
+    q("vJuros").textContent = `${(S.jurosAM*100).toFixed(2).replace(".",",")}% ao mês`;
+    q("vPrazo").textContent = `${S.prazo} meses`;
+    q("camposFin").hidden = S.pagamento !== "financiado";
+    if(S.pagamento === "financiado"){
+      const aa = (Math.pow(1+S.jurosAM,12)-1)*100;
+      q("dicaFin").innerHTML = `Equivale a <b>${aa.toFixed(1).replace(".",",")}% ao ano</b>. ` +
+        `Os juros entram no custo anual e aparecem como camada própria no gráfico de composição.`;
+    }
+  }
+  window._upd = upd;
 
   q("budMin").onchange = e => { S.budMin = +e.target.value;
     if(S.budMax <= S.budMin){ S.budMax = FAIXAS[FAIXAS.indexOf(S.budMin)+1] || 500000; q("budMax").value = S.budMax; }
@@ -80,21 +119,28 @@ function bind(){
     if(S.idadeMin > S.idadeMax){ S.idadeMin = Math.max(0,S.idadeMax-1); q("idadeMin").value = S.idadeMin; } render(); };
   q("buscaSel").onchange = e => { S.busca = e.target.value; S.sel = null; render(); };
   q("tetoCusto").oninput = e => { S.tetoCusto = +e.target.value; upd(); render(); };
+  q("ene").onchange = e => { S.ene = e.target.value; S.sel=null; render(); };
+
+  q("uf").onchange = e => { S.uf = e.target.value; S.ipva = IPVA_UF[S.uf] ?? PADRAO.ipva;
+    q("ipva").value = Math.round(S.ipva*1000); upd(); render(); };
 
   [["km",v=>S.km=+v],["ipva",v=>S.ipva=+v/1000],["comb",v=>S.comb=+v/100],
-   ["kwh",v=>S.kwh=+v/100],["bat",v=>S.bat=+v/1000],["mm",v=>S.mmult=+v/100]]
-    .forEach(([id,set])=>{ q(id).oninput = e => { set(e.target.value); upd(); render(); }; });
-
-  ["seg","marca","ene"].forEach(id=>{ q(id).onchange = e => {
-    S[id === "seg" ? "seg" : id] = e.target.value; S.sel=null; render(); }; });
+   ["kwh",v=>S.kwh=+v/100],["bat",v=>S.bat=+v/1000],["mm",v=>S.mmult=+v/100],
+   ["entrada",v=>S.entrada=+v/100],["jurosAM",v=>S.jurosAM=+v/10000],["prazo",v=>S.prazo=+v]]
+    .forEach(([id,set])=>{ const e=q(id); if(e) e.oninput = ev => { set(ev.target.value); upd(); render(); }; });
 
   [["soGarantia","soGarantia"],["soConfiavel","soConfiavel"],["soLiquido","soLiquido"],["soCambio","soCambio"]]
     .forEach(([id,k])=>{ q(id).onchange = e => { S[k] = e.target.checked; render(); }; });
 
+  document.querySelectorAll("#chipsPag .chip").forEach(b => b.onclick = () => {
+    S.pagamento = b.dataset.pag;
+    document.querySelectorAll("#chipsPag .chip").forEach(x => x.setAttribute("aria-pressed", x===b));
+    upd(); render();
+  });
   document.querySelectorAll("#chipsH .chip").forEach(b => b.onclick = () => {
     S.H = +b.dataset.h;
     document.querySelectorAll("#chipsH .chip").forEach(x => x.setAttribute("aria-pressed", x===b));
-    render();
+    upd(); render();
   });
 
   q("wreset").onclick = () => { S.w = { custo:34, manut:12, gar:16, conf:10, liq:16, camb:12 }; render(); };
@@ -102,14 +148,19 @@ function bind(){
 
   q("limparTudo").onclick = () => {
     Object.assign(S, PADRAO, {soGarantia:false, soConfiavel:false, soLiquido:false, soCambio:false,
-      seg:"todos", marca:"todas", ene:"todas", busca:"", sel:null, listaN:10, verMaisHeat:false});
+      ene:"todas", busca:"", sel:null, listaN:10, verMaisHeat:false,
+      pagamento:"avista", entrada:0.20, jurosAM:0.018, prazo:48, uf:""});
+    S.segs = new Set(); S.marcas = new Set();
     q("budMin").value=PADRAO.budMin; q("budMax").value=PADRAO.budMax;
     q("idadeMin").value=PADRAO.idadeMin; q("idadeMax").value=PADRAO.idadeMax;
-    q("tetoCusto").value=PADRAO.tetoCusto; q("buscaSel").value=""; q("seg").value="todos"; q("marca").value="todas";
-    q("ene").value="todas"; q("km").value=12000; q("ipva").value=20; q("comb").value=620;
-    q("kwh").value=95; q("bat").value=25; q("mm").value=100;
+    q("tetoCusto").value=PADRAO.tetoCusto; q("buscaSel").value=""; q("ene").value="todas";
+    q("uf").value=""; q("ipva").value=Math.round(PADRAO.ipva*1000);
+    q("km").value=12000; q("comb").value=620; q("kwh").value=95; q("bat").value=25; q("mm").value=100;
+    q("entrada").value=20; q("jurosAM").value=180; q("prazo").value=48; q("buscaMarca").value="";
     ["soGarantia","soConfiavel","soLiquido","soCambio"].forEach(id=>q(id).checked=false);
-    upd(); render();
+    document.querySelectorAll("#chipsPag .chip").forEach(x=>x.setAttribute("aria-pressed", x.dataset.pag==="avista"));
+    document.querySelectorAll("#chipsSeg .chip").forEach(x=>x.setAttribute("aria-pressed", false));
+    pintaMarcas(); upd(); render();
   };
 
   // gaveta de filtros
@@ -117,12 +168,24 @@ function bind(){
   const abrir = on => { dr.classList.toggle("on", on); velo.classList.toggle("on", on);
     bf.setAttribute("aria-expanded", on); document.body.style.overflow = on ? "hidden" : "";
     if(on) dr.querySelector("select,input,button").focus(); };
-  bf.onclick = () => abrir(!dr.classList.contains("on"));
+  bf.onclick = () => { fecharMega(); abrir(!dr.classList.contains("on")); };
   q("fecharDrawer").onclick = () => abrir(false);
   q("verResultados").onclick = () => { abrir(false);
     document.getElementById("s-veredito").scrollIntoView({behavior:"smooth"}); };
   velo.onclick = () => abrir(false);
-  addEventListener("keydown", e => { if(e.key === "Escape"){ abrir(false); folha(false); } });
+
+  // megamenu de criterios
+  const mega = q("mega"), bc = q("btnCriterios");
+  function fecharMega(){ mega.classList.remove("on"); bc.setAttribute("aria-expanded", false); }
+  function abrirMega(){ abrir(false); mega.classList.add("on"); bc.setAttribute("aria-expanded", true);
+    mega.scrollTop = 0; }
+  bc.onclick = () => mega.classList.contains("on") ? fecharMega() : abrirMega();
+  q("fecharMega").onclick = fecharMega;
+  if(q("verCriterios")) q("verCriterios").onclick = abrirMega;
+  document.addEventListener("click", e => {
+    if(mega.classList.contains("on") && !mega.contains(e.target) && !bc.contains(e.target)) fecharMega();
+  });
+  addEventListener("keydown", e => { if(e.key === "Escape"){ abrir(false); fecharMega(); folha(false); } });
 
   // folha de seções
   const sh = q("sheetSecoes");
@@ -137,7 +200,8 @@ function bind(){
     document.documentElement.setAttribute("data-theme", cur ? (cur==="dark"?"light":"dark") : (sysDark?"light":"dark"));
     requestAnimationFrame(render);
   };
-  upd();
+
+  pintaMarcas(); upd();
 }
 
 /* ============ rolagem: revelação, progresso, seção atual, parallax ============ */
