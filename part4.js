@@ -169,6 +169,31 @@ function tco(f, ano, H){
     energia:f.energia, curto:f.curto, segEst:f.segEst, curada:f.curada, curvaEst:f.curvaEst,
     kml:f.kml, kwh100:f.kwh100, nVersoes:f.nVersoes, _f:f };
 }
+/* Custo ano a ano. O numero do painel e a MEDIA do periodo: cada componente ja
+   e calculado como media, entao media x H bate com a soma dos anos ate o centavo.
+   Mas os anos nao sao iguais, e isso precisa ficar visivel. */
+function contaPorAno(c){
+  const f = c._f; if(!f) return [];
+  const p = f.serie[String(c.ano)]; if(!p) return [];
+  const P = p.m, idade = c.idade, r0 = relIdade(f, idade);
+  const kmf = Math.pow(S.km/12000, 0.7), msg = D.multSeg[f.segmento] || 1;
+  const energia = energiaCusto(f);
+  const jurosAno = jurosPorAno(P) * S.H / Math.min(S.prazo/12, S.H) || 0;
+  const anos = [];
+  for(let k = 0; k < S.H; k++){
+    const a = idade + k;
+    const vIni = P * relIdade(f, a) / r0, vFim = P * relIdade(f, a+1) / r0;
+    let manut = f.manutBase * multIdade(a) * msg * kmf * S.mmult;
+    if(a < f.garantiaAnos) manut *= 0.55;
+    if(f.energia === "eletrico") manut += vIni * S.bat * (a >= 8 ? 2 : 1);
+    const juros = (S.pagamento === "financiado" && k < S.prazo/12) ? jurosAno : 0;
+    const deprec = vIni - vFim;
+    anos.push({ano:k+1, deprec, ipva:vIni*S.ipva, seguro:vIni*f.seguroPct, manut,
+      energia, juros, total: deprec + vIni*S.ipva + vIni*f.seguroPct + manut + energia + juros});
+  }
+  return anos;
+}
+
 /* candidatos = todas as combinações família x ano dentro do orçamento e filtros */
 function candidatos(ignoreBudget){
   const out = [];

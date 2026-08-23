@@ -279,12 +279,13 @@ h1 .ris::after{content:""; position:absolute; left:-2%; right:-2%; top:54%; heig
 .placa .porque{margin-top:9px; font-size:16px; line-height:1.45; color:var(--ink-2); max-width:60ch}
 .placa .porque b{color:var(--ink); font-weight:650}
 .dois{display:grid; gap:10px; margin-top:14px}
-@media(min-width:640px){ .dois{grid-template-columns:1fr 1fr; gap:16px; align-items:start} }
+@media(min-width:640px){ .dois{grid-template-columns:1fr 1fr; gap:16px; align-items:stretch} }
+.dois.aberto{align-items:start}
 .val{border:1px solid var(--line-2); border-radius:var(--r-m); padding:12px 15px; background:var(--card-2)}
 .val .tag{display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:700; letter-spacing:.03em;
   text-transform:uppercase; padding:3px 9px; border-radius:99px; margin-bottom:8px}
 .val.med .tag{background:var(--good-soft); color:var(--good)}
-.val.est .tag{background:var(--warn-soft); color:var(--warn)}
+.val.calc .tag{background:var(--warn-soft); color:var(--warn)}
 .val .cifra{font-size:clamp(28px,4.6vw,36px); font-weight:800; letter-spacing:-.04em; line-height:1}
 .val .exp{margin-top:8px; font-size:13.5px; line-height:1.45; color:var(--ink-2)}
 .val .exp b{color:var(--ink); font-weight:650}
@@ -368,7 +369,7 @@ main{padding-bottom:80px}
 }
 
 /* ---------- extrato do custo anual ---------- */
-.verConta{display:inline-flex; align-items:center; gap:6px; margin-top:9px; padding:6px 10px 6px 8px;
+.verConta{display:inline-flex; align-items:center; gap:6px; margin-top:10px; margin-bottom:2px; padding:6px 10px 6px 8px;
   border:1px solid var(--line); border-radius:99px; background:var(--card); color:var(--acc-ink);
   font:inherit; font-size:13px; font-weight:650; cursor:pointer; min-height:34px}
 .verConta:hover{border-color:var(--acc); background:var(--acc-soft)}
@@ -390,6 +391,9 @@ main{padding-bottom:80px}
 .extrato .soma .nome{font-weight:700; white-space:nowrap; color:var(--ink)}
 .extrato .soma .v{font-weight:800; font-size:16.5px; white-space:nowrap}
 .extrato .rodape{margin-top:9px; font-size:12px; line-height:1.4; color:var(--ink-3)}
+.extrato .soma.periodo{border-top:1px solid var(--line-2); margin-top:5px; padding-top:7px}
+.extrato .soma.periodo .nome{font-weight:600; color:var(--ink-2)}
+.extrato .soma.periodo .v{font-size:14.5px; font-weight:700; color:var(--ink-2)}
 
 /* ============ gráficos ============ */
 .quadro{background:var(--card); border:1px solid var(--line-2); border-radius:var(--r-m); padding:20px 12px 8px;
@@ -772,7 +776,7 @@ table.rk th .thin button{width:auto}
             <div class="cifra" id="topPreco"></div>
             <p class="exp">É o que a Tabela FIPE diz que esse carro vale hoje, e mais ou menos o que você vai ver pedindo no anúncio. <b>Esse número não é calculado aqui, apenas coletado.</b></p>
           </div>
-          <div class="val est">
+          <div class="val calc">
             <span class="tag">Estimado pelo Ponto de Compra</span><button class="ajuda" type="button" data-ajuda="custoAno" aria-expanded="false" aria-label="O que entra no custo por ano">?</button>
             <div class="cifra" id="topCusto"></div>
             <button class="verConta" id="btnConta" aria-expanded="false" aria-controls="contaTopo">
@@ -1143,6 +1147,31 @@ function tco(f, ano, H){
     energia:f.energia, curto:f.curto, segEst:f.segEst, curada:f.curada, curvaEst:f.curvaEst,
     kml:f.kml, kwh100:f.kwh100, nVersoes:f.nVersoes, _f:f };
 }
+/* Custo ano a ano. O numero do painel e a MEDIA do periodo: cada componente ja
+   e calculado como media, entao media x H bate com a soma dos anos ate o centavo.
+   Mas os anos nao sao iguais, e isso precisa ficar visivel. */
+function contaPorAno(c){
+  const f = c._f; if(!f) return [];
+  const p = f.serie[String(c.ano)]; if(!p) return [];
+  const P = p.m, idade = c.idade, r0 = relIdade(f, idade);
+  const kmf = Math.pow(S.km/12000, 0.7), msg = D.multSeg[f.segmento] || 1;
+  const energia = energiaCusto(f);
+  const jurosAno = jurosPorAno(P) * S.H / Math.min(S.prazo/12, S.H) || 0;
+  const anos = [];
+  for(let k = 0; k < S.H; k++){
+    const a = idade + k;
+    const vIni = P * relIdade(f, a) / r0, vFim = P * relIdade(f, a+1) / r0;
+    let manut = f.manutBase * multIdade(a) * msg * kmf * S.mmult;
+    if(a < f.garantiaAnos) manut *= 0.55;
+    if(f.energia === "eletrico") manut += vIni * S.bat * (a >= 8 ? 2 : 1);
+    const juros = (S.pagamento === "financiado" && k < S.prazo/12) ? jurosAno : 0;
+    const deprec = vIni - vFim;
+    anos.push({ano:k+1, deprec, ipva:vIni*S.ipva, seguro:vIni*f.seguroPct, manut,
+      energia, juros, total: deprec + vIni*S.ipva + vIni*f.seguroPct + manut + energia + juros});
+  }
+  return anos;
+}
+
 /* candidatos = todas as combinações família x ano dentro do orçamento e filtros */
 function candidatos(ignoreBudget){
   const out = [];
@@ -1823,11 +1852,20 @@ function montaConta(c){
       `<span class="nome"><i class="marca" style="background:var(${cor})"></i>${nome}</span>` +
       `<span class="pt"></span><span class="v">${v>0?BRL(v):"não entra"}</span></div>`;
   }).join("");
+  const anos = contaPorAno(c);
+  const pri = anos.length ? anos[0].total : c.total;
+  const ult = anos.length ? anos[anos.length-1].total : c.total;
+  const variacao = anos.length > 1 ? `
+    <p class="rodape"><b>Esta é a média dos ${S.H} anos, e os anos não são iguais.</b>
+    O primeiro sai por volta de <b>${BRL(pri)}</b> e o último por volta de <b>${BRL(ult)}</b>,
+    porque o carro perde mais valor no começo e pede mais oficina no fim.</p>` : "";
   return linhas +
-    `<div class="soma"><span class="nome">Total por ano</span><span class="pt"></span>` +
+    `<div class="soma"><span class="nome">Média por ano</span><span class="pt"></span>` +
     `<span class="v">${BRL(c.total)}</span></div>` +
-    `<p class="rodape">Ao longo de ${S.H} anos dá <b>${BRL(c.total*S.H)}</b>. ` +
-    `Não entram entrada, licenciamento, multas nem estacionamento.</p>`;
+    `<div class="soma periodo"><span class="nome">Total em ${S.H} anos</span><span class="pt"></span>` +
+    `<span class="v">${BRL(c.total*S.H)}</span></div>` +
+    variacao +
+    `<p class="rodape">Não entram entrada, licenciamento, multas nem estacionamento.</p>`;
 }
 
 function drawTopo(top, cs){
@@ -2202,6 +2240,9 @@ function bind(){
     alvo.hidden = !abrindo;
     bConta.setAttribute("aria-expanded", abrindo);
     bConta.querySelector(".rot").textContent = abrindo ? "Esconder a conta" : "Ver a conta";
+    // fechado: os dois blocos com a mesma altura. aberto: cada um com a sua, senao
+    // o bloco da esquerda estica e fica com um vazio enorme
+    const dois = alvo.closest(".dois"); if(dois) dois.classList.toggle("aberto", abrindo);
   };
   if(q("verCriterios")) q("verCriterios").onclick = e => { e.stopPropagation(); abrirMega(); };
   if(q("irCriterios"))  q("irCriterios").onclick  = e => { e.stopPropagation(); abrir(false); abrirMega(); };

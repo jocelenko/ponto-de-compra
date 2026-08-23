@@ -72,6 +72,22 @@ Regras duráveis:
   filho de cada número ele seria cortado pela tabela e pela matriz, que têm `overflow` próprio.
 - **`.quadro`**: moldura de gráfico. **Todo gráfico é obrigado a ter `.tit` com a conclusão e `.sub` ensinando a ler.** Gráfico sem título que conclui é gráfico incompleto.
 
+## Nomes de classe, regra durável
+
+**Classe utilitária nunca pode ter o mesmo nome de um modificador de bloco.** Já quebrou duas vezes aqui:
+
+1. `.conta` era o container da leitura em rolagem (`display:grid`, duas colunas). O extrato de custo
+   nasceu com o mesmo nome e herdou o grid: linhas em duas colunas e sobrepostas.
+2. `.est` dá sublinhado tracejado e `padding-bottom:1px` a número estimado. O bloco do herói nasceu
+   como `<div class="val est">` e recebeu as duas regras: ganhou borda tracejada e teve o padding
+   de 12px esmagado para 1px.
+
+Nenhum dos dois gerou erro de sintaxe ou aviso de detector. O layout simplesmente saiu errado.
+
+Convenção adotada: **utilitária global tem nome curto e único** (`est`, `rev`, `vis`, `on`), e
+**modificador de bloco usa palavra própria**, nunca uma dessas (`.val.calc`, e não `.val.est`).
+Antes de criar uma classe, procure o nome no CSS inteiro.
+
 ## Proveniência, regra durável
 
 Número medido na FIPE sai limpo. Número estimado por premissa recebe `.est`, que é sublinhado tracejado mais explicação no `title`. No herói os dois aparecem lado a lado com um parágrafo cada dizendo o que são, porque chave solta com dois números não se explica para quem lê pela primeira vez.

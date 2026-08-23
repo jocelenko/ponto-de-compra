@@ -60,11 +60,20 @@ function montaConta(c){
       `<span class="nome"><i class="marca" style="background:var(${cor})"></i>${nome}</span>` +
       `<span class="pt"></span><span class="v">${v>0?BRL(v):"não entra"}</span></div>`;
   }).join("");
+  const anos = contaPorAno(c);
+  const pri = anos.length ? anos[0].total : c.total;
+  const ult = anos.length ? anos[anos.length-1].total : c.total;
+  const variacao = anos.length > 1 ? `
+    <p class="rodape"><b>Esta é a média dos ${S.H} anos, e os anos não são iguais.</b>
+    O primeiro sai por volta de <b>${BRL(pri)}</b> e o último por volta de <b>${BRL(ult)}</b>,
+    porque o carro perde mais valor no começo e pede mais oficina no fim.</p>` : "";
   return linhas +
-    `<div class="soma"><span class="nome">Total por ano</span><span class="pt"></span>` +
+    `<div class="soma"><span class="nome">Média por ano</span><span class="pt"></span>` +
     `<span class="v">${BRL(c.total)}</span></div>` +
-    `<p class="rodape">Ao longo de ${S.H} anos dá <b>${BRL(c.total*S.H)}</b>. ` +
-    `Não entram entrada, licenciamento, multas nem estacionamento.</p>`;
+    `<div class="soma periodo"><span class="nome">Total em ${S.H} anos</span><span class="pt"></span>` +
+    `<span class="v">${BRL(c.total*S.H)}</span></div>` +
+    variacao +
+    `<p class="rodape">Não entram entrada, licenciamento, multas nem estacionamento.</p>`;
 }
 
 function drawTopo(top, cs){

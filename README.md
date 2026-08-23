@@ -96,14 +96,11 @@ e copie o resultado:
 python3 build.py
 ```
 
-O `build.py` ja copia para `docs/index.html`. Antes de publicar mudanca de estilo, rode:
+O `build.py` ja copia para `docs/index.html`.
 
-```bash
-python3 scripts/checar-css.py
-```
-
-Ele procura classe CSS definida em mais de um arquivo. Colisao de nome nao gera erro
-de sintaxe, so quebra o layout em silencio, e ja aconteceu uma vez neste projeto.
+> Antes de criar uma classe CSS, procure o nome no projeto inteiro. Colisao entre uma
+> utilitaria global e um modificador de bloco nao gera erro de sintaxe, so quebra o
+> layout em silencio. Ja aconteceu duas vezes aqui, e o `DESIGN.md` registra os casos.
 
 ## Licença
 

@@ -32,12 +32,13 @@ h1 .ris::after{content:""; position:absolute; left:-2%; right:-2%; top:54%; heig
 .placa .porque{margin-top:9px; font-size:16px; line-height:1.45; color:var(--ink-2); max-width:60ch}
 .placa .porque b{color:var(--ink); font-weight:650}
 .dois{display:grid; gap:10px; margin-top:14px}
-@media(min-width:640px){ .dois{grid-template-columns:1fr 1fr; gap:16px; align-items:start} }
+@media(min-width:640px){ .dois{grid-template-columns:1fr 1fr; gap:16px; align-items:stretch} }
+.dois.aberto{align-items:start}
 .val{border:1px solid var(--line-2); border-radius:var(--r-m); padding:12px 15px; background:var(--card-2)}
 .val .tag{display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:700; letter-spacing:.03em;
   text-transform:uppercase; padding:3px 9px; border-radius:99px; margin-bottom:8px}
 .val.med .tag{background:var(--good-soft); color:var(--good)}
-.val.est .tag{background:var(--warn-soft); color:var(--warn)}
+.val.calc .tag{background:var(--warn-soft); color:var(--warn)}
 .val .cifra{font-size:clamp(28px,4.6vw,36px); font-weight:800; letter-spacing:-.04em; line-height:1}
 .val .exp{margin-top:8px; font-size:13.5px; line-height:1.45; color:var(--ink-2)}
 .val .exp b{color:var(--ink); font-weight:650}
@@ -121,7 +122,7 @@ main{padding-bottom:80px}
 }
 
 /* ---------- extrato do custo anual ---------- */
-.verConta{display:inline-flex; align-items:center; gap:6px; margin-top:9px; padding:6px 10px 6px 8px;
+.verConta{display:inline-flex; align-items:center; gap:6px; margin-top:10px; margin-bottom:2px; padding:6px 10px 6px 8px;
   border:1px solid var(--line); border-radius:99px; background:var(--card); color:var(--acc-ink);
   font:inherit; font-size:13px; font-weight:650; cursor:pointer; min-height:34px}
 .verConta:hover{border-color:var(--acc); background:var(--acc-soft)}
@@ -143,3 +144,6 @@ main{padding-bottom:80px}
 .extrato .soma .nome{font-weight:700; white-space:nowrap; color:var(--ink)}
 .extrato .soma .v{font-weight:800; font-size:16.5px; white-space:nowrap}
 .extrato .rodape{margin-top:9px; font-size:12px; line-height:1.4; color:var(--ink-3)}
+.extrato .soma.periodo{border-top:1px solid var(--line-2); margin-top:5px; padding-top:7px}
+.extrato .soma.periodo .nome{font-weight:600; color:var(--ink-2)}
+.extrato .soma.periodo .v{font-size:14.5px; font-weight:700; color:var(--ink-2)}

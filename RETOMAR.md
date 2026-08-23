@@ -211,3 +211,27 @@ O custo anual do carro sai de R$ 11.861 para R$ 18.216, um salto de 54%.
 `IPVA_UF` em `part4.js`, alíquota de automóvel de passeio a gasolina ou flex nas 27 unidades da
 federação. O padrão é "não informado" com 2%, para não assumir estado. Escolher o estado preenche
 a alíquota, e o slider continua disponível para ajuste fino.
+
+## O número anual é média, e isso agora está dito
+
+Levantada a dúvida de se `total x H` estava certo, já que a depreciação não é igual todo ano.
+
+**Está certo, e por um motivo que não é óbvio.** Todo componente do `tco()` já é média do período,
+não retrato do primeiro ano: `deprec = (P - revenda)/H`, e IPVA e seguro usam `vmed`, que é o valor
+médio ao longo dos anos. Conferido por script independente: média x 5 e a soma ano a ano dão
+R$ 102.416 nos dois casos, diferença de zero centavo.
+
+Mas os anos são bem diferentes entre si. HB20S 2026, 12.000 km, IPVA 2%:
+
+| ano | depreciação | total |
+|---|---|---|
+| 1 | 8.211 | 22.628 |
+| 2 | 6.995 | 20.871 |
+| 3 | 6.786 | 20.200 |
+| 4 | 10.369 | 23.334 |
+| 5 | 2.546 | 15.382 |
+
+O salto no ano 4 não é bug: é o formato da própria curva FIPE desse modelo, que não é suave.
+
+O extrato passou a dizer "Média por ano", a mostrar "Total em 5 anos" como linha própria, e a
+declarar a faixa entre o primeiro e o último ano. `contaPorAno()` em `part4.js` faz esse cálculo.

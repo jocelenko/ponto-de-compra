@@ -189,6 +189,9 @@ function bind(){
     alvo.hidden = !abrindo;
     bConta.setAttribute("aria-expanded", abrindo);
     bConta.querySelector(".rot").textContent = abrindo ? "Esconder a conta" : "Ver a conta";
+    // fechado: os dois blocos com a mesma altura. aberto: cada um com a sua, senao
+    // o bloco da esquerda estica e fica com um vazio enorme
+    const dois = alvo.closest(".dois"); if(dois) dois.classList.toggle("aberto", abrindo);
   };
   if(q("verCriterios")) q("verCriterios").onclick = e => { e.stopPropagation(); abrirMega(); };
   if(q("irCriterios"))  q("irCriterios").onclick  = e => { e.stopPropagation(); abrir(false); abrirMega(); };
