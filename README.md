@@ -93,8 +93,17 @@ O GitHub Pages serve a pasta `docs/`. Para atualizar o site, rode `python3 build
 e copie o resultado:
 
 ```bash
-python3 build.py && cp ponto-de-compra.html docs/index.html
+python3 build.py
 ```
+
+O `build.py` ja copia para `docs/index.html`. Antes de publicar mudanca de estilo, rode:
+
+```bash
+python3 scripts/checar-css.py
+```
+
+Ele procura classe CSS definida em mais de um arquivo. Colisao de nome nao gera erro
+de sintaxe, so quebra o layout em silencio, e ja aconteceu uma vez neste projeto.
 
 ## Licença
 

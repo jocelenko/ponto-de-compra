@@ -32,7 +32,7 @@ h1 .ris::after{content:""; position:absolute; left:-2%; right:-2%; top:54%; heig
 .placa .porque{margin-top:9px; font-size:16px; line-height:1.45; color:var(--ink-2); max-width:60ch}
 .placa .porque b{color:var(--ink); font-weight:650}
 .dois{display:grid; gap:10px; margin-top:14px}
-@media(min-width:640px){ .dois{grid-template-columns:1fr 1fr; gap:16px} }
+@media(min-width:640px){ .dois{grid-template-columns:1fr 1fr; gap:16px; align-items:start} }
 .val{border:1px solid var(--line-2); border-radius:var(--r-m); padding:12px 15px; background:var(--card-2)}
 .val .tag{display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:700; letter-spacing:.03em;
   text-transform:uppercase; padding:3px 9px; border-radius:99px; margin-bottom:8px}
@@ -121,24 +121,25 @@ main{padding-bottom:80px}
 }
 
 /* ---------- extrato do custo anual ---------- */
-.verConta{display:inline-flex; align-items:center; gap:6px; margin-top:10px; padding:6px 10px 6px 8px;
+.verConta{display:inline-flex; align-items:center; gap:6px; margin-top:9px; padding:6px 10px 6px 8px;
   border:1px solid var(--line); border-radius:99px; background:var(--card); color:var(--acc-ink);
   font:inherit; font-size:13px; font-weight:650; cursor:pointer; min-height:34px}
 .verConta:hover{border-color:var(--acc); background:var(--acc-soft)}
 .verConta svg{width:12px; height:12px; transition:transform .2s}
 .verConta[aria-expanded=true] svg{transform:rotate(180deg)}
 @media (pointer:coarse){ .verConta{min-height:42px; padding:0 14px 0 12px} }
-.conta{margin-top:12px; border-top:1px solid var(--line-2); padding-top:12px;
-  font-size:14px; font-variant-numeric:tabular-nums}
-.conta[hidden]{display:none}
-.conta .l{display:flex; align-items:baseline; gap:10px; padding:5px 0}
-.conta .l .nome{color:var(--ink-2); display:flex; align-items:center; gap:7px; min-width:0}
-.conta .l .pt{flex:1; border-bottom:1px dotted var(--line); min-width:12px; transform:translateY(-3px)}
-.conta .l .v{font-weight:650; white-space:nowrap}
-.conta .l .marca{width:8px; height:8px; border-radius:2px; flex:0 0 auto}
-.conta .l.zero .nome,.conta .l.zero .v{color:var(--ink-3); font-weight:400}
-.conta .soma{display:flex; align-items:baseline; gap:10px; margin-top:8px; padding-top:10px;
-  border-top:2px solid var(--ink)}
-.conta .soma .nome{font-weight:700}
-.conta .soma .v{font-weight:800; font-size:17px; white-space:nowrap}
-.conta .rodape{margin-top:10px; font-size:12.5px; line-height:1.45; color:var(--ink-3)}
+.extrato{display:block; margin-top:11px; border-top:1px solid var(--line-2); padding-top:10px;
+  font-size:13.5px; font-variant-numeric:tabular-nums}
+.extrato[hidden]{display:none}
+.extrato .l{display:flex; align-items:baseline; gap:8px; padding:3px 0; line-height:1.35}
+.extrato .l .nome{color:var(--ink-2); display:flex; align-items:center; gap:7px; min-width:0;
+  white-space:nowrap}
+.extrato .l .pt{flex:1; border-bottom:1px dotted var(--line); min-width:12px; transform:translateY(-3px)}
+.extrato .l .v{font-weight:650; white-space:nowrap; font-variant-numeric:tabular-nums}
+.extrato .l .marca{width:8px; height:8px; border-radius:2px; flex:0 0 auto}
+.extrato .l.zero .nome,.extrato .l.zero .v{color:var(--ink-3); font-weight:400}
+.extrato .soma{display:flex; align-items:baseline; gap:8px; margin-top:7px; padding-top:9px;
+  border-top:2px solid var(--ink); line-height:1.3}
+.extrato .soma .nome{font-weight:700; white-space:nowrap; color:var(--ink)}
+.extrato .soma .v{font-weight:800; font-size:16.5px; white-space:nowrap}
+.extrato .rodape{margin-top:9px; font-size:12px; line-height:1.4; color:var(--ink-3)}
