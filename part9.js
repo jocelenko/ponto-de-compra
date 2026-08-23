@@ -179,9 +179,12 @@ function bind(){
   function fecharMega(){ mega.classList.remove("on"); bc.setAttribute("aria-expanded", false); }
   function abrirMega(){ abrir(false); mega.classList.add("on"); bc.setAttribute("aria-expanded", true);
     mega.scrollTop = 0; }
-  bc.onclick = () => mega.classList.contains("on") ? fecharMega() : abrirMega();
+  bc.onclick = e => { e.stopPropagation(); mega.classList.contains("on") ? fecharMega() : abrirMega(); };
   q("fecharMega").onclick = fecharMega;
-  if(q("verCriterios")) q("verCriterios").onclick = abrirMega;
+  // stopPropagation: sem ele o clique borbulha ate o document, que fecha o megamenu
+  // no mesmo instante em que ele abre
+  if(q("verCriterios")) q("verCriterios").onclick = e => { e.stopPropagation(); abrirMega(); };
+  if(q("irCriterios"))  q("irCriterios").onclick  = e => { e.stopPropagation(); abrir(false); abrirMega(); };
   document.addEventListener("click", e => {
     if(mega.classList.contains("on") && !mega.contains(e.target) && !bc.contains(e.target)) fecharMega();
   });

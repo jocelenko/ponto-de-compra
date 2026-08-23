@@ -61,6 +61,12 @@ Regras duráveis:
 - **`.placa`**: o campeão dentro do herói, com o motivo em uma frase e os dois números explicados lado a lado.
 - **`.cartao`**: item de resultado. Traz cifra, motivo, selos, ficha e as seis notas por critério.
 - **`.crit`**: critério de pontuação com peso em percentual e slider.
+- **`.ponte`**: resumo dos pesos no topo da gaveta de filtros, com barra empilhada e atalho para o
+  megamenu. Existe porque **filtro e peso fazem coisas diferentes**: filtro tira candidatos, peso
+  reordena. Juntar os dois no mesmo painel faria o usuário mexer num peso e estranhar que a contagem
+  não mudou. A ponte resolve a descoberta sem apagar a distinção.
+- **`.ajuda` e `#balao`**: ajuda contextual. Um balão único no `body`, posicionado por JS, porque como
+  filho de cada número ele seria cortado pela tabela e pela matriz, que têm `overflow` próprio.
 - **`.quadro`**: moldura de gráfico. **Todo gráfico é obrigado a ter `.tit` com a conclusão e `.sub` ensinando a ler.** Gráfico sem título que conclui é gráfico incompleto.
 
 ## Proveniência, regra durável

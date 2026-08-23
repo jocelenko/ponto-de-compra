@@ -228,6 +228,23 @@ input.mini{width:100%; font:inherit; font-size:14.5px; padding:9px 12px; min-hei
   font-size:13px; color:var(--ink-2)}
 #camposFin .dica b{color:var(--ink)}
 
+/* ---------- ponte entre a gaveta de filtros e os critérios ---------- */
+.ponte{border:1px solid var(--line-2); border-radius:var(--r-m); background:var(--bg-2);
+  padding:14px; margin-bottom:22px}
+.ponte .cima{display:flex; align-items:center; gap:10px; margin-bottom:11px}
+.ponte h4{font-size:13px; letter-spacing:.03em; text-transform:uppercase; color:var(--ink-3);
+  font-weight:700; margin-right:auto}
+.ponte .tbtn{height:34px; padding:0 12px; font-size:12.5px}
+.ponte p{font-size:12.5px; line-height:1.45; color:var(--ink-3); margin-top:10px}
+.ponte p b{color:var(--ink-2); font-weight:650}
+.barraPesos{display:flex; height:28px; border-radius:6px; overflow:hidden; background:var(--bg-3)}
+.barraPesos i{display:block; position:relative}
+.barraPesos i span{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-size:9.5px; font-weight:800; color:#fff; letter-spacing:.02em; white-space:nowrap; overflow:hidden}
+.pesosLeg{display:flex; flex-wrap:wrap; gap:4px 12px; margin-top:9px; font-size:11.5px; color:var(--ink-3)}
+.pesosLeg span{display:inline-flex; align-items:center; gap:5px}
+.pesosLeg i{width:9px; height:9px; border-radius:2px; flex:0 0 auto}
+
 /* ============ herói ============ */
 .hero{padding:22px 0 14px; position:relative; overflow:hidden}
 @media(min-width:900px){ .hero{padding:44px 0 26px} }
@@ -632,6 +649,15 @@ table.rk th .thin button{width:auto}
     <button class="tbtn" id="limparTudo">Limpar</button>
     <button class="fechar" id="fecharDrawer" aria-label="Fechar filtros">&times;</button></div>
   <div class="corpo">
+    <div class="ponte" id="pontePesos">
+      <div class="cima">
+        <h4>Ordem do ranking</h4>
+        <button class="tbtn" id="irCriterios">Ajustar critérios</button>
+      </div>
+      <div class="barraPesos" id="barraPesos"></div>
+      <p>Estes são os pesos que decidem <b>a ordem</b>. Eles não tiram carro nenhum da lista, só mudam quem vem primeiro. Os filtros abaixo é que reduzem os candidatos.</p>
+    </div>
+
     <div class="grupo"><h4>Como você vai pagar</h4>
       <div class="chips" id="chipsPag">
         <button class="chip" data-pag="avista" aria-pressed="true">À vista</button>
@@ -1828,6 +1854,24 @@ const CRIT_INFO = [
   ["liq","Revenda fácil","Nota de 1 a 5 de liquidez, ou seja, quão rápido o modelo sai quando você anuncia. Onix e HB20 giram muito, importado de nicho não gira.","Histórico de mercado"],
   ["camb","Câmbio confiável","Nota de 1 a 5 de risco da transmissão. Conversor de torque e redutor de elétrico são os mais seguros. Dupla embreagem seca é o mais arriscado.","Histórico de mercado"]
 ];
+function drawBarraPesos(){
+  const alvo = document.getElementById("barraPesos"); if(!alvo) return;
+  const soma = Object.values(S.w).reduce((a,b)=>a+b,0) || 1;
+  const ordem = CRIT_INFO.filter(([k])=>S.w[k] > 0);
+  alvo.innerHTML = ordem.map(([k,nome],i)=>{
+    const pct = S.w[k]/soma*100;
+    return `<i style="width:${pct}%;background:var(${SERIES[i%6]})" title="${nome}: ${Math.round(pct)}%">` +
+      `${pct >= 13 ? `<span>${Math.round(pct)}%</span>` : ""}</i>`;
+  }).join("") || `<i style="width:100%;background:var(--ink-3)"><span>sem peso definido</span></i>`;
+  let leg = alvo.nextElementSibling;
+  if(!leg || !leg.classList.contains("pesosLeg")){
+    leg = document.createElement("div"); leg.className = "pesosLeg";
+    alvo.insertAdjacentElement("afterend", leg);
+  }
+  leg.innerHTML = ordem.map(([k,nome],i)=>
+    `<span><i style="background:var(${SERIES[i%6]})"></i>${nome} ${Math.round(S.w[k]/soma*100)}%</span>`).join("");
+}
+
 function drawCriterios(){
   const soma = Object.values(S.w).reduce((a,b)=>a+b,0) || 1;
   document.getElementById("critGrade").innerHTML = CRIT_INFO.map(([k,nome,exp,fonte])=>`
@@ -1839,6 +1883,7 @@ function drawCriterios(){
     </div>`).join("");
   Object.keys(S.w).forEach(k=>{ const e=document.getElementById("w_"+k);
     if(e) e.oninput = ev => { S.w[k] = +ev.target.value; render(); }; });
+  drawBarraPesos();
 }
 
 /* ============ 7. tabela ============ */
@@ -2092,9 +2137,12 @@ function bind(){
   function fecharMega(){ mega.classList.remove("on"); bc.setAttribute("aria-expanded", false); }
   function abrirMega(){ abrir(false); mega.classList.add("on"); bc.setAttribute("aria-expanded", true);
     mega.scrollTop = 0; }
-  bc.onclick = () => mega.classList.contains("on") ? fecharMega() : abrirMega();
+  bc.onclick = e => { e.stopPropagation(); mega.classList.contains("on") ? fecharMega() : abrirMega(); };
   q("fecharMega").onclick = fecharMega;
-  if(q("verCriterios")) q("verCriterios").onclick = abrirMega;
+  // stopPropagation: sem ele o clique borbulha ate o document, que fecha o megamenu
+  // no mesmo instante em que ele abre
+  if(q("verCriterios")) q("verCriterios").onclick = e => { e.stopPropagation(); abrirMega(); };
+  if(q("irCriterios"))  q("irCriterios").onclick  = e => { e.stopPropagation(); abrir(false); abrirMega(); };
   document.addEventListener("click", e => {
     if(mega.classList.contains("on") && !mega.contains(e.target) && !bc.contains(e.target)) fecharMega();
   });

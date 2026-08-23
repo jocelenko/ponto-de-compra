@@ -120,6 +120,24 @@ const CRIT_INFO = [
   ["liq","Revenda fácil","Nota de 1 a 5 de liquidez, ou seja, quão rápido o modelo sai quando você anuncia. Onix e HB20 giram muito, importado de nicho não gira.","Histórico de mercado"],
   ["camb","Câmbio confiável","Nota de 1 a 5 de risco da transmissão. Conversor de torque e redutor de elétrico são os mais seguros. Dupla embreagem seca é o mais arriscado.","Histórico de mercado"]
 ];
+function drawBarraPesos(){
+  const alvo = document.getElementById("barraPesos"); if(!alvo) return;
+  const soma = Object.values(S.w).reduce((a,b)=>a+b,0) || 1;
+  const ordem = CRIT_INFO.filter(([k])=>S.w[k] > 0);
+  alvo.innerHTML = ordem.map(([k,nome],i)=>{
+    const pct = S.w[k]/soma*100;
+    return `<i style="width:${pct}%;background:var(${SERIES[i%6]})" title="${nome}: ${Math.round(pct)}%">` +
+      `${pct >= 13 ? `<span>${Math.round(pct)}%</span>` : ""}</i>`;
+  }).join("") || `<i style="width:100%;background:var(--ink-3)"><span>sem peso definido</span></i>`;
+  let leg = alvo.nextElementSibling;
+  if(!leg || !leg.classList.contains("pesosLeg")){
+    leg = document.createElement("div"); leg.className = "pesosLeg";
+    alvo.insertAdjacentElement("afterend", leg);
+  }
+  leg.innerHTML = ordem.map(([k,nome],i)=>
+    `<span><i style="background:var(${SERIES[i%6]})"></i>${nome} ${Math.round(S.w[k]/soma*100)}%</span>`).join("");
+}
+
 function drawCriterios(){
   const soma = Object.values(S.w).reduce((a,b)=>a+b,0) || 1;
   document.getElementById("critGrade").innerHTML = CRIT_INFO.map(([k,nome,exp,fonte])=>`
@@ -131,6 +149,7 @@ function drawCriterios(){
     </div>`).join("");
   Object.keys(S.w).forEach(k=>{ const e=document.getElementById("w_"+k);
     if(e) e.oninput = ev => { S.w[k] = +ev.target.value; render(); }; });
+  drawBarraPesos();
 }
 
 /* ============ 7. tabela ============ */
