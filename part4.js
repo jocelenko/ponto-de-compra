@@ -43,7 +43,7 @@ function filtrosAtivos(){
       || S.kwh !== PADRAO.kwh || S.bat !== PADRAO.bat || S.mmult !== PADRAO.mmult) n++;
   return n;
 }
-const est = (txt, motivo) => `<span class="est" title="Estimado. ${motivo}">${txt}</span>`;
+const est = (txt, motivo) => `<span class="est" title="Estimado pelo Ponto de Compra. ${motivo}">${txt}</span>`;
 const norm = s => (s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
 const DIMS = [["custo","Custo"],["manut","Manut"],["gar","Garan"],
               ["conf","Confo"],["liq","Reven"],["camb","Câmb"]];

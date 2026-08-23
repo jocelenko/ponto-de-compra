@@ -64,7 +64,7 @@ function bind(){
     q("vComb").textContent = `R$ ${S.comb.toFixed(2).replace(".",",")}`;
     q("vKwh").textContent  = `R$ ${S.kwh.toFixed(2).replace(".",",")}`;
     q("vBat").textContent  = `${(S.bat*100).toFixed(1).replace(".",",")}% a.a.`;
-    q("vMm").textContent   = S.mmult === 1 ? "como estimei" : (S.mmult>1?"+":"") + Math.round((S.mmult-1)*100) + "%";
+    q("vMm").textContent   = S.mmult === 1 ? "como estimado" : (S.mmult>1?"+":"") + Math.round((S.mmult-1)*100) + "%";
     q("vTeto").textContent = S.tetoCusto >= 150000 ? "sem limite" : BRL(S.tetoCusto);
   };
 

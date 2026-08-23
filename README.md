@@ -30,8 +30,9 @@ Custo por ano de posse soma cinco componentes:
 | Manutenção | Estimativa por marca, idade e porte |
 | Energia | Estimativa, km/l ou kWh/100km |
 
-Na interface, todo número **estimado** aparece com sublinhado tracejado. Número
-**medido** na FIPE sai limpo. Essa separação é regra do produto, não detalhe visual.
+Na interface, todo número **estimado pelo Ponto de Compra** aparece com sublinhado
+tracejado. Número **medido** na FIPE sai limpo. Essa separação é regra do produto,
+não detalhe visual.
 
 ### Índice encadeado
 

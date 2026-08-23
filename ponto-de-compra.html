@@ -192,49 +192,49 @@ a:hover{text-decoration:underline; text-underline-offset:3px}
 }
 
 /* ============ herói ============ */
-.hero{padding:56px 0 20px; position:relative; overflow:hidden}
-@media(min-width:900px){ .hero{padding:88px 0 32px} }
+.hero{padding:22px 0 14px; position:relative; overflow:hidden}
+@media(min-width:900px){ .hero{padding:44px 0 26px} }
 .hero .bolha{position:absolute; border-radius:50%; filter:blur(80px); opacity:.5; pointer-events:none; z-index:0}
 .hero .b1{width:520px; height:520px; background:var(--acc-soft); top:-180px; right:-140px}
 .hero .b2{width:420px; height:420px; background:var(--crit-soft); bottom:-220px; left:-160px; opacity:.35}
 .hero .in{position:relative; z-index:1}
 .olho{display:inline-block; font-size:13px; font-weight:600; color:var(--acc-ink);
-  background:var(--acc-soft); padding:7px 15px; border-radius:99px; margin-bottom:20px;
+  background:var(--acc-soft); padding:6px 14px; border-radius:99px; margin-bottom:14px;
   white-space:nowrap; max-width:100%; overflow:hidden; text-overflow:ellipsis}
 .olho b{font-weight:750}
 .soAmplo{display:none}
 @media(min-width:560px){ .soAmplo{display:inline} }
-h1{font-size:clamp(38px,7.4vw,68px); line-height:1.02; letter-spacing:-.038em; max-width:16ch}
+h1{font-size:clamp(34px,6.2vw,58px); line-height:1.0; letter-spacing:-.038em; max-width:17ch}
 h1 .ris{position:relative; display:inline-block; white-space:nowrap}
 h1 .ris::after{content:""; position:absolute; left:-2%; right:-2%; top:54%; height:.075em; background:var(--crit);
   border-radius:99px; transform:scaleX(0); transform-origin:left; animation:risca .6s cubic-bezier(.2,.8,.25,1) .35s forwards}
 @keyframes risca{to{transform:scaleX(1)}}
-.chamada{margin-top:22px; font-size:clamp(17px,2.3vw,21px); line-height:1.45; color:var(--ink-2); max-width:44ch}
+.chamada{margin-top:14px; font-size:clamp(15.5px,1.9vw,19px); line-height:1.4; color:var(--ink-2); max-width:52ch}
 .chamada b{color:var(--ink); font-weight:650}
 
 /* placa: o carro do topo, explicado */
-.placa{margin-top:34px; background:var(--card); border:1px solid var(--line); border-radius:var(--r-l);
+.placa{margin-top:18px; background:var(--card); border:1px solid var(--line); border-radius:var(--r-l);
   box-shadow:var(--sh-2); overflow:hidden}
-.placa .fita{display:flex; align-items:center; gap:9px; padding:11px 20px; background:var(--ink); color:var(--bg);
+.placa .fita{display:flex; align-items:center; gap:9px; padding:9px 20px; background:var(--ink); color:var(--bg);
   font-size:13px; font-weight:650; letter-spacing:-.01em}
 .placa .fita svg{width:15px; height:15px}
-.placa .corpo{padding:22px 20px 24px}
-@media(min-width:760px){ .placa .corpo{padding:28px 30px 30px} }
+.placa .corpo{padding:18px 18px 20px}
+@media(min-width:760px){ .placa .corpo{padding:22px 28px 26px} }
 .placa h2{font-size:clamp(24px,4vw,32px); letter-spacing:-.032em}
 .placa h2 .ano{color:var(--ink-3); font-weight:600}
-.placa .porque{margin-top:12px; font-size:16.5px; line-height:1.5; color:var(--ink-2); max-width:60ch}
+.placa .porque{margin-top:9px; font-size:16px; line-height:1.45; color:var(--ink-2); max-width:60ch}
 .placa .porque b{color:var(--ink); font-weight:650}
-.dois{display:grid; gap:14px; margin-top:22px}
-@media(min-width:640px){ .dois{grid-template-columns:1fr 1fr; gap:18px} }
-.val{border:1px solid var(--line-2); border-radius:var(--r-m); padding:16px 18px; background:var(--card-2)}
-.val .tag{display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:700; letter-spacing:.03em;
-  text-transform:uppercase; padding:3px 9px; border-radius:99px; margin-bottom:10px}
+.dois{display:grid; gap:10px; margin-top:14px}
+@media(min-width:640px){ .dois{grid-template-columns:1fr 1fr; gap:16px} }
+.val{border:1px solid var(--line-2); border-radius:var(--r-m); padding:12px 15px; background:var(--card-2)}
+.val .tag{display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:700; letter-spacing:.03em;
+  text-transform:uppercase; padding:3px 9px; border-radius:99px; margin-bottom:8px}
 .val.med .tag{background:var(--good-soft); color:var(--good)}
 .val.est .tag{background:var(--warn-soft); color:var(--warn)}
-.val .cifra{font-size:clamp(30px,5.6vw,40px); font-weight:800; letter-spacing:-.04em; line-height:1}
-.val .exp{margin-top:10px; font-size:14px; line-height:1.5; color:var(--ink-2)}
+.val .cifra{font-size:clamp(28px,4.6vw,36px); font-weight:800; letter-spacing:-.04em; line-height:1}
+.val .exp{margin-top:8px; font-size:13.5px; line-height:1.45; color:var(--ink-2)}
 .val .exp b{color:var(--ink); font-weight:650}
-.acoes{display:flex; flex-wrap:wrap; gap:10px; margin-top:24px}
+.acoes{display:flex; flex-wrap:wrap; gap:10px; margin-top:18px}
 .acoes .tbtn{height:48px; padding:0 22px; font-size:15px; border-radius:99px}
 
 /* ============ seções ============ */
@@ -298,6 +298,20 @@ main{padding-bottom:80px}
 .stat .v small{font-size:16px; font-weight:600; color:var(--ink-3); letter-spacing:-.02em}
 .stat .n{font-size:14px; line-height:1.5; color:var(--ink-2); margin-top:10px}
 .stat .n b{color:var(--ink); font-weight:650}
+
+/* Telas baixas: comprime o herio para que os dois numeros apareçam sem rolar */
+@media(min-height:0px) and (max-height:860px) and (min-width:900px){
+  .hero{padding:26px 0 18px}
+  h1{font-size:clamp(32px,4.6vw,46px)}
+  .chamada{margin-top:12px; font-size:16.5px}
+  .placa{margin-top:16px}
+  .placa .corpo{padding:18px 26px 20px}
+  .placa h2{font-size:clamp(21px,3vw,26px)}
+  .placa .porque{margin-top:7px; font-size:15px}
+  .dois{margin-top:12px}
+  .val .exp{display:none}
+  .val .cifra{font-size:clamp(26px,3.6vw,32px)}
+}
 
 /* ============ gráficos ============ */
 .quadro{background:var(--card); border:1px solid var(--line-2); border-radius:var(--r-m); padding:20px 12px 8px;
@@ -570,7 +584,7 @@ footer{border-top:1px solid var(--line-2); padding:28px 0 48px; font-size:13px; 
         <button class="chip" data-h="8" aria-pressed="false">8 anos</button>
       </div>
     </div>
-    <div class="grupo"><h4>Premissas que eu estimei</h4>
+    <div class="grupo"><h4>Premissas estimadas</h4>
       <div class="campo"><label for="km">Rodagem por ano <span class="val" id="vKm"></span></label>
         <input type="range" id="km" min="5000" max="40000" step="1000" value="12000"></div>
       <div class="campo"><label for="ipva">IPVA do seu estado <span class="val" id="vIpva"></span></label>
@@ -593,7 +607,7 @@ footer{border-top:1px solid var(--line-2); padding:28px 0 48px; font-size:13px; 
   <div class="wrap in">
     <span class="olho"><b>Tabela FIPE</b> <span id="hRef"></span><span class="soAmplo"> · <span id="hFam"></span> modelos · <span id="hPts"></span> preços</span></span>
     <h1>O <span class="ris">preço da vitrine</span> não é o custo do carro.</h1>
-    <p class="chamada">Existem dois números em toda compra de carro. Um está no anúncio. O outro é <b>quanto ele tira do seu bolso por ano</b> depois que você leva. Só o segundo compara um carro com outro.</p>
+    <p class="chamada">Todo carro tem dois números. Um está no anúncio. O outro é <b>quanto ele tira do seu bolso por ano</b>, e só esse compara um carro com outro.</p>
 
     <div class="placa rev">
       <div class="fita">
@@ -607,10 +621,10 @@ footer{border-top:1px solid var(--line-2); padding:28px 0 48px; font-size:13px; 
           <div class="val med">
             <span class="tag">Medido na FIPE</span>
             <div class="cifra" id="topPreco"></div>
-            <p class="exp">É o que a Tabela FIPE diz que esse carro vale hoje, e mais ou menos o que você vai ver pedindo no anúncio. <b>Esse número eu não calculei, apenas coletei.</b></p>
+            <p class="exp">É o que a Tabela FIPE diz que esse carro vale hoje, e mais ou menos o que você vai ver pedindo no anúncio. <b>Esse número não é calculado aqui, apenas coletado.</b></p>
           </div>
           <div class="val est">
-            <span class="tag">Estimado por mim</span>
+            <span class="tag">Estimado pelo Ponto de Compra</span>
             <div class="cifra" id="topCusto"></div>
             <p class="exp">É quanto ele consome <b>por ano</b> se você ficar <span id="topAnos"></span> anos com ele. Soma o que ele perde de valor, mais IPVA, seguro, manutenção e combustível. <b>Depende de premissas que você pode mexer nos filtros.</b></p>
           </div>
@@ -752,7 +766,7 @@ footer{border-top:1px solid var(--line-2); padding:28px 0 48px; font-size:13px; 
     <div class="wrap">
       <div class="sec-cab rev"><span class="papel">Método</span>
         <h2>Como a conta foi feita</h2>
-        <p>Tudo que está marcado com <span class="est">linha tracejada</span> é estimativa minha e não dado da FIPE. Aqui está exatamente o que é cada coisa.</p></div>
+        <p>Tudo que está marcado com <span class="est">linha tracejada</span> é estimativa do Ponto de Compra, e não dado da FIPE. Aqui está exatamente o que é cada coisa.</p></div>
       <div class="metodo rev">
         <div class="mgrade">
           <div>
@@ -766,7 +780,7 @@ footer{border-top:1px solid var(--line-2); padding:28px 0 48px; font-size:13px; 
             </ul>
           </div>
           <div>
-            <h3>O que é estimativa minha</h3>
+            <h3>O que o Ponto de Compra estima</h3>
             <ul>
               <li><b>Manutenção:</b> base por marca, corrigida por idade e porte, reduzida a 55% dentro da garantia. Elétrico entra com 60% da base.</li>
               <li><b>Seguro:</b> percentual do valor FIPE por ano, variando por marca e modelo.</li>
@@ -860,7 +874,7 @@ function filtrosAtivos(){
       || S.kwh !== PADRAO.kwh || S.bat !== PADRAO.bat || S.mmult !== PADRAO.mmult) n++;
   return n;
 }
-const est = (txt, motivo) => `<span class="est" title="Estimado. ${motivo}">${txt}</span>`;
+const est = (txt, motivo) => `<span class="est" title="Estimado pelo Ponto de Compra. ${motivo}">${txt}</span>`;
 const norm = s => (s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
 const DIMS = [["custo","Custo"],["manut","Manut"],["gar","Garan"],
               ["conf","Confo"],["liq","Reven"],["camb","Câmb"]];
@@ -1711,8 +1725,8 @@ function drawTable(cs){
     h += `<tr class="${sel?"sel":""}" data-f="${c.fam}" data-a="${c.ano}">
       <td class="l"><span class="nm">${famNome(c.fam)}</span><span class="sg"> · ${segNome(c.seg)}</span></td>
       <td>${c.ano}</td>${estreito?"":`<td>${c.idade}a</td>`}<td>${BRL(c.preco)}</td>
-      <td class="bararea"><span class="fill" style="width:${(c.total/maxT*100).toFixed(1)}%"></span><span class="est" title="Estimado">${BRL(c.total)}</span></td>
-      ${estreito?"":`<td><span class="est" title="Estimado">${BRL(c.deprec)}</span></td><td><span class="est" title="Estimado">${BRL(c.manut)}</span></td><td><span class="est" title="Estimado">${c.depPct.toFixed(0)}%</span></td>
+      <td class="bararea"><span class="fill" style="width:${(c.total/maxT*100).toFixed(1)}%"></span><span class="est" title="Estimado pelo Ponto de Compra">${BRL(c.total)}</span></td>
+      ${estreito?"":`<td><span class="est" title="Estimado pelo Ponto de Compra">${BRL(c.deprec)}</span></td><td><span class="est" title="Estimado pelo Ponto de Compra">${BRL(c.manut)}</span></td><td><span class="est" title="Estimado pelo Ponto de Compra">${c.depPct.toFixed(0)}%</span></td>
       <td>${c.garMeses?c.garMeses+"m":"–"}</td><td>${"●".repeat(c.liq)}<span style="opacity:.25">${"●".repeat(5-c.liq)}</span></td>`}
       <td><b>${c.score.toFixed(0)}</b></td></tr>`;
   });
@@ -1822,7 +1836,7 @@ function bind(){
     q("vComb").textContent = `R$ ${S.comb.toFixed(2).replace(".",",")}`;
     q("vKwh").textContent  = `R$ ${S.kwh.toFixed(2).replace(".",",")}`;
     q("vBat").textContent  = `${(S.bat*100).toFixed(1).replace(".",",")}% a.a.`;
-    q("vMm").textContent   = S.mmult === 1 ? "como estimei" : (S.mmult>1?"+":"") + Math.round((S.mmult-1)*100) + "%";
+    q("vMm").textContent   = S.mmult === 1 ? "como estimado" : (S.mmult>1?"+":"") + Math.round((S.mmult-1)*100) + "%";
     q("vTeto").textContent = S.tetoCusto >= 150000 ? "sem limite" : BRL(S.tetoCusto);
   };
 

@@ -176,3 +176,22 @@ depois de limitar matriz a 10 modelos e tabela a 20 linhas, com botão para ver 
 - Geração de comps de imagem foi pulada por orçamento.
 - Sem estado na URL: não dá para compartilhar uma visão já filtrada.
 - Agrupamento heurístico erra em nomes compostos fora dos modelos de volume.
+
+## Achado: a rodagem inverte o campeão
+
+O ponto de virada fica entre **5.000 e 6.000 km por ano** (IPVA 2%, 5 anos de posse):
+
+| km/ano | campeão | custo | VW Gol 2022 |
+|---|---|---|---|
+| 4.000 | VW Gol 2022 | 9.052 | 1º |
+| 5.000 | VW Gol 2022 | 9.905 | 1º |
+| 6.000 | Caoa Chery iCar Elétrico | 10.494 | 2º |
+| 12.000 | Caoa Chery iCar Elétrico | 11.861 | 14º |
+| 30.000 | Caoa Chery iCar Elétrico | 15.585 | 87º |
+
+Por quê: a 5.000 km o Gol gasta R$ 2.696 de gasolina contra R$ 665 de energia do elétrico.
+Essa diferença de R$ 2.031 não cobre o que o elétrico paga a mais em depreciação, seguro e
+provisão de bateria. Acima disso o combustível vira o item dominante e o elétrico dispara.
+
+Isso significa que **o controle de rodagem é o filtro que mais muda a resposta**, e hoje ele
+está enterrado na gaveta sob "Premissas estimadas". Vale considerar promovê-lo.

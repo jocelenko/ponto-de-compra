@@ -156,8 +156,8 @@ function drawTable(cs){
     h += `<tr class="${sel?"sel":""}" data-f="${c.fam}" data-a="${c.ano}">
       <td class="l"><span class="nm">${famNome(c.fam)}</span><span class="sg"> · ${segNome(c.seg)}</span></td>
       <td>${c.ano}</td>${estreito?"":`<td>${c.idade}a</td>`}<td>${BRL(c.preco)}</td>
-      <td class="bararea"><span class="fill" style="width:${(c.total/maxT*100).toFixed(1)}%"></span><span class="est" title="Estimado">${BRL(c.total)}</span></td>
-      ${estreito?"":`<td><span class="est" title="Estimado">${BRL(c.deprec)}</span></td><td><span class="est" title="Estimado">${BRL(c.manut)}</span></td><td><span class="est" title="Estimado">${c.depPct.toFixed(0)}%</span></td>
+      <td class="bararea"><span class="fill" style="width:${(c.total/maxT*100).toFixed(1)}%"></span><span class="est" title="Estimado pelo Ponto de Compra">${BRL(c.total)}</span></td>
+      ${estreito?"":`<td><span class="est" title="Estimado pelo Ponto de Compra">${BRL(c.deprec)}</span></td><td><span class="est" title="Estimado pelo Ponto de Compra">${BRL(c.manut)}</span></td><td><span class="est" title="Estimado pelo Ponto de Compra">${c.depPct.toFixed(0)}%</span></td>
       <td>${c.garMeses?c.garMeses+"m":"–"}</td><td>${"●".repeat(c.liq)}<span style="opacity:.25">${"●".repeat(5-c.liq)}</span></td>`}
       <td><b>${c.score.toFixed(0)}</b></td></tr>`;
   });
