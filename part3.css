@@ -1,0 +1,107 @@
+/* ============ herói ============ */
+.hero{padding:56px 0 20px; position:relative; overflow:hidden}
+@media(min-width:900px){ .hero{padding:88px 0 32px} }
+.hero .bolha{position:absolute; border-radius:50%; filter:blur(80px); opacity:.5; pointer-events:none; z-index:0}
+.hero .b1{width:520px; height:520px; background:var(--acc-soft); top:-180px; right:-140px}
+.hero .b2{width:420px; height:420px; background:var(--crit-soft); bottom:-220px; left:-160px; opacity:.35}
+.hero .in{position:relative; z-index:1}
+.olho{display:inline-block; font-size:13px; font-weight:600; color:var(--acc-ink);
+  background:var(--acc-soft); padding:7px 15px; border-radius:99px; margin-bottom:20px;
+  white-space:nowrap; max-width:100%; overflow:hidden; text-overflow:ellipsis}
+.olho b{font-weight:750}
+.soAmplo{display:none}
+@media(min-width:560px){ .soAmplo{display:inline} }
+h1{font-size:clamp(38px,7.4vw,68px); line-height:1.02; letter-spacing:-.038em; max-width:16ch}
+h1 .ris{position:relative; display:inline-block; white-space:nowrap}
+h1 .ris::after{content:""; position:absolute; left:-2%; right:-2%; top:54%; height:.075em; background:var(--crit);
+  border-radius:99px; transform:scaleX(0); transform-origin:left; animation:risca .6s cubic-bezier(.2,.8,.25,1) .35s forwards}
+@keyframes risca{to{transform:scaleX(1)}}
+.chamada{margin-top:22px; font-size:clamp(17px,2.3vw,21px); line-height:1.45; color:var(--ink-2); max-width:44ch}
+.chamada b{color:var(--ink); font-weight:650}
+
+/* placa: o carro do topo, explicado */
+.placa{margin-top:34px; background:var(--card); border:1px solid var(--line); border-radius:var(--r-l);
+  box-shadow:var(--sh-2); overflow:hidden}
+.placa .fita{display:flex; align-items:center; gap:9px; padding:11px 20px; background:var(--ink); color:var(--bg);
+  font-size:13px; font-weight:650; letter-spacing:-.01em}
+.placa .fita svg{width:15px; height:15px}
+.placa .corpo{padding:22px 20px 24px}
+@media(min-width:760px){ .placa .corpo{padding:28px 30px 30px} }
+.placa h2{font-size:clamp(24px,4vw,32px); letter-spacing:-.032em}
+.placa h2 .ano{color:var(--ink-3); font-weight:600}
+.placa .porque{margin-top:12px; font-size:16.5px; line-height:1.5; color:var(--ink-2); max-width:60ch}
+.placa .porque b{color:var(--ink); font-weight:650}
+.dois{display:grid; gap:14px; margin-top:22px}
+@media(min-width:640px){ .dois{grid-template-columns:1fr 1fr; gap:18px} }
+.val{border:1px solid var(--line-2); border-radius:var(--r-m); padding:16px 18px; background:var(--card-2)}
+.val .tag{display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:700; letter-spacing:.03em;
+  text-transform:uppercase; padding:3px 9px; border-radius:99px; margin-bottom:10px}
+.val.med .tag{background:var(--good-soft); color:var(--good)}
+.val.est .tag{background:var(--warn-soft); color:var(--warn)}
+.val .cifra{font-size:clamp(30px,5.6vw,40px); font-weight:800; letter-spacing:-.04em; line-height:1}
+.val .exp{margin-top:10px; font-size:14px; line-height:1.5; color:var(--ink-2)}
+.val .exp b{color:var(--ink); font-weight:650}
+.acoes{display:flex; flex-wrap:wrap; gap:10px; margin-top:24px}
+.acoes .tbtn{height:48px; padding:0 22px; font-size:15px; border-radius:99px}
+
+/* ============ seções ============ */
+main{padding-bottom:80px}
+.sec{padding:64px 0 8px; scroll-margin-top:76px}
+@media(min-width:900px){ .sec{padding:92px 0 8px} }
+.sec.faixa{background:var(--bg-2)}
+.sec-cab{max-width:62ch; margin-bottom:28px}
+.papel{display:inline-block; font-size:12px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+  color:var(--acc-ink); margin-bottom:12px}
+.sec-cab h2{font-size:clamp(27px,4.6vw,40px); letter-spacing:-.034em}
+.sec-cab p{margin-top:14px; font-size:17px; line-height:1.55; color:var(--ink-2)}
+.sec-cab p b{color:var(--ink); font-weight:650}
+
+/* revelação na rolagem */
+.rev{opacity:0; transform:translateY(22px); transition:opacity .6s cubic-bezier(.2,.7,.3,1), transform .6s cubic-bezier(.2,.7,.3,1)}
+.rev.vis{opacity:1; transform:none}
+.rev.d1{transition-delay:.07s} .rev.d2{transition-delay:.14s} .rev.d3{transition-delay:.21s}
+.plx{will-change:transform}
+
+/* ============ cartões de resultado ============ */
+.grade{display:grid; gap:16px}
+@media(min-width:700px){ .grade.g2{grid-template-columns:1fr 1fr} }
+@media(min-width:820px){ .grade.g3{grid-template-columns:repeat(3,1fr)} }
+@media(min-width:700px){ .grade.g4{grid-template-columns:repeat(2,1fr)} }
+@media(min-width:1000px){ .grade.g4{grid-template-columns:repeat(4,1fr)} }
+.cartao{background:var(--card); border:1px solid var(--line-2); border-radius:var(--r-m); padding:20px;
+  box-shadow:var(--sh-1); position:relative; min-width:0}
+.cartao.top{border-color:var(--ink); box-shadow:var(--sh-2)}
+.cartao .pos{position:absolute; top:18px; right:18px; font-size:12.5px; font-weight:700; color:var(--ink-3)}
+.cartao h3{font-size:19px; letter-spacing:-.028em; padding-right:34px}
+.cartao h3 .ano{color:var(--ink-3); font-weight:600}
+.cartao .big{display:flex; align-items:baseline; gap:8px; margin:14px 0 3px; flex-wrap:wrap}
+.cartao .big .v{font-size:32px; font-weight:800; letter-spacing:-.04em; line-height:1}
+.cartao .big .u{font-size:13px; color:var(--ink-3); font-weight:600}
+.cartao .motivo{font-size:14px; line-height:1.5; color:var(--ink-2); margin-top:8px}
+.cartao .motivo b{color:var(--ink); font-weight:650}
+.selos{display:flex; gap:6px; flex-wrap:wrap; margin:14px 0 2px}
+.selo{font-size:12px; font-weight:600; padding:4px 10px; border-radius:99px; background:var(--bg-2);
+  color:var(--ink-2); white-space:nowrap}
+.selo.g{background:var(--good-soft); color:var(--good)}
+.selo.w{background:var(--warn-soft); color:var(--warn)}
+.selo.c{background:var(--crit-soft); color:var(--crit)}
+.ficha{display:grid; grid-template-columns:auto 1fr; gap:5px 14px; font-size:13.5px; margin-top:14px;
+  padding-top:14px; border-top:1px solid var(--line-2)}
+.ficha dt{color:var(--ink-3); min-width:0}
+.ficha dd{margin:0; text-align:right; font-weight:650; white-space:nowrap}
+.notas{display:flex; gap:6px; margin-top:14px; padding-top:14px; border-top:1px solid var(--line-2)}
+.notas .d{flex:1; display:grid; gap:5px; min-width:0}
+.notas .d em{font-style:normal; font-size:9px; letter-spacing:.03em; text-transform:uppercase; color:var(--ink-3);
+  font-weight:700; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.notas .d i{display:block; height:4px; background:var(--bg-3); border-radius:99px; position:relative}
+.notas .d i b{position:absolute; inset:0 auto 0 0; background:var(--acc); border-radius:99px}
+.notas .d.baixa i b{background:var(--ink-3)}
+
+/* estatística grande */
+.stat{background:var(--card); border:1px solid var(--line-2); border-radius:var(--r-m); padding:22px 20px;
+  box-shadow:var(--sh-1)}
+.stat .lab{font-size:12.5px; font-weight:650; color:var(--ink-3)}
+.stat .v{font-size:38px; font-weight:800; letter-spacing:-.045em; margin-top:8px; line-height:1}
+.stat .v small{font-size:16px; font-weight:600; color:var(--ink-3); letter-spacing:-.02em}
+.stat .n{font-size:14px; line-height:1.5; color:var(--ink-2); margin-top:10px}
+.stat .n b{color:var(--ink); font-weight:650}

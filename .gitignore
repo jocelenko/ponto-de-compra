@@ -1,0 +1,13 @@
+# cache cru da API: 7.800+ arquivos, ~28 MB. Reconstruivel com os scripts.
+cache/
+cache2/
+# saidas intermediarias e logs de coleta
+*.log
+fipe_all_backup.json
+_alljobs.json
+_analise_step1.json
+_falta.json
+teste.html
+mobile.html
+__pycache__/
+.DS_Store

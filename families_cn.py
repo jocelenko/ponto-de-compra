@@ -1,0 +1,23 @@
+# nome, [codigos de marca], marca, segmento, regex_inclui, regex_exclui, forceAuto
+FAM_CN = [
+ ("Caoa Chery Tiggo 2",  [161],     "Caoa Chery","SUV compacto",  r'^Tiggo 2 ', None, False),
+ ("Caoa Chery Tiggo 3X", [245],     "Caoa Chery","SUV compacto",  r'^Tiggo 3X', None, False),
+ ("Caoa Chery Tiggo 5X", [245,161], "Caoa Chery","SUV compacto",  r'^Tiggo 5X', None, True),
+ ("Caoa Chery Tiggo 7",  [245,161], "Caoa Chery","SUV medio",     r'^Tiggo 7',  None, True),
+ ("Caoa Chery Tiggo 8",  [245,161], "Caoa Chery","SUV medio",     r'^Tiggo 8',  None, True),
+ ("Caoa Chery Arrizo 5", [161],     "Caoa Chery","Sedan compacto",r'^ARRIZO 5', r'5e', False),
+ ("Caoa Chery Arrizo 6", [245,161], "Caoa Chery","Sedan medio",   r'^ARRIZO 6', None, True),
+ ("BYD Dolphin Mini",    [238],     "BYD",       "Hatch compacto",r'^Dolphin Mini', None, True),
+ ("BYD Dolphin",         [238],     "BYD",       "Hatch compacto",r'^Dolphin (EV|Plus|SE)', None, True),
+ ("BYD Yuan",            [238],     "BYD",       "SUV compacto",  r'^Yuan', None, True),
+ ("BYD Song",            [238],     "BYD",       "SUV medio",     r'^Song', None, True),
+ ("BYD King",            [238],     "BYD",       "Sedan medio",   r'^King', None, True),
+ ("BYD Seal",            [238],     "BYD",       "Sedan medio",   r'^Seal\b', None, True),
+ ("GWM Haval H6",        [240],     "GWM",       "SUV medio",     r'^Haval H6', None, True),
+ ("GWM Ora 03",          [240],     "GWM",       "Hatch compacto",r'^Ora 03', None, True),
+ ("Omoda 5",             [252],     "Omoda",     "SUV compacto",  r'^5 ', None, True),
+ ("Jaecoo 7",            [251],     "Jaecoo",    "SUV medio",     r'^7 ', None, True),
+ ("JAC T40",             [177],     "JAC",       "SUV compacto",  r'^T40', None, False),
+ ("JAC T50",             [177],     "JAC",       "SUV compacto",  r'^T50', None, False),
+ ("JAC T60",             [177],     "JAC",       "SUV medio",     r'^T60', None, False),
+]

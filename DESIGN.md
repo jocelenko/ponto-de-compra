@@ -1,0 +1,87 @@
+# Design
+
+<!-- impeccable:design-schema 1 -->
+
+## Visual world
+
+**Cânone big tech editorial.** Régua de qualidade escolhida pelo autor: Apple e Airbnb. Executado direto, sem ironia e sem gracinha autoral enfiada por dentro.
+
+Isso é uma decisão registrada, não um padrão que caiu por omissão. Duas direções autorais foram construídas antes (dashboard escuro com acento teal, depois classificados de jornal com cartela de para-brisa) e ambas foram recusadas. O autor pediu explicitamente o caminho convencional, e convenção virou o compromisso.
+
+Anti-referências, já testadas e descartadas neste projeto:
+
+- Dashboard SaaS com rail fixo de filtros que rola de lado, tiles de KPI e grade de cards.
+- Papel de jornal, serifa de notícia e escrita à mão.
+- Menu lateral permanente. Comeu 30% da largura e não recolhia.
+
+## Ground e paleta
+
+Estratégia: **contido**. Neutros mais um azul de ação. O visitante veio entender, então cor não disputa com número.
+
+Claro é o padrão. Escuro é quase preto de verdade, no registro Apple, e não cinza-azulado.
+
+| Papel | Claro | Escuro |
+|---|---|---|
+| `--bg` fundo | `#FFFFFF` | `#000000` |
+| `--bg-2` faixa alternada de seção | `#F5F5F7` | `#0E0E10` |
+| `--card` superfície elevada | `#FFFFFF` | `#1D1D1F` |
+| `--ink` | `#1D1D1F` | `#F5F5F7` |
+| `--ink-2` | `#515154` | `#B4B4B8` |
+| `--ink-3` | `#6E6E73` | `#8E8E93` |
+| `--line` | `#D2D2D7` | `#3A3A3C` |
+| `--acc` ação | `#0071E3` | `#2997FF` |
+| `--acc-on` tinta sobre a ação | `#FFFFFF` | `#04121F` |
+| `--good` / `--warn` / `--crit` | `#1E7B45` / `#9A6400` / `#B3261E` | `#3FBF6F` / `#E0A33A` / `#FF6B5E` |
+
+Regras duráveis:
+
+- **`--acc-on` existe porque branco sobre `#2997FF` reprova em contraste (3,02).** No escuro a tinta do botão primário é escura. Nunca voltar para branco fixo.
+- Série de gráfico usa `--s1` a `--s6`, um conjunto já validado para daltonismo e contraste nas duas superfícies. Não trocar sem revalidar.
+- A tinta dentro das células da matriz é **calculada pela luminância real do degrau**, nunca por limiar fixo de índice. Limiar fixo quebra quando a rampa inverte de direção entre os temas.
+- Sem gradiente em texto. Ênfase vem de peso e tamanho.
+
+## Tipografia
+
+**Figtree** como família única, 300 a 900, com `tabular-nums` global. Uma família em escala ampla é a gramática da régua escolhida.
+
+| Papel | Tamanho | Tracking |
+|---|---|---|
+| h1 | `clamp(38px, 7.4vw, 68px)` | `-.038em` |
+| h2 de seção | `clamp(27px, 4.6vw, 40px)` | `-.034em` |
+| Cifra grande | 32 a 52px, peso 800 | `-.04em` |
+| Corpo | 17px | `-.011em` |
+
+## Componentes
+
+- **`.topo`**: barra fixa de 60px, translúcida com `backdrop-filter`. Contém navegação inline (some abaixo de 1040px), tema, seções e o botão de filtros com contador de filtros ativos.
+- **`.drawer`**: gaveta de filtros à direita, recolhível, `transform: translateX(100%)` quando fechada. Largura `min(420px, 100%)`, então ocupa a tela inteira no celular. **Nunca virar coluna permanente.**
+- **`.sheet`**: folha de seções que sobe de baixo no celular.
+- **`.placa`**: o campeão dentro do herói, com o motivo em uma frase e os dois números explicados lado a lado.
+- **`.cartao`**: item de resultado. Traz cifra, motivo, selos, ficha e as seis notas por critério.
+- **`.crit`**: critério de pontuação com peso em percentual e slider.
+- **`.quadro`**: moldura de gráfico. **Todo gráfico é obrigado a ter `.tit` com a conclusão e `.sub` ensinando a ler.** Gráfico sem título que conclui é gráfico incompleto.
+
+## Proveniência, regra durável
+
+Número medido na FIPE sai limpo. Número estimado por premissa recebe `.est`, que é sublinhado tracejado mais explicação no `title`. No herói os dois aparecem lado a lado com um parágrafo cada dizendo o que são, porque chave solta com dois números não se explica para quem lê pela primeira vez.
+
+## Responsivo
+
+Mobile-first, só `min-width`. Pontos de quebra: 520, 560, 700, 760, 820, 900, 980, 1000, 1040, 1200.
+
+Verificado por harness de iframe (`mobile.html`), porque o painel de navegador do ambiente reporta viewport zero e não honra redimensionamento:
+
+- **Zero rolagem horizontal de página em 360, 390 e 768.**
+- Matriz vira lista por modelo abaixo de 700px, limitada a 10 modelos com botão para ver o resto.
+- Tabela cai para 5 colunas e 20 linhas abaixo de 760px, com botão para ver o resto.
+- Isso derrubou a altura da página no celular de 31.911px para 18.072px.
+- Alvo de toque 44px em `pointer: coarse`.
+
+## Movimento
+
+- Risco sobre "preço da vitrine" traçado uma vez na entrada.
+- `.rev` revela blocos na rolagem, com `IntersectionObserver` e `unobserve` depois de revelar.
+- Leitura em rolagem na seção da curva: gráfico fixo, texto avança em três etapas.
+- Parallax só nas manchas do herói, e só nos primeiros 140% da viewport.
+- Barra de progresso usa `transform: scaleX`, nunca `width`, que causa thrash de layout.
+- `prefers-reduced-motion` desliga tudo e entrega o estado final.

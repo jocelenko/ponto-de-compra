@@ -1,0 +1,293 @@
+<header class="topo">
+  <div class="in">
+    <span class="marca">Ponto de Compra</span>
+    <nav id="navTopo">
+      <a href="#s-veredito">O que comprar</a>
+      <a href="#s-criterios">Por que esses</a>
+      <a href="#s-curva">A curva</a>
+      <a href="#s-matriz">Preços</a>
+      <a href="#s-lista">Lista</a>
+      <a href="#s-metodo">Método</a>
+    </nav>
+    <button class="tbtn" id="btnSecoes" aria-label="Seções">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M1 3h12M1 7h12M1 11h12"/></svg>
+      <span class="soDesk">Seções</span>
+    </button>
+    <button class="tbtn" id="theme" aria-label="Alternar tema">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="7" cy="7" r="3.2"/><path d="M7 .8v1.6M7 11.6v1.6M13.2 7h-1.6M2.4 7H.8M11.4 2.6l-1.1 1.1M3.7 10.3l-1.1 1.1M11.4 11.4l-1.1-1.1M3.7 3.7L2.6 2.6"/></svg>
+    </button>
+    <button class="tbtn forte" id="btnFiltros" aria-expanded="false" aria-controls="drawer">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M1 3h12M3.5 7h7M6 11h2"/></svg>
+      Filtros <span class="cont" id="contFiltros">0</span>
+    </button>
+    <div class="progresso" id="progresso"></div>
+  </div>
+</header>
+
+<div class="sheet" id="sheetSecoes"><div class="fundo" data-fecha></div>
+  <div class="painel"><div class="pega"></div>
+    <a href="#s-veredito"><i>1</i>O que comprar</a>
+    <a href="#s-criterios"><i>2</i>Por que esses ganharam</a>
+    <a href="#s-curva"><i>3</i>A curva de desvalorização</a>
+    <a href="#s-modelo"><i>4</i>Modelo pesa mais que ano</a>
+    <a href="#s-matriz"><i>5</i>Preço por ano modelo</a>
+    <a href="#s-detalhe"><i>6</i>Um modelo de perto</a>
+    <a href="#s-dinheiro"><i>7</i>Onde vai o dinheiro</a>
+    <a href="#s-fronteira"><i>8</i>Preço contra custo</a>
+    <a href="#s-lista"><i>9</i>A lista completa</a>
+    <a href="#s-metodo"><i>10</i>Como a conta foi feita</a>
+  </div>
+</div>
+
+<div class="velo" id="velo"></div>
+<aside class="drawer" id="drawer" aria-label="Filtros">
+  <div class="cab"><h3>Filtros</h3>
+    <button class="tbtn" id="limparTudo">Limpar</button>
+    <button class="fechar" id="fecharDrawer" aria-label="Fechar filtros">&times;</button></div>
+  <div class="corpo">
+    <div class="grupo"><h4>O carro</h4>
+      <div class="campo"><label for="busca">Procurar modelo</label>
+        <select id="buscaSel"></select></div>
+      <div class="campo"><label>Preço de compra</label>
+        <div class="dupla"><select id="budMin" aria-label="Preço mínimo"></select><select id="budMax" aria-label="Preço máximo"></select></div></div>
+      <div class="campo"><label>Idade do carro</label>
+        <div class="dupla"><select id="idadeMin" aria-label="Idade mínima"></select><select id="idadeMax" aria-label="Idade máxima"></select></div></div>
+      <div class="campo"><label for="tetoCusto">Custo por ano até <span class="val" id="vTeto"></span></label>
+        <input type="range" id="tetoCusto" min="10000" max="80000" step="1000" value="80000"></div>
+      <div class="campo"><label for="seg">Segmento</label><select id="seg"></select></div>
+      <div class="campo"><label for="marca">Marca</label><select id="marca"></select></div>
+      <div class="campo"><label for="ene">Combustível</label><select id="ene"></select></div>
+    </div>
+    <div class="grupo"><h4>Exigências</h4>
+      <label class="switch"><input type="checkbox" id="soGarantia"><span class="box"></span>
+        <span class="txt">Só com garantia de fábrica<small>Descarta quem chega com a garantia vencida.</small></span></label>
+      <label class="switch"><input type="checkbox" id="soConfiavel"><span class="box"></span>
+        <span class="txt">Só com histórico confiável<small>Descarta modelo com menos de quatro anos na FIPE, onde a curva é chute.</small></span></label>
+      <label class="switch"><input type="checkbox" id="soLiquido"><span class="box"></span>
+        <span class="txt">Só o que revende fácil<small>Mantém apenas liquidez 4 ou 5, que sai rápido no anúncio.</small></span></label>
+      <label class="switch"><input type="checkbox" id="soCambio"><span class="box"></span>
+        <span class="txt">Só câmbio de baixo risco<small>Descarta dupla embreagem seca e CVT de histórico problemático.</small></span></label>
+    </div>
+    <div class="grupo"><h4>Tempo com o carro</h4>
+      <div class="chips" id="chipsH">
+        <button class="chip" data-h="3" aria-pressed="false">3 anos</button>
+        <button class="chip" data-h="5" aria-pressed="true">5 anos</button>
+        <button class="chip" data-h="8" aria-pressed="false">8 anos</button>
+      </div>
+    </div>
+    <div class="grupo"><h4>Premissas que eu estimei</h4>
+      <div class="campo"><label for="km">Rodagem por ano <span class="val" id="vKm"></span></label>
+        <input type="range" id="km" min="5000" max="40000" step="1000" value="12000"></div>
+      <div class="campo"><label for="ipva">IPVA do seu estado <span class="val" id="vIpva"></span></label>
+        <input type="range" id="ipva" min="0" max="60" step="5" value="40"></div>
+      <div class="campo"><label for="comb">Gasolina <span class="val" id="vComb"></span></label>
+        <input type="range" id="comb" min="450" max="900" step="10" value="620"></div>
+      <div class="campo"><label for="kwh">Energia elétrica <span class="val" id="vKwh"></span></label>
+        <input type="range" id="kwh" min="50" max="180" step="5" value="95"></div>
+      <div class="campo"><label for="bat">Provisão de bateria <span class="val" id="vBat"></span></label>
+        <input type="range" id="bat" min="0" max="80" step="5" value="25"></div>
+      <div class="campo"><label for="mm">Manutenção real <span class="val" id="vMm"></span></label>
+        <input type="range" id="mm" min="60" max="220" step="10" value="100"></div>
+    </div>
+  </div>
+  <div class="pe"><button class="tbtn forte" id="verResultados" style="flex:1;justify-content:center">Ver <span id="contRes"></span> resultados</button></div>
+</aside>
+
+<section class="hero">
+  <span class="bolha b1"></span><span class="bolha b2"></span>
+  <div class="wrap in">
+    <span class="olho"><b>Tabela FIPE</b> <span id="hRef"></span><span class="soAmplo"> · <span id="hFam"></span> modelos · <span id="hPts"></span> preços</span></span>
+    <h1>O <span class="ris">preço da vitrine</span> não é o custo do carro.</h1>
+    <p class="chamada">Existem dois números em toda compra de carro. Um está no anúncio. O outro é <b>quanto ele tira do seu bolso por ano</b> depois que você leva. Só o segundo compara um carro com outro.</p>
+
+    <div class="placa rev">
+      <div class="fita">
+        <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 1l2 4.3 4.7.6-3.4 3.2.9 4.6L8 11.5 3.8 13.7l.9-4.6L1.3 5.9 6 5.3z"/></svg>
+        O melhor da sua faixa agora
+      </div>
+      <div class="corpo">
+        <h2 id="topNome"></h2>
+        <p class="porque" id="topPorque"></p>
+        <div class="dois">
+          <div class="val med">
+            <span class="tag">Medido na FIPE</span>
+            <div class="cifra" id="topPreco"></div>
+            <p class="exp">É o que a Tabela FIPE diz que esse carro vale hoje, e mais ou menos o que você vai ver pedindo no anúncio. <b>Esse número eu não calculei, apenas coletei.</b></p>
+          </div>
+          <div class="val est">
+            <span class="tag">Estimado por mim</span>
+            <div class="cifra" id="topCusto"></div>
+            <p class="exp">É quanto ele consome <b>por ano</b> se você ficar <span id="topAnos"></span> anos com ele. Soma o que ele perde de valor, mais IPVA, seguro, manutenção e combustível. <b>Depende de premissas que você pode mexer nos filtros.</b></p>
+          </div>
+        </div>
+        <div class="acoes">
+          <a class="tbtn forte" href="#s-veredito">Ver os três primeiros</a>
+          <a class="tbtn" href="#s-criterios">Por que esse ganhou</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<main>
+  <section class="sec faixa" id="s-veredito">
+    <div class="wrap">
+      <div class="sec-cab rev"><span class="papel">O que comprar</span>
+        <h2>Os três que lideram no seu filtro</h2>
+        <p><span id="cCount"></span> combinações de modelo e ano passam pelo que você pediu. Estas três ficam na frente depois de pesar custo por ano, garantia, manutenção, conforto, facilidade de revenda e risco de câmbio.</p></div>
+      <div class="grade g3" id="picks"></div>
+      <div class="grade g4 rev" id="tiles" style="margin-top:20px"></div>
+    </div>
+  </section>
+
+  <section class="sec" id="s-criterios">
+    <div class="wrap">
+      <div class="sec-cab rev"><span class="papel">Por que esses ganharam</span>
+        <h2>Seis critérios, e você manda no peso de cada um</h2>
+        <p>Cada carro leva nota de 0 a 100 em seis critérios. A nota é <b>relativa ao seu filtro de agora</b>, ou seja, 100 é o melhor entre os <span id="pesoN"></span> candidatos atuais, não uma nota absoluta. A média ponderada dessas seis notas é o que define a ordem. Arraste qualquer peso e a lista se refaz na hora.</p></div>
+      <div class="criterios" id="critGrade"></div>
+      <div class="acoes" style="margin-top:18px">
+        <button class="tbtn" id="wreset">Voltar ao equilíbrio</button>
+        <button class="tbtn" id="wcusto">Ordenar só por custo</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec faixa" id="s-curva">
+    <div class="wrap">
+      <div class="sec-cab rev"><span class="papel">A curva</span>
+        <h2>Carro não despenca e depois estabiliza. Ele cai sempre igual.</h2>
+        <p>Essa é a crença mais repetida sobre carro, e a FIPE não confirma. Role para ver o que os dados mostram.</p></div>
+      <div class="conta">
+        <div class="passos">
+          <div class="passo" data-passo="0"><h3>A queda é constante</h3>
+            <span class="cif" id="quedaAno"></span>
+            <p>É quanto o carro mediano perde por ano, todo ano. <b>Não existe joelho na curva.</b> O quarto ano tira quase o mesmo tanto que o primeiro.</p></div>
+          <div class="passo" data-passo="1"><h3>Metade do valor</h3>
+            <span class="cif" id="meiaVida"></span>
+            <p>É quantos <b>anos</b> o carro mediano leva para valer metade do que valia zero quilômetro. Muito mais tempo do que a fama sugere.</p></div>
+          <div class="passo" data-passo="2"><h3>Então de onde vem o tombo?</h3>
+            <p>Ele existe, mas acontece <b>fora desta curva</b>. A queda brutal é entre o que você paga na concessionária e o que a FIPE diz que o carro vale no dia seguinte. Nesse pulo entram margem da loja, frete, emplacamento e acessórios. Da segunda mão em diante, que é onde você compra, é ladeira constante.</p></div>
+        </div>
+        <div class="fixo">
+          <div class="quadro">
+            <p class="tit">Quanto do valor de zero quilômetro o carro ainda segura</p>
+            <p class="sub">Cada linha é um modelo. A linha tracejada é a mediana do mercado. Toque nos nomes para trocar.</p>
+            <div class="chartbox" id="cCurva"></div><div class="legf" id="lgCurva"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="s-modelo">
+    <div class="wrap">
+      <div class="sec-cab rev"><span class="papel">O achado</span>
+        <h2>Escolher o modelo pesa mais do que escolher o ano</h2>
+        <p>Entre a idade mais barata e a mais cara, a mediana do custo anual muda só <b id="varIdade"></b>. Dentro da <b>mesma idade</b>, a distância do modelo mais barato para o mais caro é de <b id="varModelo"></b>. Decida o carro primeiro, o ano depois.</p></div>
+      <div class="quadro rev">
+        <p class="tit">Custo por ano, por idade do carro na compra</p>
+        <p class="sub">A linha do meio quase não sobe nem desce. As barras verticais mostram a distância entre o modelo mais barato e o mais caro daquela idade.</p>
+        <div class="chartbox" id="cRange"></div><div class="legf" id="lgRange"></div>
+      </div>
+      <div class="nota rev" style="margin-top:18px">
+        <b>Por que a mediana quase não se mexe.</b> Ao envelhecer, o carro deixa de perder valor mais ou menos na mesma velocidade em que passa a exigir oficina. Um efeito perde força, o outro ganha, e o total por ano fica parado. Com horizonte de cinco anos, IPVA, seguro e combustível somados já respondem por perto de dois terços da conta.
+      </div>
+    </div>
+  </section>
+
+  <section class="sec faixa" id="s-matriz">
+    <div class="wrap">
+      <div class="sec-cab rev"><span class="papel">Os preços</span>
+        <h2>Quanto custa cada modelo, em cada ano</h2>
+        <p>Em cima o preço FIPE de hoje. Embaixo, em cinza, o custo estimado por ano. Quanto mais escura a célula, mais caro o carro. Toque em qualquer uma para abrir o modelo no detalhe.</p></div>
+      <div class="quadro rev"><div class="hmwrap" id="heat"></div><div class="escala" id="hmScale"></div></div>
+    </div>
+  </section>
+
+  <section class="sec" id="s-detalhe">
+    <div class="wrap">
+      <div class="sec-cab rev"><span class="papel">Detalhe</span>
+        <h2>Um modelo de perto</h2>
+        <p>O mesmo cálculo dentro de um único modelo, ano a ano, com as camadas de custo empilhadas. No gráfico, <b id="uFam"></b>.</p></div>
+      <div class="quadro rev">
+        <p class="tit">De que é feito o custo anual, ano a ano</p>
+        <p class="sub">A linha preta é o total. As faixas coloridas mostram quanto cada componente contribui.</p>
+        <div class="chartbox" id="cU"></div><div class="legf" id="lgU"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec faixa" id="s-dinheiro">
+    <div class="wrap">
+      <div class="sec-cab rev"><span class="papel">Detalhe</span>
+        <h2>Onde vai o dinheiro</h2>
+        <p>Em carro novo a depreciação domina. Em carro velho quem manda é a manutenção. É essa troca de comando que achata a curva de custo.</p></div>
+      <div class="quadro rev">
+        <p class="tit">Composição do custo anual dos 12 primeiros</p>
+        <p class="sub">Cada barra é um carro. O comprimento total é o custo por ano.</p>
+        <div class="chartbox" id="cStack"></div><div class="legf" id="lgStack"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="s-fronteira">
+    <div class="wrap">
+      <div class="sec-cab rev"><span class="papel">Detalhe</span>
+        <h2>Quanto você paga contra quanto você gasta</h2>
+        <p>Comprar barato e manter barato não são a mesma coisa. Este gráfico separa as duas.</p></div>
+      <div class="quadro rev">
+        <p class="tit">Preço de compra no eixo horizontal, custo por ano no vertical</p>
+        <p class="sub">Cada ponto é um modelo em um ano. <b>O canto inferior esquerdo é onde mora o bom negócio.</b> Quanto mais claro o ponto, mais novo o carro.</p>
+        <div class="chartbox" id="cScat"></div><div class="legf" id="lgScat"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec faixa" id="s-lista">
+    <div class="wrap">
+      <div class="sec-cab rev"><span class="papel">Tudo</span>
+        <h2>A lista completa</h2>
+        <p><span id="tblCount"></span> candidatos no seu filtro. Toque no cabeçalho para reordenar e na linha para mandar o carro aos gráficos.</p></div>
+      <div class="quadro rev"><div class="tblwrap" id="tbl"></div></div>
+    </div>
+  </section>
+
+  <section class="sec" id="s-metodo">
+    <div class="wrap">
+      <div class="sec-cab rev"><span class="papel">Método</span>
+        <h2>Como a conta foi feita</h2>
+        <p>Tudo que está marcado com <span class="est">linha tracejada</span> é estimativa minha e não dado da FIPE. Aqui está exatamente o que é cada coisa.</p></div>
+      <div class="metodo rev">
+        <div class="mgrade">
+          <div>
+            <h3>O que vem da FIPE</h3>
+            <ul>
+              <li>Preços puxados da API oficial <code>veiculos.fipe.org.br</code>, tabela de referência <span id="mRef"></span>.</li>
+              <li>A varredura passou por <b>todas as marcas de carro da FIPE</b>, sem lista curta. Ficaram as versões automáticas, incluindo elétricas e híbridas. Manuais e anos anteriores a 2016 ficaram de fora.</li>
+              <li>A FIPE não publica planilha nem CSV, só consulta versão por versão. Os dados foram coletados um a um.</li>
+              <li>A FIPE renomeia as versões a cada geração, então a mediana crua de um ano não é comparável com a do seguinte. A série foi montada por <b>índice encadeado</b>: a variação de um ano para o outro sai só das versões que existem nos <b>dois</b> anos.</li>
+              <li>Versões <b>flex, híbridas, elétricas e diesel</b> viram linhas separadas, porque misturam preço e custo de energia muito distintos.</li>
+            </ul>
+          </div>
+          <div>
+            <h3>O que é estimativa minha</h3>
+            <ul>
+              <li><b>Manutenção:</b> base por marca, corrigida por idade e porte, reduzida a 55% dentro da garantia. Elétrico entra com 60% da base.</li>
+              <li><b>Seguro:</b> percentual do valor FIPE por ano, variando por marca e modelo.</li>
+              <li><b>Energia:</b> flex e híbrido em km por litro, diesel a 95% do preço da gasolina, elétrico em kWh por 100 km.</li>
+              <li><b>Provisão de bateria:</b> reserva anual para elétrico, que dobra a partir do oitavo ano.</li>
+              <li><b>Revenda futura:</b> assume que a curva de hoje continua valendo. Tudo em reais de hoje, sem inflação e sem juros.</li>
+              <li><b>Risco de câmbio, liquidez, porte e conforto:</b> notas por marca e modelo, a partir do histórico de mercado.</li>
+            </ul>
+            <div class="nota" style="margin-top:20px">
+              <b>O maior risco não está nesta conta.</b> Um exemplar mal cuidado apaga qualquer vantagem calculada aqui. Antes de fechar, pague vistoria cautelar independente e laudo de motor e câmbio, e peça o histórico de revisões. FIPE é referência, não preço de loja: negociação, cor, quilometragem e estado mexem uns 10% para cada lado.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap">Preços da Tabela FIPE, referência <span id="fRef"></span>. <span id="hMarcas"></span> marcas, <span id="hVer"></span> versões automáticas. Os custos de posse são estimativas e não substituem orçamento de oficina nem cotação de seguro.</div></footer>

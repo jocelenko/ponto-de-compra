@@ -1,0 +1,90 @@
+/* ============ barra superior ============ */
+.topo{position:sticky; top:0; z-index:70; background:color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter:saturate(180%) blur(20px); -webkit-backdrop-filter:saturate(180%) blur(20px);
+  border-bottom:1px solid var(--line-2)}
+.topo .in{display:flex; align-items:center; gap:10px; height:60px; max-width:1120px; margin:0 auto; padding:0 20px}
+@media(min-width:900px){ .topo .in{padding:0 32px} }
+.topo .marca{font-weight:800; font-size:16px; letter-spacing:-.03em; white-space:nowrap; margin-right:auto; color:var(--ink)}
+.topo nav{display:none; gap:2px; margin-right:auto}
+@media(min-width:1040px){ .topo nav{display:flex} .topo .marca{margin-right:26px} }
+.topo nav a{font-size:13.5px; font-weight:500; color:var(--ink-2); padding:7px 10px; border-radius:99px}
+.topo nav a:hover{background:var(--bg-2); color:var(--ink); text-decoration:none}
+.topo nav a.atual{color:var(--ink); font-weight:650; background:var(--bg-2)}
+.tbtn{display:inline-flex; align-items:center; justify-content:center; gap:7px; height:40px; padding:0 14px; border-radius:99px;
+  border:1px solid var(--line); background:var(--card); color:var(--ink); font:inherit; font-size:13.5px;
+  font-weight:600; cursor:pointer; white-space:nowrap}
+.tbtn:hover{background:var(--bg-2)}
+.tbtn.forte{background:var(--acc); border-color:var(--acc); color:var(--acc-on)}
+.tbtn.forte:hover{filter:brightness(1.08)}
+.tbtn svg{width:14px; height:14px; flex:0 0 auto}
+.tbtn .cont{background:color-mix(in srgb, var(--acc-on) 22%, transparent); border-radius:99px; padding:1px 6px; font-size:11.5px; font-weight:700}
+.progresso{position:absolute; left:0; bottom:-1px; height:2px; background:var(--acc); width:100%;
+  transform:scaleX(0); transform-origin:left; will-change:transform}
+
+/* menu de seções no celular */
+.sheet{position:fixed; inset:0; z-index:90; display:none}
+.sheet.on{display:block}
+.sheet .fundo{position:absolute; inset:0; background:rgba(0,0,0,.4)}
+.sheet .painel{position:absolute; left:0; right:0; bottom:0; background:var(--card); border-radius:20px 20px 0 0;
+  padding:10px 0 24px; max-height:82vh; overflow-y:auto; box-shadow:var(--sh-3);
+  animation:sobe .26s cubic-bezier(.2,.8,.25,1)}
+@keyframes sobe{from{transform:translateY(18px); opacity:.6} to{transform:none; opacity:1}}
+.sheet .pega{width:36px; height:4px; background:var(--line); border-radius:99px; margin:0 auto 12px}
+.sheet a{display:flex; align-items:center; gap:12px; padding:14px 22px; color:var(--ink); font-size:16px; font-weight:500}
+.sheet a:hover{background:var(--bg-2); text-decoration:none}
+.sheet a i{font-style:normal; color:var(--ink-3); font-size:13px; font-variant-numeric:tabular-nums; min-width:16px}
+
+/* ============ painel de filtros, coluna recolhível ============ */
+.drawer{position:fixed; top:0; right:0; bottom:0; width:min(420px,100%); z-index:95; background:var(--card);
+  border-left:1px solid var(--line); box-shadow:var(--sh-3); transform:translateX(100%);
+  transition:transform .3s cubic-bezier(.32,.72,0,1); display:flex; flex-direction:column}
+.drawer.on{transform:none}
+.drawer .cab{display:flex; align-items:center; gap:10px; padding:16px 20px; border-bottom:1px solid var(--line-2)}
+.drawer .cab h3{font-size:19px; margin-right:auto}
+.drawer .corpo{overflow-y:auto; padding:18px 20px 26px; flex:1}
+.drawer .pe{border-top:1px solid var(--line-2); padding:12px 20px; display:flex; gap:10px}
+.fechar{width:40px; height:40px; border-radius:99px; border:0; background:var(--bg-2); color:var(--ink);
+  font-size:19px; cursor:pointer; line-height:1}
+.fechar:hover{background:var(--bg-3)}
+.velo{position:fixed; inset:0; z-index:94; background:rgba(0,0,0,.35); opacity:0; pointer-events:none;
+  transition:opacity .3s}
+.velo.on{opacity:1; pointer-events:auto}
+.grupo{margin-bottom:22px}
+.grupo > h4{font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3);
+  font-weight:700; margin-bottom:12px}
+.campo{margin-bottom:16px}
+.campo > label{display:flex; justify-content:space-between; align-items:baseline; gap:10px;
+  font-size:14px; font-weight:600; margin-bottom:6px}
+.campo .val{font-size:13.5px; font-weight:700; color:var(--acc-ink); font-variant-numeric:tabular-nums}
+.campo input[type=range]{width:100%; accent-color:var(--acc); min-height:28px}
+.campo select{width:100%; font:inherit; font-size:15px; padding:11px 34px 11px 12px; min-height:46px;
+  border:1px solid var(--line); border-radius:var(--r-s); background:var(--card-2); color:var(--ink);
+  appearance:none; cursor:pointer;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M1 1l4 4 4-4' fill='none' stroke='%236E6E73' stroke-width='1.7'/></svg>");
+  background-repeat:no-repeat; background-position:right 12px center}
+.dupla{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.chips{display:flex; flex-wrap:wrap; gap:8px}
+.chip{font:inherit; font-size:13.5px; font-weight:600; padding:0 16px; min-height:44px; border-radius:99px;
+  border:1px solid var(--line); background:var(--card); color:var(--ink-2); cursor:pointer}
+.chip[aria-pressed=true]{background:var(--ink); border-color:var(--ink); color:var(--bg)}
+.chip:hover{border-color:var(--ink-3)}
+.switch{display:flex; align-items:center; gap:12px; padding:11px 0; cursor:pointer; min-height:46px}
+.switch input{position:absolute; opacity:0; width:0; height:0}
+.switch .box{width:44px; height:26px; border-radius:99px; background:var(--line); position:relative;
+  flex:0 0 auto; transition:background .2s}
+.switch .box::after{content:""; position:absolute; top:3px; left:3px; width:20px; height:20px; border-radius:50%;
+  background:#fff; box-shadow:var(--sh-1); transition:transform .2s}
+.switch input:checked + .box{background:var(--acc)}
+.switch input:checked + .box::after{transform:translateX(18px)}
+.switch input:focus-visible + .box{outline:2px solid var(--acc); outline-offset:2px}
+.switch .txt{font-size:14.5px; font-weight:500}
+.switch .txt small{display:block; color:var(--ink-3); font-size:12.5px; font-weight:400; line-height:1.35}
+
+/* alvos maiores onde o dedo manda */
+@media (pointer:coarse){
+  .tbtn{height:44px; padding:0 16px}
+  .fechar{width:44px; height:44px}
+  .topo nav a{padding:11px 12px}
+}
+.soDesk{display:none}
+@media(min-width:520px){ .soDesk{display:inline} }
