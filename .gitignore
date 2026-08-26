@@ -11,3 +11,6 @@ teste.html
 mobile.html
 __pycache__/
 .DS_Store
+
+# arquivos temporarios de auditoria
+_rev_*.html
