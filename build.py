@@ -18,3 +18,9 @@ import shutil, os
 if os.path.isdir(p+"docs"):
     shutil.copyfile(p+"ponto-de-compra.html", p+"docs/index.html")
     print("docs/index.html atualizado")
+
+# o detector só serve se rodar sozinho. colisão de classe não dá erro de sintaxe,
+# então sem isso ela só aparece como layout torto na tela.
+import subprocess
+r = subprocess.run(["python3", p+"scripts/checar-css.py"], capture_output=True, text=True)
+print(r.stdout.strip() or r.stderr.strip())

@@ -99,8 +99,6 @@ a:hover{text-decoration:underline; text-underline-offset:3px}
 @media(min-width:1040px){
   .topo nav{display:flex}
   .topo .marca{margin-right:26px}
-  /* o menu do topo ja lista as secoes: o botao seria repeticao */
-  #btnSecoes{display:none}
 }
 .topo nav a{font-size:13.5px; font-weight:500; color:var(--ink-2); padding:7px 10px; border-radius:99px}
 .topo nav a:hover{background:var(--bg-2); color:var(--ink); text-decoration:none}
@@ -191,26 +189,6 @@ a:hover{text-decoration:underline; text-underline-offset:3px}
   .topo .marca{gap:7px}
 }
 
-/* ---------- megamenu de critérios ---------- */
-.mega{position:fixed; top:60px; left:0; right:0; z-index:80; background:var(--card);
-  border-bottom:1px solid var(--line); box-shadow:var(--sh-3);
-  max-height:calc(100vh - 60px); overflow-y:auto;
-  transform:translateY(-8px); opacity:0; pointer-events:none;
-  transition:transform .22s cubic-bezier(.2,.8,.25,1), opacity .18s}
-.mega.on{transform:none; opacity:1; pointer-events:auto}
-.mega .wrap{padding-top:22px; padding-bottom:24px}
-.megaCab{display:flex; gap:16px; align-items:flex-start; margin-bottom:18px}
-.megaCab h3{font-size:21px; letter-spacing:-.03em}
-.megaCab p{margin-top:8px; font-size:14.5px; line-height:1.5; color:var(--ink-2); max-width:74ch}
-.megaCab p b{color:var(--ink); font-weight:650}
-.megaCab .fechar{margin-left:auto; flex:0 0 auto}
-.megaPe{display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; padding-top:16px;
-  border-top:1px solid var(--line-2)}
-@media(max-width:700px){
-  .mega{top:60px; height:calc(100dvh - 60px); max-height:none}
-  .megaCab h3{font-size:19px}
-}
-
 /* ---------- lista de marcas com busca ---------- */
 input.mini{width:100%; font:inherit; font-size:14.5px; padding:9px 12px; min-height:42px;
   border:1px solid var(--line); border-radius:var(--r-s); background:var(--card-2); color:var(--ink)}
@@ -228,15 +206,13 @@ input.mini{width:100%; font:inherit; font-size:14.5px; padding:9px 12px; min-hei
   font-size:13px; color:var(--ink-2)}
 #camposFin .dica b{color:var(--ink)}
 
-/* ---------- ponte entre a gaveta de filtros e os critérios ---------- */
-.ponte{border:1px solid var(--line-2); border-radius:var(--r-m); background:var(--bg-2);
-  padding:14px; margin-bottom:22px}
-.ponte .cima{display:flex; align-items:center; gap:10px; margin-bottom:11px}
-.ponte h4{font-size:13px; letter-spacing:.03em; text-transform:uppercase; color:var(--ink-3);
-  font-weight:700; margin-right:auto}
-.ponte .tbtn{height:34px; padding:0 12px; font-size:12.5px}
-.ponte p{font-size:12.5px; line-height:1.45; color:var(--ink-3); margin-top:10px}
-.ponte p b{color:var(--ink-2); font-weight:650}
+/* ---------- os pesos, primeiro grupo da gaveta ---------- */
+#grupoCriterios{scroll-margin-top:8px}
+#grupoCriterios .pesosNota{font-size:12.5px; line-height:1.45; color:var(--ink-3); margin:-4px 0 12px}
+#grupoCriterios .pesosNota b{color:var(--ink-2); font-weight:650}
+#grupoCriterios.piscar{animation:piscar 1.4s ease-out}
+@keyframes piscar{ 0%,100%{background:transparent} 18%{background:var(--acc-soft)} }
+@media(prefers-reduced-motion:reduce){ #grupoCriterios.piscar{animation:none} }
 .barraPesos{display:flex; height:28px; border-radius:6px; overflow:hidden; background:var(--bg-3)}
 .barraPesos i{display:block; position:relative}
 .barraPesos i span{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
@@ -395,6 +371,41 @@ main{padding-bottom:80px}
 .extrato .soma.periodo .nome{font-weight:600; color:var(--ink-2)}
 .extrato .soma.periodo .v{font-size:14.5px; font-weight:700; color:var(--ink-2)}
 
+/* ---------- as três perguntas do herói ---------- */
+h1 .ris2{position:relative; display:inline-block; white-space:nowrap; color:var(--acc)}
+h1 .ris2 .pt{font-style:normal; color:var(--ink)}
+.quiz{margin-top:18px; display:grid; gap:2px; background:var(--card); border:1px solid var(--line);
+  border-radius:var(--r-l); overflow:hidden; box-shadow:var(--sh-2)}
+.qLinha{display:flex; gap:12px; padding:13px 15px; background:var(--card)}
+.qLinha + .qLinha{border-top:1px solid var(--line-2)}
+@media(min-width:760px){ .qLinha{padding:18px 24px} }
+.qNum{width:24px; height:24px; border-radius:50%; background:var(--acc); color:var(--acc-on);
+  font-size:12.5px; font-weight:800; display:flex; align-items:center; justify-content:center;
+  flex:0 0 auto; margin-top:1px}
+.qCorpo{min-width:0; flex:1}
+.qTxt{display:block; font-size:14.5px; font-weight:650; margin-bottom:8px}
+.qLinha .chips{gap:6px}
+/* 2x2 em vez de 3+1 ragged: mesma altura, leitura mais rápida */
+@media(max-width:479px){ .qLinha .chips{display:grid; grid-template-columns:1fr 1fr} }
+.qLinha .chip{font-size:13.5px; padding:0 14px; min-height:40px; border-radius:99px}
+.qLinha .chip[aria-pressed=true]{background:var(--acc); border-color:var(--acc); color:var(--acc-on)}
+
+/* ---------- o contraste que mostra que a resposta é condicional ---------- */
+.eSe{margin-top:16px; border:1px solid color-mix(in srgb, var(--warn) 40%, var(--line));
+  background:var(--warn-soft); border-radius:var(--r-m); padding:16px 18px}
+.eSe[hidden]{display:none}
+.eSe .cab{display:flex; align-items:center; gap:9px; font-size:13px; font-weight:750; color:var(--warn);
+  margin-bottom:9px}
+.eSe .cab svg{width:15px; height:15px; flex:0 0 auto}
+.eSe p{font-size:15px; line-height:1.5; color:var(--ink-2)}
+.eSe p b{color:var(--ink); font-weight:700}
+.eSe .troca{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:11px;
+  padding-top:11px; border-top:1px solid color-mix(in srgb, var(--warn) 26%, transparent)}
+.eSe .troca .car{font-size:15px; font-weight:700}
+.eSe .troca .seta{color:var(--ink-3)}
+.eSe .troca .val{font-size:15px; font-weight:800; padding:0; border:0; background:none}
+.eSe .btnTroca{margin-top:12px}
+
 /* ============ gráficos ============ */
 .quadro{background:var(--card); border:1px solid var(--line-2); border-radius:var(--r-m); padding:20px 12px 8px;
   box-shadow:var(--sh-1); min-width:0}
@@ -502,17 +513,16 @@ table.rk .sg{color:var(--ink-3); font-size:12px; display:block}
 .bararea span{position:relative; z-index:1}
 
 /* ============ critérios ============ */
-.criterios{display:grid; gap:14px}
-@media(min-width:760px){ .criterios{grid-template-columns:1fr 1fr; gap:16px} }
-.crit{background:var(--card); border:1px solid var(--line-2); border-radius:var(--r-m); padding:18px;
-  box-shadow:var(--sh-1)}
+/* uma coluna sempre: os critérios moram na gaveta, que tem 420px no máximo */
+.criterios{display:grid; gap:10px; margin-top:14px}
+.crit{background:var(--card-2); border:1px solid var(--line-2); border-radius:var(--r-s); padding:13px 14px}
 .crit .cima{display:flex; align-items:center; gap:10px; margin-bottom:8px}
-.crit .cima h4{font-size:16.5px; letter-spacing:-.026em; margin-right:auto}
-.crit .peso{font-size:15px; font-weight:800; color:var(--acc-ink); letter-spacing:-.02em}
-.crit p{font-size:14px; line-height:1.5; color:var(--ink-2)}
+.crit .cima h4{font-size:14.5px; letter-spacing:-.026em; margin-right:auto}
+.crit .peso{font-size:14px; font-weight:800; color:var(--acc-ink); letter-spacing:-.02em}
+.crit p{font-size:12.8px; line-height:1.45; color:var(--ink-2)}
 .crit .fonte{display:inline-block; margin-top:9px; font-size:11.5px; font-weight:650; color:var(--ink-3);
   background:var(--bg-2); padding:3px 9px; border-radius:99px}
-.crit input[type=range]{width:100%; accent-color:var(--acc); min-height:28px; margin-top:12px}
+.crit input[type=range]{width:100%; accent-color:var(--acc); min-height:28px; margin-top:9px}
 
 /* ============ método ============ */
 .metodo{font-size:15.5px; color:var(--ink-2); line-height:1.62}
@@ -621,14 +631,6 @@ table.rk th .thin button{width:auto}
       <a href="#s-lista">Lista</a>
       <a href="#s-metodo">Método</a>
     </nav>
-    <button class="tbtn" id="btnCriterios" aria-expanded="false" aria-controls="mega">
-      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 10.5h3M2 7h6M2 3.5h10"/></svg>
-      <span class="soDesk">Critérios</span>
-    </button>
-    <button class="tbtn" id="btnSecoes" aria-label="Seções">
-      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M1 3h12M1 7h12M1 11h12"/></svg>
-      <span class="soDesk">Seções</span>
-    </button>
     <button class="tbtn" id="theme" aria-label="Alternar tema">
       <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="7" cy="7" r="3.2"/><path d="M7 .8v1.6M7 11.6v1.6M13.2 7h-1.6M2.4 7H.8M11.4 2.6l-1.1 1.1M3.7 10.3l-1.1 1.1M11.4 11.4l-1.1-1.1M3.7 3.7L2.6 2.6"/></svg>
     </button>
@@ -640,50 +642,21 @@ table.rk th .thin button{width:auto}
   </div>
 </header>
 
-<div class="mega" id="mega" role="region" aria-label="Critérios do ranking">
-  <div class="wrap">
-    <div class="megaCab">
-      <div>
-        <h3>Como o ranking é montado</h3>
-        <p>Cada carro leva nota de 0 a 100 em seis critérios, sempre <b>relativa aos <span id="pesoN"></span> candidatos do seu filtro</b>. A média ponderada define a ordem. Arraste um peso e a lista se refaz na hora.</p>
-      </div>
-      <button class="fechar" id="fecharMega" aria-label="Fechar critérios">&times;</button>
-    </div>
-    <div class="criterios" id="critGrade"></div>
-    <div class="megaPe">
-      <button class="tbtn" id="wreset">Voltar ao equilíbrio</button>
-      <button class="tbtn" id="wcusto">Ordenar só por custo</button>
-    </div>
-  </div>
-</div>
-
-<div class="sheet" id="sheetSecoes"><div class="fundo" data-fecha></div>
-  <div class="painel"><div class="pega"></div>
-    <a href="#s-veredito"><i>1</i>O que comprar</a>
-    <a href="#s-curva"><i>2</i>A curva de desvalorização</a>
-    <a href="#s-modelo"><i>3</i>Modelo pesa mais que ano</a>
-    <a href="#s-matriz"><i>4</i>Preço por ano modelo</a>
-    <a href="#s-detalhe"><i>5</i>Um modelo de perto</a>
-    <a href="#s-dinheiro"><i>6</i>Onde vai o dinheiro</a>
-    <a href="#s-fronteira"><i>7</i>Preço contra custo</a>
-    <a href="#s-lista"><i>8</i>A lista completa</a>
-    <a href="#s-metodo"><i>9</i>Como a conta foi feita</a>
-  </div>
-</div>
-
 <div class="velo" id="velo"></div>
 <aside class="drawer" id="drawer" aria-label="Filtros">
   <div class="cab"><h3>Filtros</h3>
     <button class="tbtn" id="limparTudo">Limpar</button>
     <button class="fechar" id="fecharDrawer" aria-label="Fechar filtros">&times;</button></div>
   <div class="corpo">
-    <div class="ponte" id="pontePesos">
-      <div class="cima">
-        <h4>Ordem do ranking</h4>
-        <button class="tbtn" id="irCriterios">Ajustar critérios</button>
-      </div>
+    <div class="grupo" id="grupoCriterios">
+      <h4>Ordem do ranking</h4>
+      <p class="pesosNota">Estes pesos decidem <b>quem vem primeiro</b>. Eles não tiram carro da lista, só mudam a ordem. Os filtros abaixo é que reduzem os candidatos.</p>
       <div class="barraPesos" id="barraPesos"></div>
-      <p>Estes são os pesos que decidem <b>a ordem</b>. Eles não tiram carro nenhum da lista, só mudam quem vem primeiro. Os filtros abaixo é que reduzem os candidatos.</p>
+      <div class="criterios" id="critGrade"></div>
+      <div class="rodape" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+        <button class="tbtn" id="wreset">Voltar ao equilíbrio</button>
+        <button class="tbtn" id="wcusto">Só custo por ano</button>
+      </div>
     </div>
 
     <div class="grupo"><h4>Como você vai pagar</h4>
@@ -752,20 +725,38 @@ table.rk th .thin button{width:auto}
         <input type="range" id="mm" min="60" max="220" step="10" value="100"></div>
     </div>
   </div>
-  <div class="pe"><button class="tbtn forte" id="verResultados" style="flex:1;justify-content:center">Ver <span id="contRes"></span> resultados</button></div>
+  <div class="pe"><button class="tbtn forte" id="verResultados" style="flex:1;justify-content:center"><span>Ver <span id="contRes"></span> resultados</span></button></div>
 </aside>
 
 <section class="hero">
   <span class="bolha b1"></span><span class="bolha b2"></span>
   <div class="wrap in">
     <span class="olho"><b>Tabela FIPE</b> <span id="hRef"></span><span class="soAmplo"> · <span id="hFam"></span> modelos · <span id="hPts"></span> preços</span></span>
-    <h1>O <span class="ris">preço da vitrine</span> não é o custo do carro.</h1>
-    <p class="chamada">Todo carro tem dois números. Um está no anúncio. O outro é <b>quanto ele tira do seu bolso por ano</b>, e só esse compara um carro com outro.</p>
+    <h1>Não existe melhor carro.<br>Existe o melhor <span class="ris2">para você<i class="pt">.</i></span></h1>
+    <p class="chamada">A resposta muda com o seu uso. Responda três coisas e veja a sua.</p>
+
+    <div class="quiz">
+      <div class="qLinha">
+        <span class="qNum">1</span>
+        <div class="qCorpo"><span class="qTxt">Quanto você roda por ano?</span>
+          <div class="chips" id="qKm"></div></div>
+      </div>
+      <div class="qLinha">
+        <span class="qNum">2</span>
+        <div class="qCorpo"><span class="qTxt">Por quanto tempo fica com o carro?</span>
+          <div class="chips" id="qH"></div></div>
+      </div>
+      <div class="qLinha">
+        <span class="qNum">3</span>
+        <div class="qCorpo"><span class="qTxt">Quanto pode gastar na compra?</span>
+          <div class="chips" id="qBud"></div></div>
+      </div>
+    </div>
 
     <div class="placa rev">
       <div class="fita">
         <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 1l2 4.3 4.7.6-3.4 3.2.9 4.6L8 11.5 3.8 13.7l.9-4.6L1.3 5.9 6 5.3z"/></svg>
-        O melhor da sua faixa agora
+        <span id="fitaTxt">Com o que você respondeu, o melhor é</span>
       </div>
       <div class="corpo">
         <h2 id="topNome"></h2>
@@ -793,6 +784,8 @@ table.rk th .thin button{width:auto}
         </div>
       </div>
     </div>
+
+    <div class="eSe rev" id="eSe"></div>
   </div>
 </section>
 
@@ -1868,6 +1861,79 @@ function montaConta(c){
     `<p class="rodape">Não entram entrada, licenciamento, multas nem estacionamento.</p>`;
 }
 
+/* O visitante lia o carro do herói como "o melhor carro". Não é: é o melhor sob
+   as condições que ele respondeu. Este bloco procura a virada de verdade em vez de
+   supor que a rodagem basta, porque com os pesos equilibrados o mesmo carro ganha
+   em quase toda faixa de quilometragem. Se nenhuma condição virar, ele diz isso,
+   que é informação e não enfeite. */
+const PERFIS = [
+  ["budMax",  50000, "seu teto de compra fosse R$ 50 mil"],
+  ["budMax", 100000, "seu teto de compra fosse R$ 100 mil"],
+  ["km",       5000, "você rodasse 5 mil km por ano"],
+  ["km",      30000, "você rodasse 30 mil km por ano"],
+  ["H",          10, "você ficasse 10 anos com o carro"],
+  ["H",           3, "você ficasse só 3 anos com o carro"]
+];
+function melhorSob(mudanca){
+  const antes = {};
+  for(const k in mudanca){ antes[k] = S[k]; S[k] = mudanca[k]; }
+  const w = pontuar(candidatos(false)).sort((a,b)=>b.score-a.score)[0];
+  for(const k in antes) S[k] = antes[k];
+  return w;
+}
+function drawESe(top){
+  const alvo = document.getElementById("eSe"); if(!alvo) return;
+  const atual = top[0];
+  if(!atual){ alvo.hidden = true; return; }
+  const mesmo = c => c && c.fam === atual.fam && c.ano === atual.ano;
+
+  let achado = null;
+  for(const [chave, valor, frase] of PERFIS){
+    if(S[chave] === valor) continue;
+    const o = melhorSob({[chave]: valor});
+    if(o && !mesmo(o)){ achado = {o, frase, mud:{[chave]:valor}, rot:rotuloPerfil(chave, valor)}; break; }
+  }
+  if(!achado){
+    const soCusto = melhorSob({w:{custo:50, manut:0, gar:0, conf:0, liq:0, camb:0}});
+    if(soCusto && !mesmo(soCusto))
+      achado = {o:soCusto, frase:"você olhasse só o custo por ano, ignorando garantia e revenda",
+                mud:{w:{custo:50, manut:0, gar:0, conf:0, liq:0, camb:0}}, rot:"Só custo por ano"};
+  }
+
+  alvo.hidden = false;
+  if(!achado){
+    alvo.innerHTML = `<div class="cab">${iconeAviso()}Testado contra outros perfis</div>` +
+      `<p>Este carro continuou em primeiro em todas as combinações que testamos agora. ` +
+      `Isso é raro e não vale para todo mundo: mexa nos pesos dentro dos filtros e a ordem muda.</p>`;
+    return;
+  }
+  alvo.innerHTML = `<div class="cab">${iconeAviso()}Este não é "o melhor carro"</div>` +
+    `<p>É o melhor <b>para o que você respondeu</b>. Se ${achado.frase}, o primeiro lugar já seria outro:</p>` +
+    `<div class="troca"><span class="car">${famNome(achado.o.fam)} ${achado.o.ano}</span>` +
+    `<span class="seta">·</span><span class="val">${BRL(achado.o.total)}/ano</span></div>` +
+    `<button class="tbtn btnTroca" type="button" id="testarAlt">Ver com ${achado.rot}</button>`;
+  const b = document.getElementById("testarAlt");
+  if(b) b.onclick = () => {
+    Object.assign(S, achado.mud);
+    if(achado.mud.budMax){ const e = document.getElementById("budMax"); if(e) e.value = S.budMax; }
+    if(achado.mud.km){ const e = document.getElementById("km"); if(e) e.value = S.km; }
+    if(achado.mud.H) document.querySelectorAll("#chipsH .chip")
+      .forEach(x => x.setAttribute("aria-pressed", +x.dataset.h === S.H));
+    if(window._upd) window._upd();
+    render();
+    document.querySelector(".placa").scrollIntoView({behavior:"smooth", block:"center"});
+  };
+}
+function rotuloPerfil(chave, valor){
+  if(chave === "km")  return valor.toLocaleString("pt-BR") + " km por ano";
+  if(chave === "H")   return valor + " anos";
+  return "teto de " + BRL(valor);
+}
+function iconeAviso(){
+  return `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">` +
+    `<circle cx="8" cy="8" r="6.5"/><path d="M8 4.6v4M8 11.1v.3"/></svg>`;
+}
+
 function drawTopo(top, cs){
   const q = id => document.getElementById(id);
   const c = top[0];
@@ -1880,6 +1946,8 @@ function drawTopo(top, cs){
   q("topCusto").textContent = BRL(c.total);
   q("topAnos").textContent = S.H;
   const conta = q("contaTopo"); if(conta) conta.innerHTML = montaConta(c);
+  const ft = q("fitaTxt");
+  if(ft) ft.textContent = `Para quem roda ${S.km.toLocaleString("pt-BR")} km e fica ${S.H} anos com o carro`;
 }
 
 function drawPicks(top, cs){
@@ -2072,18 +2140,23 @@ function render(){
   }
   if(S.sel && !cs.some(c=>c.fam===S.sel.fam && c.ano===S.sel.ano)) S.sel = null;
 
-  drawTopo(top, cs); drawPicks(top, cs); drawTiles(cs, top); drawCriterios();
-  drawCurva(); drawRange(cs); drawU();
-  drawHeat(top); drawStack(top); drawScatter(cs, top); drawTable(cs);
+  sincronizaQuiz();
+  // Um desenho que estoura não pode levar a revelação junto: sem o .vis a página
+  // inteira fica com opacity 0. Já aconteceu quando um id sumiu do markup.
+  try{
+    drawTopo(top, cs); drawESe(top); drawPicks(top, cs); drawTiles(cs, top); drawCriterios();
+    drawCurva(); drawRange(cs); drawU();
+    drawHeat(top); drawStack(top); drawScatter(cs, top); drawTable(cs);
 
-  const q = id => document.getElementById(id);
-  q("cCount").textContent = cs.length;
-  q("tblCount").textContent = cs.length;
-  q("pesoN").textContent = cs.length;
-  q("contRes").textContent = cs.length;
-  const n = filtrosAtivos();
-  q("contFiltros").textContent = n;
-  q("contFiltros").style.display = n ? "" : "none";
+    const q = id => document.getElementById(id);
+    const põe = (id, v) => { const e = q(id); if(e) e.textContent = v; };
+    põe("cCount", cs.length); põe("tblCount", cs.length); põe("contRes", cs.length);
+    const n = filtrosAtivos();
+    põe("contFiltros", n);
+    if(q("contFiltros")) q("contFiltros").style.display = n ? "" : "none";
+  } catch(err){
+    console.error("falha ao desenhar", err);
+  }
   revelar();
 }
 
@@ -2198,7 +2271,7 @@ function bind(){
   q("wcusto").onclick = () => { S.w = { custo:50, manut:0, gar:0, conf:0, liq:0, camb:0 }; render(); };
 
   q("limparTudo").onclick = () => {
-    Object.assign(S, PADRAO, {soGarantia:false, soConfiavel:false, soLiquido:false, soCambio:false,
+    Object.assign(S, PADRAO, {H:5, soGarantia:false, soConfiavel:false, soLiquido:false, soCambio:false,
       ene:"todas", busca:"", sel:null, listaN:10, verMaisHeat:false,
       pagamento:"avista", entrada:0.20, jurosAM:0.018, prazo:48, uf:""});
     S.segs = new Set(); S.marcas = new Set();
@@ -2210,6 +2283,7 @@ function bind(){
     q("entrada").value=20; q("jurosAM").value=180; q("prazo").value=48; q("buscaMarca").value="";
     ["soGarantia","soConfiavel","soLiquido","soCambio"].forEach(id=>q(id).checked=false);
     document.querySelectorAll("#chipsPag .chip").forEach(x=>x.setAttribute("aria-pressed", x.dataset.pag==="avista"));
+    document.querySelectorAll("#chipsH .chip").forEach(x=>x.setAttribute("aria-pressed", +x.dataset.h===5));
     document.querySelectorAll("#chipsSeg .chip").forEach(x=>x.setAttribute("aria-pressed", false));
     pintaMarcas(); upd(); render();
   };
@@ -2219,21 +2293,12 @@ function bind(){
   const abrir = on => { dr.classList.toggle("on", on); velo.classList.toggle("on", on);
     bf.setAttribute("aria-expanded", on); document.body.style.overflow = on ? "hidden" : "";
     if(on) dr.querySelector("select,input,button").focus(); };
-  bf.onclick = () => { fecharMega(); abrir(!dr.classList.contains("on")); };
+  bf.onclick = () => abrir(!dr.classList.contains("on"));
   q("fecharDrawer").onclick = () => abrir(false);
   q("verResultados").onclick = () => { abrir(false);
     document.getElementById("s-veredito").scrollIntoView({behavior:"smooth"}); };
   velo.onclick = () => abrir(false);
 
-  // megamenu de criterios
-  const mega = q("mega"), bc = q("btnCriterios");
-  function fecharMega(){ mega.classList.remove("on"); bc.setAttribute("aria-expanded", false); }
-  function abrirMega(){ abrir(false); mega.classList.add("on"); bc.setAttribute("aria-expanded", true);
-    mega.scrollTop = 0; }
-  bc.onclick = e => { e.stopPropagation(); mega.classList.contains("on") ? fecharMega() : abrirMega(); };
-  q("fecharMega").onclick = fecharMega;
-  // stopPropagation: sem ele o clique borbulha ate o document, que fecha o megamenu
-  // no mesmo instante em que ele abre
   const bConta = q("btnConta");
   if(bConta) bConta.onclick = () => {
     const alvo = q("contaTopo"), abrindo = alvo.hidden;
@@ -2244,18 +2309,14 @@ function bind(){
     // o bloco da esquerda estica e fica com um vazio enorme
     const dois = alvo.closest(".dois"); if(dois) dois.classList.toggle("aberto", abrindo);
   };
-  if(q("verCriterios")) q("verCriterios").onclick = e => { e.stopPropagation(); abrirMega(); };
-  if(q("irCriterios"))  q("irCriterios").onclick  = e => { e.stopPropagation(); abrir(false); abrirMega(); };
-  document.addEventListener("click", e => {
-    if(mega.classList.contains("on") && !mega.contains(e.target) && !bc.contains(e.target)) fecharMega();
-  });
-  addEventListener("keydown", e => { if(e.key === "Escape"){ abrir(false); fecharMega(); folha(false); } });
-
-  // folha de seções
-  const sh = q("sheetSecoes");
-  const folha = on => sh.classList.toggle("on", on);
-  q("btnSecoes").onclick = () => folha(true);
-  sh.querySelectorAll("a,[data-fecha]").forEach(el => el.addEventListener("click", () => folha(false)));
+  // os critérios agora moram na gaveta. o atalho abre a gaveta já no grupo certo
+  const irAosPesos = e => { if(e) e.stopPropagation(); abrir(true);
+    const g = q("grupoCriterios");
+    if(g){ g.scrollIntoView({block:"start"}); g.classList.add("piscar");
+      setTimeout(()=>g.classList.remove("piscar"), 1400); } };
+  if(q("verCriterios")) q("verCriterios").onclick = irAosPesos;
+  if(q("irCriterios"))  q("irCriterios").onclick  = irAosPesos;
+  addEventListener("keydown", e => { if(e.key === "Escape") abrir(false); });
 
   // tema
   q("theme").onclick = () => {
@@ -2265,7 +2326,44 @@ function bind(){
     requestAnimationFrame(render);
   };
 
-  pintaMarcas(); upd();
+  montaQuiz(); pintaMarcas(); upd();
+}
+
+/* ============ as três perguntas do herói ============
+   O visitante lia o carro do herói como "o melhor carro". Não é: é o melhor para
+   um uso. Perguntar antes de responder torna a condição parte da resposta. */
+const QUIZ = [
+  ["qKm", "km", [[5000,"5 mil"],[12000,"12 mil"],[20000,"20 mil"],[30000,"30 mil"]]],
+  ["qH",  "H",  [[3,"3 anos"],[5,"5 anos"],[8,"8 anos"],[10,"10 anos"]]],
+  ["qBud","budMax", [[50000,"até 50 mil"],[100000,"até 100 mil"],[200000,"até 200 mil"],[500000,"sem teto"]]]
+];
+function montaQuiz(){
+  for(const [id, chave, ops] of QUIZ){
+    const cx = document.getElementById(id); if(!cx) continue;
+    cx.innerHTML = ops.map(([v,r]) =>
+      `<button class="chip" type="button" data-v="${v}" aria-pressed="${S[chave]===v}">${r}</button>`).join("");
+    cx.querySelectorAll(".chip").forEach(b => b.onclick = () => {
+      S[chave] = +b.dataset.v;
+      espelhaNosFiltros(chave);
+      sincronizaQuiz();
+      if(window._upd) window._upd();
+      render();
+    });
+  }
+}
+/* Mexer num filtro tem que refletir nas perguntas, e vice-versa. Sem isso a
+   página mostra duas verdades ao mesmo tempo. */
+function espelhaNosFiltros(chave){
+  const e = document.getElementById(chave === "budMax" ? "budMax" : chave === "km" ? "km" : null);
+  if(e) e.value = S[chave];
+  if(chave === "H") document.querySelectorAll("#chipsH .chip")
+    .forEach(x => x.setAttribute("aria-pressed", +x.dataset.h === S.H));
+}
+function sincronizaQuiz(){
+  for(const [id, chave] of QUIZ){
+    const cx = document.getElementById(id); if(!cx) continue;
+    cx.querySelectorAll(".chip").forEach(b => b.setAttribute("aria-pressed", +b.dataset.v === S[chave]));
+  }
 }
 
 /* ============ balão de ajuda ============ */

@@ -53,18 +53,27 @@ Regras duráveis:
 
 ## Componentes
 
-- **`.topo`**: barra fixa de 60px, translúcida com `backdrop-filter`. Contém navegação inline (some abaixo de 1040px), tema, seções e o botão de filtros com contador de filtros ativos.
+- **`.topo`**: barra fixa de 60px, translúcida com `backdrop-filter`. Contém navegação inline (some
+  abaixo de 1040px), tema e o botão de filtros com contador. Nada mais. Os botões de seções e de
+  critérios saíram: o primeiro repetia o menu, o segundo virou o primeiro grupo da gaveta.
 - **`.drawer`**: gaveta de filtros à direita, recolhível, `transform: translateX(100%)` quando fechada. Largura `min(420px, 100%)`, então ocupa a tela inteira no celular. **Nunca virar coluna permanente.**
-- **`.mega`**: megamenu dos critérios, ancorado abaixo da barra. Os critérios saíram do scroll
-  porque precisam estar claros desde o início, e não depois de rolar meia página.
-- **`.sheet`**: folha de seções que sobe de baixo no celular.
+- **`.quiz`**: as três perguntas no herói, antes de qualquer resposta. Rodagem, horizonte e teto de
+  compra. Existe porque o visitante lia o carro do herói como "o melhor carro" em vez de "o melhor
+  para este uso". Perguntar antes de responder põe a condição dentro da resposta. As três cabem
+  acima da dobra em 390x780, e isso é requisito, não coincidência.
+- **`.eSe`**: o contraste logo abaixo do campeão. Procura a virada de verdade varrendo perfis
+  alternativos e mostra o primeiro que troca o vencedor, com um botão que aplica aquele perfil.
+  **Não pode inventar a virada.** Com os pesos equilibrados o mesmo carro ganha em quase toda faixa
+  de quilometragem, então se nenhum perfil trocar, o card diz isso, o que é informação e não enfeite.
 - **`.placa`**: o campeão dentro do herói, com o motivo em uma frase e os dois números explicados lado a lado.
+  A fita acima dele repete as condições respondidas, para que a resposta nunca apareça solta.
 - **`.cartao`**: item de resultado. Traz cifra, motivo, selos, ficha e as seis notas por critério.
-- **`.crit`**: critério de pontuação com peso em percentual e slider.
-- **`.ponte`**: resumo dos pesos no topo da gaveta de filtros, com barra empilhada e atalho para o
-  megamenu. Existe porque **filtro e peso fazem coisas diferentes**: filtro tira candidatos, peso
-  reordena. Juntar os dois no mesmo painel faria o usuário mexer num peso e estranhar que a contagem
-  não mudou. A ponte resolve a descoberta sem apagar a distinção.
+- **`.crit`**: critério de pontuação com peso em percentual e slider. Uma coluna sempre, porque
+  agora mora numa gaveta de 420px.
+- **`#grupoCriterios`**: os pesos como primeiro grupo da gaveta, com barra empilhada, legenda e os
+  seis sliders. **Filtro e peso fazem coisas diferentes**: filtro tira candidatos, peso reordena.
+  Estarem no mesmo painel exige que o texto de abertura diga isso, senão o usuário mexe num peso e
+  estranha que a contagem não mudou. É o que o `.pesosNota` faz, e ele não é decoração.
 - **`.conta`**: extrato vertical do custo anual, com uma linha por componente, régua e total.
   Cada linha traz o quadradinho da cor que o componente tem no gráfico de composição, então
   extrato e gráfico se leem juntos. A soma sempre bate com o total exibido.
@@ -82,7 +91,15 @@ Regras duráveis:
    como `<div class="val est">` e recebeu as duas regras: ganhou borda tracejada e teve o padding
    de 12px esmagado para 1px.
 
-Nenhum dos dois gerou erro de sintaxe ou aviso de detector. O layout simplesmente saiu errado.
+3. `.nota` já era um bloco com fundo e 15px. O texto de abertura dos pesos nasceu com esse nome e
+   virou uma caixa cinza no meio da gaveta.
+
+Nenhum dos três gerou erro de sintaxe ou aviso de navegador. O layout simplesmente saiu errado.
+
+`scripts/checar-css.py` roda no fim de todo `build.py` e acusa o par de classes no mesmo elemento
+quando as duas têm definição global disputando propriedade de caixa. Ele **não** pega o caso de uma
+classe só reusando um nome existente, então procurar o nome no CSS antes de criar continua sendo
+obrigação de quem escreve.
 
 Convenção adotada: **utilitária global tem nome curto e único** (`est`, `rev`, `vis`, `on`), e
 **modificador de bloco usa palavra própria**, nunca uma dessas (`.val.calc`, e não `.val.est`).
@@ -110,7 +127,9 @@ Verificado por harness de iframe (`mobile.html`), porque o painel de navegador d
 - `.rev` revela blocos na rolagem, com `IntersectionObserver` e `unobserve` depois de revelar.
   **Duas redes de segurança obrigatórias**: o que já está na viewport ao carregar é revelado na hora,
   sem depender do observador, e um `setTimeout` de 1,5 s revela o resto. Sem isso, uma falha do
-  observador deixa a página inteira invisível para sempre.
+  observador deixa a página inteira invisível para sempre. Pelo mesmo motivo, **todo o desenho
+  dentro de `render()` fica em `try`**: um `id` que sumiu do markup derrubava o `render` antes do
+  `revelar()`, e a página inteira ficava com `opacity: 0`. Aconteceu ao remover o megamenu.
 - Leitura em rolagem na seção da curva: gráfico fixo, texto avança em três etapas.
 - Parallax só nas manchas do herói, e só nos primeiros 140% da viewport.
 - Barra de progresso usa `transform: scaleX`, nunca `width`, que causa thrash de layout.

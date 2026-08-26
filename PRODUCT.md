@@ -85,7 +85,11 @@ Ausências que nenhum trabalho futuro pode preencher com invenção:
 2. **Dado medido e premissa minha nunca se misturam.** O que vem da FIPE e o que eu estimei ficam visualmente separados, sempre.
 3. **Toda premissa é ajustável.** O usuário testa a conta em vez de engolir um número fechado. Se uma premissa não pode ser mexida, ela precisa de justificativa forte.
 4. **Cobertura completa, sem lista curta.** O recorte é o universo inteiro da FIPE. Filtrar é escolha do usuário, não minha.
-5. **O produto envelhece em público.** Mês de referência e limitações são elemento de primeira classe, porque o link circula sem mim junto para explicar.
+5. **A resposta é condicional e o produto tem que mostrar isso.** Visitantes liam o carro do herói
+   como "o melhor carro". Nenhuma tela pode apresentar um vencedor sem as condições que o elegeram
+   ao lado, e o contraste que mostra a troca precisa vir de uma varredura real, nunca de um exemplo
+   escrito à mão.
+6. **O produto envelhece em público.** Mês de referência e limitações são elemento de primeira classe, porque o link circula sem mim junto para explicar.
 
 ## Accessibility & Inclusion
 

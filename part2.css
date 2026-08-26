@@ -15,8 +15,6 @@
 @media(min-width:1040px){
   .topo nav{display:flex}
   .topo .marca{margin-right:26px}
-  /* o menu do topo ja lista as secoes: o botao seria repeticao */
-  #btnSecoes{display:none}
 }
 .topo nav a{font-size:13.5px; font-weight:500; color:var(--ink-2); padding:7px 10px; border-radius:99px}
 .topo nav a:hover{background:var(--bg-2); color:var(--ink); text-decoration:none}
@@ -107,26 +105,6 @@
   .topo .marca{gap:7px}
 }
 
-/* ---------- megamenu de critérios ---------- */
-.mega{position:fixed; top:60px; left:0; right:0; z-index:80; background:var(--card);
-  border-bottom:1px solid var(--line); box-shadow:var(--sh-3);
-  max-height:calc(100vh - 60px); overflow-y:auto;
-  transform:translateY(-8px); opacity:0; pointer-events:none;
-  transition:transform .22s cubic-bezier(.2,.8,.25,1), opacity .18s}
-.mega.on{transform:none; opacity:1; pointer-events:auto}
-.mega .wrap{padding-top:22px; padding-bottom:24px}
-.megaCab{display:flex; gap:16px; align-items:flex-start; margin-bottom:18px}
-.megaCab h3{font-size:21px; letter-spacing:-.03em}
-.megaCab p{margin-top:8px; font-size:14.5px; line-height:1.5; color:var(--ink-2); max-width:74ch}
-.megaCab p b{color:var(--ink); font-weight:650}
-.megaCab .fechar{margin-left:auto; flex:0 0 auto}
-.megaPe{display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; padding-top:16px;
-  border-top:1px solid var(--line-2)}
-@media(max-width:700px){
-  .mega{top:60px; height:calc(100dvh - 60px); max-height:none}
-  .megaCab h3{font-size:19px}
-}
-
 /* ---------- lista de marcas com busca ---------- */
 input.mini{width:100%; font:inherit; font-size:14.5px; padding:9px 12px; min-height:42px;
   border:1px solid var(--line); border-radius:var(--r-s); background:var(--card-2); color:var(--ink)}
@@ -144,15 +122,13 @@ input.mini{width:100%; font:inherit; font-size:14.5px; padding:9px 12px; min-hei
   font-size:13px; color:var(--ink-2)}
 #camposFin .dica b{color:var(--ink)}
 
-/* ---------- ponte entre a gaveta de filtros e os critérios ---------- */
-.ponte{border:1px solid var(--line-2); border-radius:var(--r-m); background:var(--bg-2);
-  padding:14px; margin-bottom:22px}
-.ponte .cima{display:flex; align-items:center; gap:10px; margin-bottom:11px}
-.ponte h4{font-size:13px; letter-spacing:.03em; text-transform:uppercase; color:var(--ink-3);
-  font-weight:700; margin-right:auto}
-.ponte .tbtn{height:34px; padding:0 12px; font-size:12.5px}
-.ponte p{font-size:12.5px; line-height:1.45; color:var(--ink-3); margin-top:10px}
-.ponte p b{color:var(--ink-2); font-weight:650}
+/* ---------- os pesos, primeiro grupo da gaveta ---------- */
+#grupoCriterios{scroll-margin-top:8px}
+#grupoCriterios .pesosNota{font-size:12.5px; line-height:1.45; color:var(--ink-3); margin:-4px 0 12px}
+#grupoCriterios .pesosNota b{color:var(--ink-2); font-weight:650}
+#grupoCriterios.piscar{animation:piscar 1.4s ease-out}
+@keyframes piscar{ 0%,100%{background:transparent} 18%{background:var(--acc-soft)} }
+@media(prefers-reduced-motion:reduce){ #grupoCriterios.piscar{animation:none} }
 .barraPesos{display:flex; height:28px; border-radius:6px; overflow:hidden; background:var(--bg-3)}
 .barraPesos i{display:block; position:relative}
 .barraPesos i span{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;

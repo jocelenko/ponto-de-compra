@@ -147,3 +147,38 @@ main{padding-bottom:80px}
 .extrato .soma.periodo{border-top:1px solid var(--line-2); margin-top:5px; padding-top:7px}
 .extrato .soma.periodo .nome{font-weight:600; color:var(--ink-2)}
 .extrato .soma.periodo .v{font-size:14.5px; font-weight:700; color:var(--ink-2)}
+
+/* ---------- as três perguntas do herói ---------- */
+h1 .ris2{position:relative; display:inline-block; white-space:nowrap; color:var(--acc)}
+h1 .ris2 .pt{font-style:normal; color:var(--ink)}
+.quiz{margin-top:18px; display:grid; gap:2px; background:var(--card); border:1px solid var(--line);
+  border-radius:var(--r-l); overflow:hidden; box-shadow:var(--sh-2)}
+.qLinha{display:flex; gap:12px; padding:13px 15px; background:var(--card)}
+.qLinha + .qLinha{border-top:1px solid var(--line-2)}
+@media(min-width:760px){ .qLinha{padding:18px 24px} }
+.qNum{width:24px; height:24px; border-radius:50%; background:var(--acc); color:var(--acc-on);
+  font-size:12.5px; font-weight:800; display:flex; align-items:center; justify-content:center;
+  flex:0 0 auto; margin-top:1px}
+.qCorpo{min-width:0; flex:1}
+.qTxt{display:block; font-size:14.5px; font-weight:650; margin-bottom:8px}
+.qLinha .chips{gap:6px}
+/* 2x2 em vez de 3+1 ragged: mesma altura, leitura mais rápida */
+@media(max-width:479px){ .qLinha .chips{display:grid; grid-template-columns:1fr 1fr} }
+.qLinha .chip{font-size:13.5px; padding:0 14px; min-height:40px; border-radius:99px}
+.qLinha .chip[aria-pressed=true]{background:var(--acc); border-color:var(--acc); color:var(--acc-on)}
+
+/* ---------- o contraste que mostra que a resposta é condicional ---------- */
+.eSe{margin-top:16px; border:1px solid color-mix(in srgb, var(--warn) 40%, var(--line));
+  background:var(--warn-soft); border-radius:var(--r-m); padding:16px 18px}
+.eSe[hidden]{display:none}
+.eSe .cab{display:flex; align-items:center; gap:9px; font-size:13px; font-weight:750; color:var(--warn);
+  margin-bottom:9px}
+.eSe .cab svg{width:15px; height:15px; flex:0 0 auto}
+.eSe p{font-size:15px; line-height:1.5; color:var(--ink-2)}
+.eSe p b{color:var(--ink); font-weight:700}
+.eSe .troca{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-top:11px;
+  padding-top:11px; border-top:1px solid color-mix(in srgb, var(--warn) 26%, transparent)}
+.eSe .troca .car{font-size:15px; font-weight:700}
+.eSe .troca .seta{color:var(--ink-3)}
+.eSe .troca .val{font-size:15px; font-weight:800; padding:0; border:0; background:none}
+.eSe .btnTroca{margin-top:12px}

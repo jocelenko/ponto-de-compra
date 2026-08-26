@@ -76,6 +76,79 @@ function montaConta(c){
     `<p class="rodape">Não entram entrada, licenciamento, multas nem estacionamento.</p>`;
 }
 
+/* O visitante lia o carro do herói como "o melhor carro". Não é: é o melhor sob
+   as condições que ele respondeu. Este bloco procura a virada de verdade em vez de
+   supor que a rodagem basta, porque com os pesos equilibrados o mesmo carro ganha
+   em quase toda faixa de quilometragem. Se nenhuma condição virar, ele diz isso,
+   que é informação e não enfeite. */
+const PERFIS = [
+  ["budMax",  50000, "seu teto de compra fosse R$ 50 mil"],
+  ["budMax", 100000, "seu teto de compra fosse R$ 100 mil"],
+  ["km",       5000, "você rodasse 5 mil km por ano"],
+  ["km",      30000, "você rodasse 30 mil km por ano"],
+  ["H",          10, "você ficasse 10 anos com o carro"],
+  ["H",           3, "você ficasse só 3 anos com o carro"]
+];
+function melhorSob(mudanca){
+  const antes = {};
+  for(const k in mudanca){ antes[k] = S[k]; S[k] = mudanca[k]; }
+  const w = pontuar(candidatos(false)).sort((a,b)=>b.score-a.score)[0];
+  for(const k in antes) S[k] = antes[k];
+  return w;
+}
+function drawESe(top){
+  const alvo = document.getElementById("eSe"); if(!alvo) return;
+  const atual = top[0];
+  if(!atual){ alvo.hidden = true; return; }
+  const mesmo = c => c && c.fam === atual.fam && c.ano === atual.ano;
+
+  let achado = null;
+  for(const [chave, valor, frase] of PERFIS){
+    if(S[chave] === valor) continue;
+    const o = melhorSob({[chave]: valor});
+    if(o && !mesmo(o)){ achado = {o, frase, mud:{[chave]:valor}, rot:rotuloPerfil(chave, valor)}; break; }
+  }
+  if(!achado){
+    const soCusto = melhorSob({w:{custo:50, manut:0, gar:0, conf:0, liq:0, camb:0}});
+    if(soCusto && !mesmo(soCusto))
+      achado = {o:soCusto, frase:"você olhasse só o custo por ano, ignorando garantia e revenda",
+                mud:{w:{custo:50, manut:0, gar:0, conf:0, liq:0, camb:0}}, rot:"Só custo por ano"};
+  }
+
+  alvo.hidden = false;
+  if(!achado){
+    alvo.innerHTML = `<div class="cab">${iconeAviso()}Testado contra outros perfis</div>` +
+      `<p>Este carro continuou em primeiro em todas as combinações que testamos agora. ` +
+      `Isso é raro e não vale para todo mundo: mexa nos pesos dentro dos filtros e a ordem muda.</p>`;
+    return;
+  }
+  alvo.innerHTML = `<div class="cab">${iconeAviso()}Este não é "o melhor carro"</div>` +
+    `<p>É o melhor <b>para o que você respondeu</b>. Se ${achado.frase}, o primeiro lugar já seria outro:</p>` +
+    `<div class="troca"><span class="car">${famNome(achado.o.fam)} ${achado.o.ano}</span>` +
+    `<span class="seta">·</span><span class="val">${BRL(achado.o.total)}/ano</span></div>` +
+    `<button class="tbtn btnTroca" type="button" id="testarAlt">Ver com ${achado.rot}</button>`;
+  const b = document.getElementById("testarAlt");
+  if(b) b.onclick = () => {
+    Object.assign(S, achado.mud);
+    if(achado.mud.budMax){ const e = document.getElementById("budMax"); if(e) e.value = S.budMax; }
+    if(achado.mud.km){ const e = document.getElementById("km"); if(e) e.value = S.km; }
+    if(achado.mud.H) document.querySelectorAll("#chipsH .chip")
+      .forEach(x => x.setAttribute("aria-pressed", +x.dataset.h === S.H));
+    if(window._upd) window._upd();
+    render();
+    document.querySelector(".placa").scrollIntoView({behavior:"smooth", block:"center"});
+  };
+}
+function rotuloPerfil(chave, valor){
+  if(chave === "km")  return valor.toLocaleString("pt-BR") + " km por ano";
+  if(chave === "H")   return valor + " anos";
+  return "teto de " + BRL(valor);
+}
+function iconeAviso(){
+  return `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">` +
+    `<circle cx="8" cy="8" r="6.5"/><path d="M8 4.6v4M8 11.1v.3"/></svg>`;
+}
+
 function drawTopo(top, cs){
   const q = id => document.getElementById(id);
   const c = top[0];
@@ -88,6 +161,8 @@ function drawTopo(top, cs){
   q("topCusto").textContent = BRL(c.total);
   q("topAnos").textContent = S.H;
   const conta = q("contaTopo"); if(conta) conta.innerHTML = montaConta(c);
+  const ft = q("fitaTxt");
+  if(ft) ft.textContent = `Para quem roda ${S.km.toLocaleString("pt-BR")} km e fica ${S.H} anos com o carro`;
 }
 
 function drawPicks(top, cs){

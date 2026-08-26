@@ -16,14 +16,6 @@
       <a href="#s-lista">Lista</a>
       <a href="#s-metodo">Método</a>
     </nav>
-    <button class="tbtn" id="btnCriterios" aria-expanded="false" aria-controls="mega">
-      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M2 10.5h3M2 7h6M2 3.5h10"/></svg>
-      <span class="soDesk">Critérios</span>
-    </button>
-    <button class="tbtn" id="btnSecoes" aria-label="Seções">
-      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M1 3h12M1 7h12M1 11h12"/></svg>
-      <span class="soDesk">Seções</span>
-    </button>
     <button class="tbtn" id="theme" aria-label="Alternar tema">
       <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="7" cy="7" r="3.2"/><path d="M7 .8v1.6M7 11.6v1.6M13.2 7h-1.6M2.4 7H.8M11.4 2.6l-1.1 1.1M3.7 10.3l-1.1 1.1M11.4 11.4l-1.1-1.1M3.7 3.7L2.6 2.6"/></svg>
     </button>
@@ -35,50 +27,21 @@
   </div>
 </header>
 
-<div class="mega" id="mega" role="region" aria-label="Critérios do ranking">
-  <div class="wrap">
-    <div class="megaCab">
-      <div>
-        <h3>Como o ranking é montado</h3>
-        <p>Cada carro leva nota de 0 a 100 em seis critérios, sempre <b>relativa aos <span id="pesoN"></span> candidatos do seu filtro</b>. A média ponderada define a ordem. Arraste um peso e a lista se refaz na hora.</p>
-      </div>
-      <button class="fechar" id="fecharMega" aria-label="Fechar critérios">&times;</button>
-    </div>
-    <div class="criterios" id="critGrade"></div>
-    <div class="megaPe">
-      <button class="tbtn" id="wreset">Voltar ao equilíbrio</button>
-      <button class="tbtn" id="wcusto">Ordenar só por custo</button>
-    </div>
-  </div>
-</div>
-
-<div class="sheet" id="sheetSecoes"><div class="fundo" data-fecha></div>
-  <div class="painel"><div class="pega"></div>
-    <a href="#s-veredito"><i>1</i>O que comprar</a>
-    <a href="#s-curva"><i>2</i>A curva de desvalorização</a>
-    <a href="#s-modelo"><i>3</i>Modelo pesa mais que ano</a>
-    <a href="#s-matriz"><i>4</i>Preço por ano modelo</a>
-    <a href="#s-detalhe"><i>5</i>Um modelo de perto</a>
-    <a href="#s-dinheiro"><i>6</i>Onde vai o dinheiro</a>
-    <a href="#s-fronteira"><i>7</i>Preço contra custo</a>
-    <a href="#s-lista"><i>8</i>A lista completa</a>
-    <a href="#s-metodo"><i>9</i>Como a conta foi feita</a>
-  </div>
-</div>
-
 <div class="velo" id="velo"></div>
 <aside class="drawer" id="drawer" aria-label="Filtros">
   <div class="cab"><h3>Filtros</h3>
     <button class="tbtn" id="limparTudo">Limpar</button>
     <button class="fechar" id="fecharDrawer" aria-label="Fechar filtros">&times;</button></div>
   <div class="corpo">
-    <div class="ponte" id="pontePesos">
-      <div class="cima">
-        <h4>Ordem do ranking</h4>
-        <button class="tbtn" id="irCriterios">Ajustar critérios</button>
-      </div>
+    <div class="grupo" id="grupoCriterios">
+      <h4>Ordem do ranking</h4>
+      <p class="pesosNota">Estes pesos decidem <b>quem vem primeiro</b>. Eles não tiram carro da lista, só mudam a ordem. Os filtros abaixo é que reduzem os candidatos.</p>
       <div class="barraPesos" id="barraPesos"></div>
-      <p>Estes são os pesos que decidem <b>a ordem</b>. Eles não tiram carro nenhum da lista, só mudam quem vem primeiro. Os filtros abaixo é que reduzem os candidatos.</p>
+      <div class="criterios" id="critGrade"></div>
+      <div class="rodape" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+        <button class="tbtn" id="wreset">Voltar ao equilíbrio</button>
+        <button class="tbtn" id="wcusto">Só custo por ano</button>
+      </div>
     </div>
 
     <div class="grupo"><h4>Como você vai pagar</h4>
@@ -147,20 +110,38 @@
         <input type="range" id="mm" min="60" max="220" step="10" value="100"></div>
     </div>
   </div>
-  <div class="pe"><button class="tbtn forte" id="verResultados" style="flex:1;justify-content:center">Ver <span id="contRes"></span> resultados</button></div>
+  <div class="pe"><button class="tbtn forte" id="verResultados" style="flex:1;justify-content:center"><span>Ver <span id="contRes"></span> resultados</span></button></div>
 </aside>
 
 <section class="hero">
   <span class="bolha b1"></span><span class="bolha b2"></span>
   <div class="wrap in">
     <span class="olho"><b>Tabela FIPE</b> <span id="hRef"></span><span class="soAmplo"> · <span id="hFam"></span> modelos · <span id="hPts"></span> preços</span></span>
-    <h1>O <span class="ris">preço da vitrine</span> não é o custo do carro.</h1>
-    <p class="chamada">Todo carro tem dois números. Um está no anúncio. O outro é <b>quanto ele tira do seu bolso por ano</b>, e só esse compara um carro com outro.</p>
+    <h1>Não existe melhor carro.<br>Existe o melhor <span class="ris2">para você<i class="pt">.</i></span></h1>
+    <p class="chamada">A resposta muda com o seu uso. Responda três coisas e veja a sua.</p>
+
+    <div class="quiz">
+      <div class="qLinha">
+        <span class="qNum">1</span>
+        <div class="qCorpo"><span class="qTxt">Quanto você roda por ano?</span>
+          <div class="chips" id="qKm"></div></div>
+      </div>
+      <div class="qLinha">
+        <span class="qNum">2</span>
+        <div class="qCorpo"><span class="qTxt">Por quanto tempo fica com o carro?</span>
+          <div class="chips" id="qH"></div></div>
+      </div>
+      <div class="qLinha">
+        <span class="qNum">3</span>
+        <div class="qCorpo"><span class="qTxt">Quanto pode gastar na compra?</span>
+          <div class="chips" id="qBud"></div></div>
+      </div>
+    </div>
 
     <div class="placa rev">
       <div class="fita">
         <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 1l2 4.3 4.7.6-3.4 3.2.9 4.6L8 11.5 3.8 13.7l.9-4.6L1.3 5.9 6 5.3z"/></svg>
-        O melhor da sua faixa agora
+        <span id="fitaTxt">Com o que você respondeu, o melhor é</span>
       </div>
       <div class="corpo">
         <h2 id="topNome"></h2>
@@ -188,6 +169,8 @@
         </div>
       </div>
     </div>
+
+    <div class="eSe rev" id="eSe"></div>
   </div>
 </section>
 

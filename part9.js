@@ -21,18 +21,23 @@ function render(){
   }
   if(S.sel && !cs.some(c=>c.fam===S.sel.fam && c.ano===S.sel.ano)) S.sel = null;
 
-  drawTopo(top, cs); drawPicks(top, cs); drawTiles(cs, top); drawCriterios();
-  drawCurva(); drawRange(cs); drawU();
-  drawHeat(top); drawStack(top); drawScatter(cs, top); drawTable(cs);
+  sincronizaQuiz();
+  // Um desenho que estoura não pode levar a revelação junto: sem o .vis a página
+  // inteira fica com opacity 0. Já aconteceu quando um id sumiu do markup.
+  try{
+    drawTopo(top, cs); drawESe(top); drawPicks(top, cs); drawTiles(cs, top); drawCriterios();
+    drawCurva(); drawRange(cs); drawU();
+    drawHeat(top); drawStack(top); drawScatter(cs, top); drawTable(cs);
 
-  const q = id => document.getElementById(id);
-  q("cCount").textContent = cs.length;
-  q("tblCount").textContent = cs.length;
-  q("pesoN").textContent = cs.length;
-  q("contRes").textContent = cs.length;
-  const n = filtrosAtivos();
-  q("contFiltros").textContent = n;
-  q("contFiltros").style.display = n ? "" : "none";
+    const q = id => document.getElementById(id);
+    const põe = (id, v) => { const e = q(id); if(e) e.textContent = v; };
+    põe("cCount", cs.length); põe("tblCount", cs.length); põe("contRes", cs.length);
+    const n = filtrosAtivos();
+    põe("contFiltros", n);
+    if(q("contFiltros")) q("contFiltros").style.display = n ? "" : "none";
+  } catch(err){
+    console.error("falha ao desenhar", err);
+  }
   revelar();
 }
 
@@ -147,7 +152,7 @@ function bind(){
   q("wcusto").onclick = () => { S.w = { custo:50, manut:0, gar:0, conf:0, liq:0, camb:0 }; render(); };
 
   q("limparTudo").onclick = () => {
-    Object.assign(S, PADRAO, {soGarantia:false, soConfiavel:false, soLiquido:false, soCambio:false,
+    Object.assign(S, PADRAO, {H:5, soGarantia:false, soConfiavel:false, soLiquido:false, soCambio:false,
       ene:"todas", busca:"", sel:null, listaN:10, verMaisHeat:false,
       pagamento:"avista", entrada:0.20, jurosAM:0.018, prazo:48, uf:""});
     S.segs = new Set(); S.marcas = new Set();
@@ -159,6 +164,7 @@ function bind(){
     q("entrada").value=20; q("jurosAM").value=180; q("prazo").value=48; q("buscaMarca").value="";
     ["soGarantia","soConfiavel","soLiquido","soCambio"].forEach(id=>q(id).checked=false);
     document.querySelectorAll("#chipsPag .chip").forEach(x=>x.setAttribute("aria-pressed", x.dataset.pag==="avista"));
+    document.querySelectorAll("#chipsH .chip").forEach(x=>x.setAttribute("aria-pressed", +x.dataset.h===5));
     document.querySelectorAll("#chipsSeg .chip").forEach(x=>x.setAttribute("aria-pressed", false));
     pintaMarcas(); upd(); render();
   };
@@ -168,21 +174,12 @@ function bind(){
   const abrir = on => { dr.classList.toggle("on", on); velo.classList.toggle("on", on);
     bf.setAttribute("aria-expanded", on); document.body.style.overflow = on ? "hidden" : "";
     if(on) dr.querySelector("select,input,button").focus(); };
-  bf.onclick = () => { fecharMega(); abrir(!dr.classList.contains("on")); };
+  bf.onclick = () => abrir(!dr.classList.contains("on"));
   q("fecharDrawer").onclick = () => abrir(false);
   q("verResultados").onclick = () => { abrir(false);
     document.getElementById("s-veredito").scrollIntoView({behavior:"smooth"}); };
   velo.onclick = () => abrir(false);
 
-  // megamenu de criterios
-  const mega = q("mega"), bc = q("btnCriterios");
-  function fecharMega(){ mega.classList.remove("on"); bc.setAttribute("aria-expanded", false); }
-  function abrirMega(){ abrir(false); mega.classList.add("on"); bc.setAttribute("aria-expanded", true);
-    mega.scrollTop = 0; }
-  bc.onclick = e => { e.stopPropagation(); mega.classList.contains("on") ? fecharMega() : abrirMega(); };
-  q("fecharMega").onclick = fecharMega;
-  // stopPropagation: sem ele o clique borbulha ate o document, que fecha o megamenu
-  // no mesmo instante em que ele abre
   const bConta = q("btnConta");
   if(bConta) bConta.onclick = () => {
     const alvo = q("contaTopo"), abrindo = alvo.hidden;
@@ -193,18 +190,14 @@ function bind(){
     // o bloco da esquerda estica e fica com um vazio enorme
     const dois = alvo.closest(".dois"); if(dois) dois.classList.toggle("aberto", abrindo);
   };
-  if(q("verCriterios")) q("verCriterios").onclick = e => { e.stopPropagation(); abrirMega(); };
-  if(q("irCriterios"))  q("irCriterios").onclick  = e => { e.stopPropagation(); abrir(false); abrirMega(); };
-  document.addEventListener("click", e => {
-    if(mega.classList.contains("on") && !mega.contains(e.target) && !bc.contains(e.target)) fecharMega();
-  });
-  addEventListener("keydown", e => { if(e.key === "Escape"){ abrir(false); fecharMega(); folha(false); } });
-
-  // folha de seções
-  const sh = q("sheetSecoes");
-  const folha = on => sh.classList.toggle("on", on);
-  q("btnSecoes").onclick = () => folha(true);
-  sh.querySelectorAll("a,[data-fecha]").forEach(el => el.addEventListener("click", () => folha(false)));
+  // os critérios agora moram na gaveta. o atalho abre a gaveta já no grupo certo
+  const irAosPesos = e => { if(e) e.stopPropagation(); abrir(true);
+    const g = q("grupoCriterios");
+    if(g){ g.scrollIntoView({block:"start"}); g.classList.add("piscar");
+      setTimeout(()=>g.classList.remove("piscar"), 1400); } };
+  if(q("verCriterios")) q("verCriterios").onclick = irAosPesos;
+  if(q("irCriterios"))  q("irCriterios").onclick  = irAosPesos;
+  addEventListener("keydown", e => { if(e.key === "Escape") abrir(false); });
 
   // tema
   q("theme").onclick = () => {
@@ -214,7 +207,44 @@ function bind(){
     requestAnimationFrame(render);
   };
 
-  pintaMarcas(); upd();
+  montaQuiz(); pintaMarcas(); upd();
+}
+
+/* ============ as três perguntas do herói ============
+   O visitante lia o carro do herói como "o melhor carro". Não é: é o melhor para
+   um uso. Perguntar antes de responder torna a condição parte da resposta. */
+const QUIZ = [
+  ["qKm", "km", [[5000,"5 mil"],[12000,"12 mil"],[20000,"20 mil"],[30000,"30 mil"]]],
+  ["qH",  "H",  [[3,"3 anos"],[5,"5 anos"],[8,"8 anos"],[10,"10 anos"]]],
+  ["qBud","budMax", [[50000,"até 50 mil"],[100000,"até 100 mil"],[200000,"até 200 mil"],[500000,"sem teto"]]]
+];
+function montaQuiz(){
+  for(const [id, chave, ops] of QUIZ){
+    const cx = document.getElementById(id); if(!cx) continue;
+    cx.innerHTML = ops.map(([v,r]) =>
+      `<button class="chip" type="button" data-v="${v}" aria-pressed="${S[chave]===v}">${r}</button>`).join("");
+    cx.querySelectorAll(".chip").forEach(b => b.onclick = () => {
+      S[chave] = +b.dataset.v;
+      espelhaNosFiltros(chave);
+      sincronizaQuiz();
+      if(window._upd) window._upd();
+      render();
+    });
+  }
+}
+/* Mexer num filtro tem que refletir nas perguntas, e vice-versa. Sem isso a
+   página mostra duas verdades ao mesmo tempo. */
+function espelhaNosFiltros(chave){
+  const e = document.getElementById(chave === "budMax" ? "budMax" : chave === "km" ? "km" : null);
+  if(e) e.value = S[chave];
+  if(chave === "H") document.querySelectorAll("#chipsH .chip")
+    .forEach(x => x.setAttribute("aria-pressed", +x.dataset.h === S.H));
+}
+function sincronizaQuiz(){
+  for(const [id, chave] of QUIZ){
+    const cx = document.getElementById(id); if(!cx) continue;
+    cx.querySelectorAll(".chip").forEach(b => b.setAttribute("aria-pressed", +b.dataset.v === S[chave]));
+  }
 }
 
 /* ============ balão de ajuda ============ */
