@@ -207,33 +207,90 @@ function bind(){
     requestAnimationFrame(render);
   };
 
-  montaQuiz(); pintaMarcas(); upd();
+  desenhaJogo(); pintaMarcas(); upd();
 }
 
-/* ============ as três perguntas do herói ============
-   O visitante lia o carro do herói como "o melhor carro". Não é: é o melhor para
-   um uso. Perguntar antes de responder torna a condição parte da resposta. */
+/* ============ o herói pergunta uma coisa por vez ============
+   Três perguntas juntas ainda eram carga demais na primeira tela. Uma por vez,
+   com progresso visível, troca leitura por resposta. Enquanto o jogo roda o
+   resultado fica escondido, então existe exatamente uma coisa a fazer na tela. */
 const QUIZ = [
-  ["qKm", "km", [[5000,"5 mil"],[12000,"12 mil"],[20000,"20 mil"],[30000,"30 mil"]]],
-  ["qH",  "H",  [[3,"3 anos"],[5,"5 anos"],[8,"8 anos"],[10,"10 anos"]]],
-  ["qBud","budMax", [[50000,"até 50 mil"],[100000,"até 100 mil"],[200000,"até 200 mil"],[500000,"sem teto"]]]
+  {id:"km", perg:"Quanto você roda por ano?", dica:"Vale o chute. Dá para mudar depois.",
+   ops:[[5000,"5 mil km","pouco, quase só cidade"],[12000,"12 mil km","a média brasileira"],
+        [20000,"20 mil km","estrada toda semana"],[30000,"30 mil km","trabalho com o carro"]]},
+  {id:"H", perg:"Por quanto tempo fica com o carro?", dica:"É o que decide quanto da depreciação é sua.",
+   ops:[[3,"3 anos","troco cedo"],[5,"5 anos","o mais comum"],
+        [8,"8 anos","fico bastante"],[10,"10 anos","até acabar"]]},
+  {id:"budMax", perg:"Quanto pode gastar na compra?", dica:"Preço de tabela FIPE, sem entrada nem parcela.",
+   ops:[[50000,"até R$ 50 mil",""],[100000,"até R$ 100 mil",""],
+        [200000,"até R$ 200 mil",""],[500000,"sem teto",""]]}
 ];
-function montaQuiz(){
-  for(const [id, chave, ops] of QUIZ){
-    const cx = document.getElementById(id); if(!cx) continue;
-    cx.innerHTML = ops.map(([v,r]) =>
-      `<button class="chip" type="button" data-v="${v}" aria-pressed="${S[chave]===v}">${r}</button>`).join("");
-    cx.querySelectorAll(".chip").forEach(b => b.onclick = () => {
-      S[chave] = +b.dataset.v;
-      espelhaNosFiltros(chave);
-      sincronizaQuiz();
-      if(window._upd) window._upd();
-      render();
-    });
+function desenhaJogo(){
+  const jogo = document.getElementById("jogo"); if(!jogo) return;
+  const resumo = document.getElementById("resumo");
+  const fim = S.passo >= QUIZ.length;
+
+  document.body.classList.toggle("jogando", !fim);
+  // "Responda três coisas" só ajuda antes da primeira resposta. Depois é ruído.
+  document.body.classList.toggle("iniciado", S.passo > 0 || fim);
+  jogo.hidden = fim;
+  resumo.hidden = !fim;
+
+  if(fim){
+    resumo.innerHTML = (S.pulou
+        ? `<span class="rAviso">Usando o perfil médio</span>`
+        : `<span class="rOk" aria-hidden="true">` + iconeCerto() + `</span>`) +
+      QUIZ.map(p => `<button class="rChip" type="button" data-p="${p.id}">` +
+        `${rotuloDe(p, S[p.id])}</button>`).join("") +
+      `<button class="jLink" type="button" id="rRefazer">Refazer</button>`;
+    resumo.querySelectorAll(".rChip").forEach(b => b.onclick = () => {
+      S.passo = QUIZ.findIndex(p => p.id === b.dataset.p); S.pulou = false; desenhaJogo(); });
+    document.getElementById("rRefazer").onclick = () => { S.passo = 0; S.pulou = false; desenhaJogo(); };
+    return;
   }
+
+  const p = QUIZ[S.passo];
+  document.getElementById("jPasso").textContent = `Pergunta ${S.passo+1} de ${QUIZ.length}`;
+  document.getElementById("jDots").innerHTML = QUIZ.map((_,i) =>
+    `<i class="${i < S.passo ? "feito" : i === S.passo ? "agora" : ""}"></i>`).join("");
+  document.getElementById("jPerg").textContent = p.perg;
+  document.getElementById("jOps").innerHTML = p.ops.map(([v,r,leg]) =>
+    `<button class="jOp" type="button" data-v="${v}" aria-pressed="${!!S.resp[p.id] && S[p.id]===v}">` +
+    `<b>${r}</b>${leg ? `<em>${leg}</em>` : ""}</button>`).join("") +
+    `<p class="jDica">${p.dica}</p>`;
+
+  document.getElementById("jOps").querySelectorAll(".jOp").forEach(b => b.onclick = () => {
+    S[p.id] = +b.dataset.v;
+    S.resp[p.id] = true;
+    espelhaNosFiltros(p.id);
+    S.passo++;
+    desenhaJogo();
+    if(window._upd) window._upd();
+    render();
+    if(S.passo >= QUIZ.length){
+      const alvo = document.querySelector(".placa");
+      if(alvo) setTimeout(() => alvo.scrollIntoView({behavior:"smooth", block:"center"}), 260);
+    }
+  });
+
+  const volta = document.getElementById("jVoltar");
+  volta.hidden = S.passo === 0;
+  volta.onclick = () => { S.passo = Math.max(0, S.passo-1); desenhaJogo(); };
+  // Quem não quer responder precisa de saída, senão a página vira pedágio
+  document.getElementById("jPular").onclick = () => {
+    S.passo = QUIZ.length; S.pulou = true; desenhaJogo(); render();
+    document.getElementById("s-veredito").scrollIntoView({behavior:"smooth"});
+  };
 }
-/* Mexer num filtro tem que refletir nas perguntas, e vice-versa. Sem isso a
-   página mostra duas verdades ao mesmo tempo. */
+function rotuloDe(p, v){
+  const o = p.ops.find(x => x[0] === v);
+  return o ? o[1] : String(v);
+}
+function iconeCerto(){
+  return `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.1"` +
+    ` stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-6.5"/></svg>`;
+}
+/* Mexer num filtro tem que refletir na resposta guardada, e vice-versa. */
 function espelhaNosFiltros(chave){
   const e = document.getElementById(chave === "budMax" ? "budMax" : chave === "km" ? "km" : null);
   if(e) e.value = S[chave];
@@ -241,10 +298,10 @@ function espelhaNosFiltros(chave){
     .forEach(x => x.setAttribute("aria-pressed", +x.dataset.h === S.H));
 }
 function sincronizaQuiz(){
-  for(const [id, chave] of QUIZ){
-    const cx = document.getElementById(id); if(!cx) continue;
-    cx.querySelectorAll(".chip").forEach(b => b.setAttribute("aria-pressed", +b.dataset.v === S[chave]));
-  }
+  const r = document.getElementById("resumo");
+  if(r && !r.hidden) r.querySelectorAll(".rChip").forEach(b => {
+    const p = QUIZ.find(x => x.id === b.dataset.p); if(p) b.textContent = rotuloDe(p, S[p.id]);
+  });
 }
 
 /* ============ balão de ajuda ============ */

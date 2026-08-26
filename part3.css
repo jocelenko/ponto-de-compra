@@ -148,24 +148,64 @@ main{padding-bottom:80px}
 .extrato .soma.periodo .nome{font-weight:600; color:var(--ink-2)}
 .extrato .soma.periodo .v{font-size:14.5px; font-weight:700; color:var(--ink-2)}
 
-/* ---------- as três perguntas do herói ---------- */
+/* ---------- o herói pergunta uma coisa por vez ---------- */
 h1 .ris2{position:relative; display:inline-block; white-space:nowrap; color:var(--acc)}
 h1 .ris2 .pt{font-style:normal; color:var(--ink)}
-.quiz{margin-top:18px; display:grid; gap:2px; background:var(--card); border:1px solid var(--line);
-  border-radius:var(--r-l); overflow:hidden; box-shadow:var(--sh-2)}
-.qLinha{display:flex; gap:12px; padding:13px 15px; background:var(--card)}
-.qLinha + .qLinha{border-top:1px solid var(--line-2)}
-@media(min-width:760px){ .qLinha{padding:18px 24px} }
-.qNum{width:24px; height:24px; border-radius:50%; background:var(--acc); color:var(--acc-on);
-  font-size:12.5px; font-weight:800; display:flex; align-items:center; justify-content:center;
-  flex:0 0 auto; margin-top:1px}
-.qCorpo{min-width:0; flex:1}
-.qTxt{display:block; font-size:14.5px; font-weight:650; margin-bottom:8px}
-.qLinha .chips{gap:6px}
-/* 2x2 em vez de 3+1 ragged: mesma altura, leitura mais rápida */
-@media(max-width:479px){ .qLinha .chips{display:grid; grid-template-columns:1fr 1fr} }
-.qLinha .chip{font-size:13.5px; padding:0 14px; min-height:40px; border-radius:99px}
-.qLinha .chip[aria-pressed=true]{background:var(--acc); border-color:var(--acc); color:var(--acc-on)}
+
+/* enquanto o jogo roda existe uma coisa só na tela */
+body.jogando .placa, body.jogando .eSe{display:none}
+body.iniciado .chamada{display:none}
+/* Enquanto o jogo roda, a pergunta é o assunto, não o título. No celular
+   as quatro opções só cabem acima da dobra se o título ceder espaço. */
+@media(max-width:559px){
+  body.jogando .hero h1{font-size:clamp(30px,6.6vw,40px); margin-bottom:10px}
+  body.jogando .chamada{font-size:15px; line-height:1.45}
+  body.jogando .jogo{margin-top:16px}
+  body.jogando .jPerg{margin-bottom:12px}
+  body.jogando .jOp{min-height:54px; padding:10px 15px}
+}
+
+.jogo{margin-top:22px; max-width:560px}
+.jTopo{display:flex; align-items:center; gap:12px; margin-bottom:14px}
+.jPasso{font-size:12px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-3)}
+.jDots{display:flex; gap:6px; margin-left:auto}
+.jDots i{width:22px; height:4px; border-radius:99px; background:var(--line); transition:background .3s}
+.jDots i.feito{background:var(--acc)}
+.jDots i.agora{background:var(--ink-2)}
+.jPerg{font-size:clamp(21px,3.6vw,27px); font-weight:700; letter-spacing:-.03em; line-height:1.2;
+  margin-bottom:16px}
+.jOps{display:grid; gap:9px}
+@media(min-width:560px){ .jOps{grid-template-columns:1fr 1fr} }
+.jOp{display:flex; flex-direction:column; align-items:flex-start; gap:3px; text-align:left;
+  min-height:58px; padding:12px 16px; border:1px solid var(--line); border-radius:var(--r-m);
+  background:var(--card); color:var(--ink); font:inherit; cursor:pointer;
+  transition:border-color .16s, background .16s, transform .16s}
+.jOp b{font-size:16px; font-weight:700; letter-spacing:-.02em}
+.jOp em{font-style:normal; font-size:12.5px; color:var(--ink-3)}
+.jOp:hover{border-color:var(--acc); background:var(--acc-soft); transform:translateY(-1px)}
+.jOp:active{transform:translateY(0)}
+.jOp[aria-pressed=true]{border-color:var(--acc); background:var(--acc-soft)}
+.jOp[aria-pressed=true] b{color:var(--acc-ink)}
+.jDica{grid-column:1/-1; margin-top:3px; font-size:12.5px; color:var(--ink-3)}
+.jPe{display:flex; align-items:center; gap:16px; margin-top:16px}
+.jLink{background:none; border:0; padding:6px 0; font:inherit; font-size:13.5px; color:var(--ink-3);
+  text-decoration:underline; text-underline-offset:3px; cursor:pointer}
+.jLink:hover{color:var(--ink)}
+#jPular{margin-left:auto}
+@media(prefers-reduced-motion:reduce){ .jOp{transition:none} .jOp:hover{transform:none} }
+
+/* ---------- o que foi respondido, depois que o jogo acaba ---------- */
+.resumo{display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:18px}
+.resumo[hidden]{display:none}
+.rOk{display:flex; width:22px; height:22px; border-radius:50%; background:var(--good);
+  color:var(--bg); align-items:center; justify-content:center; flex:0 0 auto}
+.rOk svg{width:13px; height:13px}
+.rChip{min-height:36px; padding:0 13px; border:1px solid var(--line); border-radius:99px;
+  background:var(--card); color:var(--ink); font:inherit; font-size:13.5px; font-weight:650; cursor:pointer}
+.rChip:hover{border-color:var(--acc); color:var(--acc-ink)}
+.rAviso{font-size:12px; font-weight:700; letter-spacing:.03em; text-transform:uppercase;
+  color:var(--warn); background:var(--warn-soft); padding:5px 10px; border-radius:99px}
+.resumo .jLink{font-size:13px}
 
 /* ---------- o contraste que mostra que a resposta é condicional ---------- */
 .eSe{margin-top:16px; border:1px solid color-mix(in srgb, var(--warn) 40%, var(--line));

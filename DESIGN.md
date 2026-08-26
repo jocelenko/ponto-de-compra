@@ -57,10 +57,24 @@ Regras duráveis:
   abaixo de 1040px), tema e o botão de filtros com contador. Nada mais. Os botões de seções e de
   critérios saíram: o primeiro repetia o menu, o segundo virou o primeiro grupo da gaveta.
 - **`.drawer`**: gaveta de filtros à direita, recolhível, `transform: translateX(100%)` quando fechada. Largura `min(420px, 100%)`, então ocupa a tela inteira no celular. **Nunca virar coluna permanente.**
-- **`.quiz`**: as três perguntas no herói, antes de qualquer resposta. Rodagem, horizonte e teto de
-  compra. Existe porque o visitante lia o carro do herói como "o melhor carro" em vez de "o melhor
-  para este uso". Perguntar antes de responder põe a condição dentro da resposta. As três cabem
-  acima da dobra em 390x780, e isso é requisito, não coincidência.
+- **`.jogo`**: o herói pergunta **uma coisa por vez**. Rodagem, horizonte e teto de compra, com
+  progresso visível, voltar e uma saída para quem não quer responder. Existe porque o visitante lia
+  o carro do herói como "o melhor carro" em vez de "o melhor para este uso", e perguntar antes de
+  responder põe a condição dentro da resposta.
+
+  As três perguntas juntas já foram tentadas e reprovaram: cabiam na tela, mas eram três decisões
+  de uma vez na primeira dobra. **Uma pergunta por vez é a regra**, e enquanto o jogo roda o
+  resultado fica escondido, então existe exatamente uma coisa a fazer na tela.
+
+  Regras que sustentam isso:
+  - Cada opção traz uma legenda em língua de gente ("a média brasileira"), nunca só o número.
+  - Opção só aparece marcada depois que o usuário escolheu. Marcar o padrão faz parecer respondido.
+  - **Pular é obrigatório.** Sem saída a página vira pedágio. Quem pula recebe o selo "usando o
+    perfil médio", porque o resumo não pode alegar escolha que não houve.
+  - As quatro opções e a dica cabem acima da dobra em 390x780. Para isso o título encolhe enquanto
+    o jogo roda: durante o jogo o assunto é a pergunta, não a manchete.
+- **`.resumo`**: o que foi respondido, em chips clicáveis que voltam àquela pergunta. Aparece no
+  lugar do jogo quando ele acaba, e é o que mantém as condições à vista junto do vencedor.
 - **`.eSe`**: o contraste logo abaixo do campeão. Procura a virada de verdade varrendo perfis
   alternativos e mostra o primeiro que troca o vencedor, com um botão que aplica aquele perfil.
   **Não pode inventar a virada.** Com os pesos equilibrados o mesmo carro ganha em quase toda faixa

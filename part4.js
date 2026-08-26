@@ -3,7 +3,7 @@ const S = {
   budMin: 10000, budMax: 500000, H: 5, km: 12000, ipva: 0.02, comb: 6.20, kwh: 0.95, bat: 0.025, mmult: 1.0,
   segs: new Set(), marcas: new Set(), ene: "todas", busca: "", sel: null,
   pagamento: "avista", entrada: 0.20, jurosAM: 0.018, prazo: 48, uf: "",
-  idadeMin: 0, idadeMax: 16, tetoCusto: 150000, verMaisHeat: false, listaN: 10,
+  passo: 0, resp: {}, pulou: false, idadeMin: 0, idadeMax: 16, tetoCusto: 150000, verMaisHeat: false, listaN: 10,
   soGarantia: false, soConfiavel: false, soLiquido: false, soCambio: false, sort: {k:"score", d:-1},
   w: { custo:34, manut:12, gar:16, conf:10, liq:16, camb:12 },
   curvas: null
