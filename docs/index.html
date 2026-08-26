@@ -409,12 +409,34 @@ body.iniciado .chamada{display:none}
 .jOp:active{transform:translateY(0)}
 .jOp[aria-pressed=true]{border-color:var(--acc); background:var(--acc-soft)}
 .jOp[aria-pressed=true] b{color:var(--acc-ink)}
+/* Não é uma resposta, é a entrega dos controles. Ocupa a linha inteira e usa
+   contorno tracejado para não competir com as quatro opções de verdade. */
+.jOp.larga{grid-column:1/-1; flex-direction:row; align-items:center; gap:12px; min-height:52px;
+  border-style:dashed; background:transparent}
+.jOp.larga:hover{border-style:solid; background:var(--acc-soft)}
+.jOp.larga > span{display:flex; flex-direction:column; align-items:flex-start; gap:2px; min-width:0}
+.jOp.larga .jIco{display:flex; flex:0 0 auto; color:var(--ink-3)}
+.jOp.larga:hover .jIco{color:var(--acc)}
+.jOp.larga .jIco svg{width:18px; height:18px}
+.jOp.larga b{font-size:15px}
 .jDica{grid-column:1/-1; margin-top:3px; font-size:12.5px; color:var(--ink-3)}
 .jPe{display:flex; align-items:center; gap:16px; margin-top:16px}
 .jLink{background:none; border:0; padding:6px 0; font:inherit; font-size:13.5px; color:var(--ink-3);
   text-decoration:underline; text-underline-offset:3px; cursor:pointer}
 .jLink:hover{color:var(--ink)}
 #jPular{margin-left:auto}
+/* Tela baixa (iPhone SE e afins, ainda comuns no Brasil): a quinta opção ficava
+   9px abaixo da dobra. O que cede é o título e o respiro, nunca o alvo de toque. */
+@media(max-height:700px){
+  body.jogando .hero h1{font-size:clamp(26px,5.4vw,34px); margin-bottom:8px}
+  body.jogando .chamada{display:none}
+  body.jogando .jogo{margin-top:12px}
+  body.jogando .jTopo{margin-bottom:10px}
+  body.jogando .jPerg{font-size:clamp(19px,3.2vw,23px); margin-bottom:10px}
+  body.jogando .jOps{gap:7px}
+  body.jogando .jOp{min-height:48px; padding:8px 14px}
+  body.jogando .jOp em{font-size:11.5px}
+}
 @media(prefers-reduced-motion:reduce){ .jOp{transition:none} .jOp:hover{transform:none} }
 
 /* ---------- o que foi respondido, depois que o jogo acaba ---------- */
@@ -2170,6 +2192,7 @@ function drawTable(cs){
 }
 
 /* ============ orquestração ============ */
+let abrirPesos = () => {};
 function render(){
   const cs = pontuar(candidatos(false));
   if(S.listaN > 10 && S._ultimoN !== cs.length){ S.listaN = 10; }   // filtro mudou: recomeca a lista
@@ -2363,10 +2386,12 @@ function bind(){
     const dois = alvo.closest(".dois"); if(dois) dois.classList.toggle("aberto", abrindo);
   };
   // os critérios agora moram na gaveta. o atalho abre a gaveta já no grupo certo
-  const irAosPesos = e => { if(e) e.stopPropagation(); abrir(true);
+  // global: o jogo do herói também precisa abrir a gaveta nos pesos
+  abrirPesos = () => { abrir(true);
     const g = q("grupoCriterios");
     if(g){ g.scrollIntoView({block:"start"}); g.classList.add("piscar");
       setTimeout(()=>g.classList.remove("piscar"), 1400); } };
+  const irAosPesos = e => { if(e) e.stopPropagation(); abrirPesos(); };
   if(q("verCriterios")) q("verCriterios").onclick = irAosPesos;
   if(q("irCriterios"))  q("irCriterios").onclick  = irAosPesos;
   addEventListener("keydown", e => { if(e.key === "Escape") abrir(false); });
@@ -2415,7 +2440,8 @@ const QUIZ = [
    ops:[["custo","Gastar o mínimo","o menor custo por ano"],
         ["problema","Não dar dor de cabeça","garantia, câmbio e oficina barata"],
         ["revenda","Revender fácil depois","modelo que sai rápido no anúncio"],
-        ["conforto","Conforto e equipamento","porte maior e mais itens de série"]]}
+        ["conforto","Conforto e equipamento","porte maior e mais itens de série"],
+        ["custom","Quero regular eu mesmo","abre os seis pesos para você mexer"]]}
 ];
 function desenhaJogo(){
   const jogo = document.getElementById("jogo"); if(!jogo) return;
@@ -2447,11 +2473,20 @@ function desenhaJogo(){
     `<i class="${i < S.passo ? "feito" : i === S.passo ? "agora" : ""}"></i>`).join("");
   document.getElementById("jPerg").textContent = p.perg;
   document.getElementById("jOps").innerHTML = p.ops.map(([v,r,leg]) =>
-    `<button class="jOp" type="button" data-v="${v}" aria-pressed="${!!S.resp[p.id] && S[p.id]===v}">` +
-    `<b>${r}</b>${leg ? `<em>${leg}</em>` : ""}</button>`).join("") +
+    v === "custom"
+      ? `<button class="jOp larga" type="button" data-v="custom">` +
+        `<span class="jIco" aria-hidden="true">${iconeSliders()}</span>` +
+        `<span><b>${r}</b><em>${leg}</em></span></button>`
+      : `<button class="jOp" type="button" data-v="${v}" aria-pressed="${!!S.resp[p.id] && S[p.id]===v}">` +
+        `<b>${r}</b>${leg ? `<em>${leg}</em>` : ""}</button>`).join("") +
     `<p class="jDica">${p.dica}</p>`;
 
   document.getElementById("jOps").querySelectorAll(".jOp").forEach(b => b.onclick = () => {
+    if(b.dataset.v === "custom"){
+      S.resp[p.id] = true; S.perfil = null; S.passo = QUIZ.length;
+      desenhaJogo(); render(); abrirPesos();
+      return;
+    }
     S[p.id] = p.peso ? b.dataset.v : +b.dataset.v;
     S.resp[p.id] = true;
     if(p.peso) aplicaPerfil(S.perfil);
@@ -2482,6 +2517,11 @@ function rotuloDe(p, v){
 function aplicaPerfil(chave){
   const p = PERFIS_PESO[chave]; if(!p) return;
   S.w = Object.assign({}, p.w);
+}
+function iconeSliders(){
+  return `<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.7"` +
+    ` stroke-linecap="round"><path d="M3 5h12M3 13h12"/><circle cx="7" cy="5" r="2.1" fill="var(--card)"/>` +
+    `<circle cx="12" cy="13" r="2.1" fill="var(--card)"/></svg>`;
 }
 function iconeCerto(){
   return `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.1"` +

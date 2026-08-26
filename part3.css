@@ -186,12 +186,34 @@ body.iniciado .chamada{display:none}
 .jOp:active{transform:translateY(0)}
 .jOp[aria-pressed=true]{border-color:var(--acc); background:var(--acc-soft)}
 .jOp[aria-pressed=true] b{color:var(--acc-ink)}
+/* Não é uma resposta, é a entrega dos controles. Ocupa a linha inteira e usa
+   contorno tracejado para não competir com as quatro opções de verdade. */
+.jOp.larga{grid-column:1/-1; flex-direction:row; align-items:center; gap:12px; min-height:52px;
+  border-style:dashed; background:transparent}
+.jOp.larga:hover{border-style:solid; background:var(--acc-soft)}
+.jOp.larga > span{display:flex; flex-direction:column; align-items:flex-start; gap:2px; min-width:0}
+.jOp.larga .jIco{display:flex; flex:0 0 auto; color:var(--ink-3)}
+.jOp.larga:hover .jIco{color:var(--acc)}
+.jOp.larga .jIco svg{width:18px; height:18px}
+.jOp.larga b{font-size:15px}
 .jDica{grid-column:1/-1; margin-top:3px; font-size:12.5px; color:var(--ink-3)}
 .jPe{display:flex; align-items:center; gap:16px; margin-top:16px}
 .jLink{background:none; border:0; padding:6px 0; font:inherit; font-size:13.5px; color:var(--ink-3);
   text-decoration:underline; text-underline-offset:3px; cursor:pointer}
 .jLink:hover{color:var(--ink)}
 #jPular{margin-left:auto}
+/* Tela baixa (iPhone SE e afins, ainda comuns no Brasil): a quinta opção ficava
+   9px abaixo da dobra. O que cede é o título e o respiro, nunca o alvo de toque. */
+@media(max-height:700px){
+  body.jogando .hero h1{font-size:clamp(26px,5.4vw,34px); margin-bottom:8px}
+  body.jogando .chamada{display:none}
+  body.jogando .jogo{margin-top:12px}
+  body.jogando .jTopo{margin-bottom:10px}
+  body.jogando .jPerg{font-size:clamp(19px,3.2vw,23px); margin-bottom:10px}
+  body.jogando .jOps{gap:7px}
+  body.jogando .jOp{min-height:48px; padding:8px 14px}
+  body.jogando .jOp em{font-size:11.5px}
+}
 @media(prefers-reduced-motion:reduce){ .jOp{transition:none} .jOp:hover{transform:none} }
 
 /* ---------- o que foi respondido, depois que o jogo acaba ---------- */

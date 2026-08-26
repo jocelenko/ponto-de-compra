@@ -409,6 +409,16 @@ body.iniciado .chamada{display:none}
 .jOp:active{transform:translateY(0)}
 .jOp[aria-pressed=true]{border-color:var(--acc); background:var(--acc-soft)}
 .jOp[aria-pressed=true] b{color:var(--acc-ink)}
+/* Não é uma resposta, é a entrega dos controles. Ocupa a linha inteira e usa
+   contorno tracejado para não competir com as quatro opções de verdade. */
+.jOp.larga{grid-column:1/-1; flex-direction:row; align-items:center; gap:12px; min-height:52px;
+  border-style:dashed; background:transparent}
+.jOp.larga:hover{border-style:solid; background:var(--acc-soft)}
+.jOp.larga > span{display:flex; flex-direction:column; align-items:flex-start; gap:2px; min-width:0}
+.jOp.larga .jIco{display:flex; flex:0 0 auto; color:var(--ink-3)}
+.jOp.larga:hover .jIco{color:var(--acc)}
+.jOp.larga .jIco svg{width:18px; height:18px}
+.jOp.larga b{font-size:15px}
 .jDica{grid-column:1/-1; margin-top:3px; font-size:12.5px; color:var(--ink-3)}
 .jPe{display:flex; align-items:center; gap:16px; margin-top:16px}
 .jLink{background:none; border:0; padding:6px 0; font:inherit; font-size:13.5px; color:var(--ink-3);
@@ -2170,6 +2180,7 @@ function drawTable(cs){
 }
 
 /* ============ orquestração ============ */
+let abrirPesos = () => {};
 function render(){
   const cs = pontuar(candidatos(false));
   if(S.listaN > 10 && S._ultimoN !== cs.length){ S.listaN = 10; }   // filtro mudou: recomeca a lista
@@ -2363,10 +2374,12 @@ function bind(){
     const dois = alvo.closest(".dois"); if(dois) dois.classList.toggle("aberto", abrindo);
   };
   // os critérios agora moram na gaveta. o atalho abre a gaveta já no grupo certo
-  const irAosPesos = e => { if(e) e.stopPropagation(); abrir(true);
+  // global: o jogo do herói também precisa abrir a gaveta nos pesos
+  abrirPesos = () => { abrir(true);
     const g = q("grupoCriterios");
     if(g){ g.scrollIntoView({block:"start"}); g.classList.add("piscar");
       setTimeout(()=>g.classList.remove("piscar"), 1400); } };
+  const irAosPesos = e => { if(e) e.stopPropagation(); abrirPesos(); };
   if(q("verCriterios")) q("verCriterios").onclick = irAosPesos;
   if(q("irCriterios"))  q("irCriterios").onclick  = irAosPesos;
   addEventListener("keydown", e => { if(e.key === "Escape") abrir(false); });
@@ -2390,11 +2403,15 @@ function bind(){
    quase sempre e a página parecia dizer "este é o melhor carro". Agora o visitante
    escolhe a prioridade, e o perfil escolhido fica à vista no resumo e na gaveta. */
 const PERFIS_PESO = {
-  custo:    {rot:"Gastar o mínimo",       w:{custo:58, manut:16, gar:6,  conf:2,  liq:10, camb:8}},
-  problema: {rot:"Não dar dor de cabeça", w:{custo:20, manut:20, gar:24, conf:4,  liq:8,  camb:24}},
-  conforto: {rot:"Conforto e equipamento",w:{custo:22, manut:8,  gar:12, conf:38, liq:12, camb:8}},
-  revenda:  {rot:"Revender fácil depois", w:{custo:26, manut:8,  gar:12, conf:6,  liq:38, camb:10}},
-  tudo:     {rot:"Um pouco de tudo",      w:{custo:34, manut:12, gar:16, conf:10, liq:16, camb:12}}
+  // custo é 100 de propósito. Testado: em 58 e em 70 o vencedor não mudava, e entre
+  // 86 e 90 ele pulava de um elétrico chinês para um HB20 usado. Nessa faixa o número
+  // exato decidia a resposta, o que é arbitrário. Se o rótulo promete o menor custo
+  // por ano, o peso honesto é o custo sozinho.
+  custo:    {rot:"Gastar o mínimo",        w:{custo:100, manut:0, gar:0,  conf:0,  liq:0,  camb:0}},
+  problema: {rot:"Não dar dor de cabeça",  w:{custo:12, manut:28, gar:30, conf:2,  liq:6,  camb:22}},
+  revenda:  {rot:"Revender fácil depois",  w:{custo:20, manut:4,  gar:8,  conf:4,  liq:56, camb:8}},
+  conforto: {rot:"Conforto e equipamento", w:{custo:20, manut:4,  gar:8,  conf:56, liq:6,  camb:6}},
+  tudo:     {rot:"Um pouco de tudo",       w:{custo:34, manut:12, gar:16, conf:10, liq:16, camb:12}}
 };
 const QUIZ = [
   {id:"km", perg:"Quanto você roda por ano?", dica:"Vale o chute. Dá para mudar depois.",
@@ -2411,7 +2428,8 @@ const QUIZ = [
    ops:[["custo","Gastar o mínimo","o menor custo por ano"],
         ["problema","Não dar dor de cabeça","garantia, câmbio e oficina barata"],
         ["revenda","Revender fácil depois","modelo que sai rápido no anúncio"],
-        ["conforto","Conforto e equipamento","porte maior e mais itens de série"]]}
+        ["conforto","Conforto e equipamento","porte maior e mais itens de série"],
+        ["custom","Quero regular eu mesmo","abre os seis pesos para você mexer"]]}
 ];
 function desenhaJogo(){
   const jogo = document.getElementById("jogo"); if(!jogo) return;
@@ -2443,11 +2461,20 @@ function desenhaJogo(){
     `<i class="${i < S.passo ? "feito" : i === S.passo ? "agora" : ""}"></i>`).join("");
   document.getElementById("jPerg").textContent = p.perg;
   document.getElementById("jOps").innerHTML = p.ops.map(([v,r,leg]) =>
-    `<button class="jOp" type="button" data-v="${v}" aria-pressed="${!!S.resp[p.id] && S[p.id]===v}">` +
-    `<b>${r}</b>${leg ? `<em>${leg}</em>` : ""}</button>`).join("") +
+    v === "custom"
+      ? `<button class="jOp larga" type="button" data-v="custom">` +
+        `<span class="jIco" aria-hidden="true">${iconeSliders()}</span>` +
+        `<span><b>${r}</b><em>${leg}</em></span></button>`
+      : `<button class="jOp" type="button" data-v="${v}" aria-pressed="${!!S.resp[p.id] && S[p.id]===v}">` +
+        `<b>${r}</b>${leg ? `<em>${leg}</em>` : ""}</button>`).join("") +
     `<p class="jDica">${p.dica}</p>`;
 
   document.getElementById("jOps").querySelectorAll(".jOp").forEach(b => b.onclick = () => {
+    if(b.dataset.v === "custom"){
+      S.resp[p.id] = true; S.perfil = null; S.passo = QUIZ.length;
+      desenhaJogo(); render(); abrirPesos();
+      return;
+    }
     S[p.id] = p.peso ? b.dataset.v : +b.dataset.v;
     S.resp[p.id] = true;
     if(p.peso) aplicaPerfil(S.perfil);
@@ -2478,6 +2505,11 @@ function rotuloDe(p, v){
 function aplicaPerfil(chave){
   const p = PERFIS_PESO[chave]; if(!p) return;
   S.w = Object.assign({}, p.w);
+}
+function iconeSliders(){
+  return `<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.7"` +
+    ` stroke-linecap="round"><path d="M3 5h12M3 13h12"/><circle cx="7" cy="5" r="2.1" fill="var(--card)"/>` +
+    `<circle cx="12" cy="13" r="2.1" fill="var(--card)"/></svg>`;
 }
 function iconeCerto(){
   return `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.1"` +

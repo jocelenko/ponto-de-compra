@@ -1,4 +1,5 @@
 /* ============ orquestração ============ */
+let abrirPesos = () => {};
 function render(){
   const cs = pontuar(candidatos(false));
   if(S.listaN > 10 && S._ultimoN !== cs.length){ S.listaN = 10; }   // filtro mudou: recomeca a lista
@@ -192,10 +193,12 @@ function bind(){
     const dois = alvo.closest(".dois"); if(dois) dois.classList.toggle("aberto", abrindo);
   };
   // os critérios agora moram na gaveta. o atalho abre a gaveta já no grupo certo
-  const irAosPesos = e => { if(e) e.stopPropagation(); abrir(true);
+  // global: o jogo do herói também precisa abrir a gaveta nos pesos
+  abrirPesos = () => { abrir(true);
     const g = q("grupoCriterios");
     if(g){ g.scrollIntoView({block:"start"}); g.classList.add("piscar");
       setTimeout(()=>g.classList.remove("piscar"), 1400); } };
+  const irAosPesos = e => { if(e) e.stopPropagation(); abrirPesos(); };
   if(q("verCriterios")) q("verCriterios").onclick = irAosPesos;
   if(q("irCriterios"))  q("irCriterios").onclick  = irAosPesos;
   addEventListener("keydown", e => { if(e.key === "Escape") abrir(false); });
@@ -244,7 +247,8 @@ const QUIZ = [
    ops:[["custo","Gastar o mínimo","o menor custo por ano"],
         ["problema","Não dar dor de cabeça","garantia, câmbio e oficina barata"],
         ["revenda","Revender fácil depois","modelo que sai rápido no anúncio"],
-        ["conforto","Conforto e equipamento","porte maior e mais itens de série"]]}
+        ["conforto","Conforto e equipamento","porte maior e mais itens de série"],
+        ["custom","Quero regular eu mesmo","abre os seis pesos para você mexer"]]}
 ];
 function desenhaJogo(){
   const jogo = document.getElementById("jogo"); if(!jogo) return;
@@ -276,11 +280,20 @@ function desenhaJogo(){
     `<i class="${i < S.passo ? "feito" : i === S.passo ? "agora" : ""}"></i>`).join("");
   document.getElementById("jPerg").textContent = p.perg;
   document.getElementById("jOps").innerHTML = p.ops.map(([v,r,leg]) =>
-    `<button class="jOp" type="button" data-v="${v}" aria-pressed="${!!S.resp[p.id] && S[p.id]===v}">` +
-    `<b>${r}</b>${leg ? `<em>${leg}</em>` : ""}</button>`).join("") +
+    v === "custom"
+      ? `<button class="jOp larga" type="button" data-v="custom">` +
+        `<span class="jIco" aria-hidden="true">${iconeSliders()}</span>` +
+        `<span><b>${r}</b><em>${leg}</em></span></button>`
+      : `<button class="jOp" type="button" data-v="${v}" aria-pressed="${!!S.resp[p.id] && S[p.id]===v}">` +
+        `<b>${r}</b>${leg ? `<em>${leg}</em>` : ""}</button>`).join("") +
     `<p class="jDica">${p.dica}</p>`;
 
   document.getElementById("jOps").querySelectorAll(".jOp").forEach(b => b.onclick = () => {
+    if(b.dataset.v === "custom"){
+      S.resp[p.id] = true; S.perfil = null; S.passo = QUIZ.length;
+      desenhaJogo(); render(); abrirPesos();
+      return;
+    }
     S[p.id] = p.peso ? b.dataset.v : +b.dataset.v;
     S.resp[p.id] = true;
     if(p.peso) aplicaPerfil(S.perfil);
@@ -311,6 +324,11 @@ function rotuloDe(p, v){
 function aplicaPerfil(chave){
   const p = PERFIS_PESO[chave]; if(!p) return;
   S.w = Object.assign({}, p.w);
+}
+function iconeSliders(){
+  return `<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.7"` +
+    ` stroke-linecap="round"><path d="M3 5h12M3 13h12"/><circle cx="7" cy="5" r="2.1" fill="var(--card)"/>` +
+    `<circle cx="12" cy="13" r="2.1" fill="var(--card)"/></svg>`;
 }
 function iconeCerto(){
   return `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.1"` +

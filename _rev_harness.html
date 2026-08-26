@@ -1,0 +1,11 @@
+<!doctype html><meta charset="utf-8"><title>RevHarness</title>
+<style>html,body{margin:0;background:#333;overflow:hidden}
+#win{width:1240px;height:700px;overflow:hidden;position:relative}
+#f{border:0;display:block;position:absolute;left:0;top:0;width:1240px;height:11000px}</style>
+<div id="win"><iframe id="f" src="_rev_freeze.html"></iframe></div>
+<script>
+const F=()=>document.getElementById('f');
+window.play=(seq)=>{const d=F().contentDocument;(seq||[1,1,1,0]).forEach(i=>{const b=d.querySelectorAll('#jOps .jOp');if(b[i])b[i].click();});return 'played'};
+window.go=(y)=>{F().style.top=(-y)+'px';return y};
+window.goTo=(sel)=>{const d=F().contentDocument;const e=d.querySelector(sel);if(!e)return 'no '+sel;const y=e.getBoundingClientRect().top+(d.documentElement.scrollTop||0)-20;window.go(y);return Math.round(y)};
+</script>

@@ -73,6 +73,10 @@ Regras duráveis:
 
   Regras que sustentam isso:
   - Cada opção traz uma legenda em língua de gente ("a média brasileira"), nunca só o número.
+  - A quinta opção da pergunta de prioridade, "quero regular eu mesmo", **não é uma resposta, é a
+    entrega dos controles**: ocupa a linha inteira, usa contorno tracejado para não competir com as
+    quatro opções de verdade, e abre a gaveta direto nos seis pesos. Quem clica fica com o rótulo
+    "Pesos personalizados" no resumo, nunca com o nome de um preset que ele não escolheu.
   - **Preset de peso tem que cumprir o rótulo.** "Gastar o mínimo" com custo em 58% e depois em 70%
     devolvia o mesmo vencedor de sempre, e entre 86% e 90% ele pulava de um elétrico chinês para um
     HB20 usado. Nessa faixa o número exato decidia a resposta, o que é arbitrário. O preset é custo
@@ -80,7 +84,7 @@ Regras duráveis:
   - Opção só aparece marcada depois que o usuário escolheu. Marcar o padrão faz parecer respondido.
   - **Pular é obrigatório.** Sem saída a página vira pedágio. Quem pula recebe o selo "usando o
     perfil médio", porque o resumo não pode alegar escolha que não houve.
-  - As quatro opções e a dica cabem acima da dobra em 390x780. Para isso o título encolhe enquanto
+  - As opções e a dica cabem acima da dobra em 390x780 e em 375x667. Para isso o título encolhe enquanto
     o jogo roda: durante o jogo o assunto é a pergunta, não a manchete.
 - **`.resumo`**: o que foi respondido, em chips clicáveis que voltam àquela pergunta. Aparece no
   lugar do jogo quando ele acaba, e é o que mantém as condições à vista junto do vencedor.
