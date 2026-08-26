@@ -66,8 +66,17 @@ Regras duráveis:
   de uma vez na primeira dobra. **Uma pergunta por vez é a regra**, e enquanto o jogo roda o
   resultado fica escondido, então existe exatamente uma coisa a fazer na tela.
 
+  A quarta pergunta é a **prioridade**, e ela existe porque os pesos decidiam a resposta ficando
+  invisíveis. O visitante escolhia rodagem, prazo e teto, e ainda assim recebia quase sempre o mesmo
+  carro, porque o perfil de peso equilibrado é que estava no comando. Perfil escolhido aparece no
+  resumo e na barra de pesos da gaveta, então nunca mais decide escondido.
+
   Regras que sustentam isso:
   - Cada opção traz uma legenda em língua de gente ("a média brasileira"), nunca só o número.
+  - **Preset de peso tem que cumprir o rótulo.** "Gastar o mínimo" com custo em 58% e depois em 70%
+    devolvia o mesmo vencedor de sempre, e entre 86% e 90% ele pulava de um elétrico chinês para um
+    HB20 usado. Nessa faixa o número exato decidia a resposta, o que é arbitrário. O preset é custo
+    em 100%, que é literalmente o que o rótulo promete e não depende de calibragem fina.
   - Opção só aparece marcada depois que o usuário escolheu. Marcar o padrão faz parecer respondido.
   - **Pular é obrigatório.** Sem saída a página vira pedágio. Quem pula recebe o selo "usando o
     perfil médio", porque o resumo não pode alegar escolha que não houve.

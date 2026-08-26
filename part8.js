@@ -81,7 +81,13 @@ function montaConta(c){
    supor que a rodagem basta, porque com os pesos equilibrados o mesmo carro ganha
    em quase toda faixa de quilometragem. Se nenhuma condição virar, ele diz isso,
    que é informação e não enfeite. */
+/* A prioridade é a dimensão que mais troca o vencedor, então ela vem primeiro.
+   Testar só rodagem dava a impressão falsa de que a resposta era estável. */
 const PERFIS = [
+  ["perfil","custo",    "você olhasse só o custo por ano",            "Gastar o mínimo"],
+  ["perfil","problema", "o que pesasse fosse não dar dor de cabeça",  "Não dar dor de cabeça"],
+  ["perfil","revenda",  "o que pesasse fosse revender fácil",         "Revender fácil depois"],
+  ["perfil","conforto", "o que pesasse fosse conforto e equipamento", "Conforto e equipamento"],
   ["budMax",  50000, "seu teto de compra fosse R$ 50 mil"],
   ["budMax", 100000, "seu teto de compra fosse R$ 100 mil"],
   ["km",       5000, "você rodasse 5 mil km por ano"],
@@ -91,10 +97,19 @@ const PERFIS = [
 ];
 function melhorSob(mudanca){
   const antes = {};
-  for(const k in mudanca){ antes[k] = S[k]; S[k] = mudanca[k]; }
+  for(const k in mudanca){
+    antes[k] = k === "w" ? Object.assign({}, S.w) : S[k];
+    S[k] = mudanca[k];
+  }
   const w = pontuar(candidatos(false)).sort((a,b)=>b.score-a.score)[0];
   for(const k in antes) S[k] = antes[k];
   return w;
+}
+// mudar de prioridade e mudar o objeto de pesos inteiro, nao uma chave solta
+function mudancaDe(chave, valor){
+  if(chave !== "perfil") return {[chave]: valor};
+  const p = PERFIS_PESO[valor];
+  return p ? {perfil: valor, w: Object.assign({}, p.w)} : null;
 }
 function drawESe(top){
   const alvo = document.getElementById("eSe"); if(!alvo) return;
@@ -103,16 +118,14 @@ function drawESe(top){
   const mesmo = c => c && c.fam === atual.fam && c.ano === atual.ano;
 
   let achado = null;
-  for(const [chave, valor, frase] of PERFIS){
+  for(const [chave, valor, frase, rotPeso] of PERFIS){
     if(S[chave] === valor) continue;
-    const o = melhorSob({[chave]: valor});
-    if(o && !mesmo(o)){ achado = {o, frase, mud:{[chave]:valor}, rot:rotuloPerfil(chave, valor)}; break; }
-  }
-  if(!achado){
-    const soCusto = melhorSob({w:{custo:50, manut:0, gar:0, conf:0, liq:0, camb:0}});
-    if(soCusto && !mesmo(soCusto))
-      achado = {o:soCusto, frase:"você olhasse só o custo por ano, ignorando garantia e revenda",
-                mud:{w:{custo:50, manut:0, gar:0, conf:0, liq:0, camb:0}}, rot:"Só custo por ano"};
+    const mud = mudancaDe(chave, valor); if(!mud) continue;
+    const o = melhorSob(mud);
+    if(o && !mesmo(o)){
+      achado = {o, frase, mud, rot: rotPeso || rotuloPerfil(chave, valor)};
+      break;
+    }
   }
 
   alvo.hidden = false;
@@ -130,6 +143,7 @@ function drawESe(top){
   const b = document.getElementById("testarAlt");
   if(b) b.onclick = () => {
     Object.assign(S, achado.mud);
+    if(achado.mud.perfil) S.resp.perfil = true;
     if(achado.mud.budMax){ const e = document.getElementById("budMax"); if(e) e.value = S.budMax; }
     if(achado.mud.km){ const e = document.getElementById("km"); if(e) e.value = S.km; }
     if(achado.mud.H) document.querySelectorAll("#chipsH .chip")
@@ -258,7 +272,7 @@ function drawCriterios(){
       <input type="range" id="w_${k}" min="0" max="50" step="2" value="${S.w[k]}" aria-label="Peso de ${nome}">
     </div>`).join("");
   Object.keys(S.w).forEach(k=>{ const e=document.getElementById("w_"+k);
-    if(e) e.oninput = ev => { S.w[k] = +ev.target.value; render(); }; });
+    if(e) e.oninput = ev => { S.w[k] = +ev.target.value; S.perfil = null; render(); }; });
   drawBarraPesos();
 }
 

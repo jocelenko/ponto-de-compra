@@ -148,10 +148,11 @@ function bind(){
     upd(); render();
   });
 
-  q("wreset").onclick = () => { S.w = { custo:34, manut:12, gar:16, conf:10, liq:16, camb:12 }; render(); };
-  q("wcusto").onclick = () => { S.w = { custo:50, manut:0, gar:0, conf:0, liq:0, camb:0 }; render(); };
+  q("wreset").onclick = () => { S.perfil = "tudo"; aplicaPerfil("tudo"); render(); };
+  q("wcusto").onclick = () => { S.perfil = "custo"; aplicaPerfil("custo"); render(); };
 
   q("limparTudo").onclick = () => {
+    S.perfil = "tudo"; aplicaPerfil("tudo");
     Object.assign(S, PADRAO, {H:5, soGarantia:false, soConfiavel:false, soLiquido:false, soCambio:false,
       ene:"todas", busca:"", sel:null, listaN:10, verMaisHeat:false,
       pagamento:"avista", entrada:0.20, jurosAM:0.018, prazo:48, uf:""});
@@ -214,6 +215,20 @@ function bind(){
    Três perguntas juntas ainda eram carga demais na primeira tela. Uma por vez,
    com progresso visível, troca leitura por resposta. Enquanto o jogo roda o
    resultado fica escondido, então existe exatamente uma coisa a fazer na tela. */
+/* Os pesos decidiam a resposta e ficavam invisíveis, então o mesmo carro ganhava
+   quase sempre e a página parecia dizer "este é o melhor carro". Agora o visitante
+   escolhe a prioridade, e o perfil escolhido fica à vista no resumo e na gaveta. */
+const PERFIS_PESO = {
+  // custo é 100 de propósito. Testado: em 58 e em 70 o vencedor não mudava, e entre
+  // 86 e 90 ele pulava de um elétrico chinês para um HB20 usado. Nessa faixa o número
+  // exato decidia a resposta, o que é arbitrário. Se o rótulo promete o menor custo
+  // por ano, o peso honesto é o custo sozinho.
+  custo:    {rot:"Gastar o mínimo",        w:{custo:100, manut:0, gar:0,  conf:0,  liq:0,  camb:0}},
+  problema: {rot:"Não dar dor de cabeça",  w:{custo:12, manut:28, gar:30, conf:2,  liq:6,  camb:22}},
+  revenda:  {rot:"Revender fácil depois",  w:{custo:20, manut:4,  gar:8,  conf:4,  liq:56, camb:8}},
+  conforto: {rot:"Conforto e equipamento", w:{custo:20, manut:4,  gar:8,  conf:56, liq:6,  camb:6}},
+  tudo:     {rot:"Um pouco de tudo",       w:{custo:34, manut:12, gar:16, conf:10, liq:16, camb:12}}
+};
 const QUIZ = [
   {id:"km", perg:"Quanto você roda por ano?", dica:"Vale o chute. Dá para mudar depois.",
    ops:[[5000,"5 mil km","pouco, quase só cidade"],[12000,"12 mil km","a média brasileira"],
@@ -223,7 +238,13 @@ const QUIZ = [
         [8,"8 anos","fico bastante"],[10,"10 anos","até acabar"]]},
   {id:"budMax", perg:"Quanto pode gastar na compra?", dica:"Preço de tabela FIPE, sem entrada nem parcela.",
    ops:[[50000,"até R$ 50 mil",""],[100000,"até R$ 100 mil",""],
-        [200000,"até R$ 200 mil",""],[500000,"sem teto",""]]}
+        [200000,"até R$ 200 mil",""],[500000,"sem teto",""]]},
+  {id:"perfil", perg:"O que mais pesa na sua escolha?", peso:true,
+   dica:"Isto muda a ordem do ranking, não a lista. Dá para regular fino nos filtros.",
+   ops:[["custo","Gastar o mínimo","o menor custo por ano"],
+        ["problema","Não dar dor de cabeça","garantia, câmbio e oficina barata"],
+        ["revenda","Revender fácil depois","modelo que sai rápido no anúncio"],
+        ["conforto","Conforto e equipamento","porte maior e mais itens de série"]]}
 ];
 function desenhaJogo(){
   const jogo = document.getElementById("jogo"); if(!jogo) return;
@@ -260,8 +281,9 @@ function desenhaJogo(){
     `<p class="jDica">${p.dica}</p>`;
 
   document.getElementById("jOps").querySelectorAll(".jOp").forEach(b => b.onclick = () => {
-    S[p.id] = +b.dataset.v;
+    S[p.id] = p.peso ? b.dataset.v : +b.dataset.v;
     S.resp[p.id] = true;
+    if(p.peso) aplicaPerfil(S.perfil);
     espelhaNosFiltros(p.id);
     S.passo++;
     desenhaJogo();
@@ -278,13 +300,17 @@ function desenhaJogo(){
   volta.onclick = () => { S.passo = Math.max(0, S.passo-1); desenhaJogo(); };
   // Quem não quer responder precisa de saída, senão a página vira pedágio
   document.getElementById("jPular").onclick = () => {
-    S.passo = QUIZ.length; S.pulou = true; desenhaJogo(); render();
+    S.passo = QUIZ.length; S.pulou = true; S.perfil = "tudo"; aplicaPerfil("tudo"); desenhaJogo(); render();
     document.getElementById("s-veredito").scrollIntoView({behavior:"smooth"});
   };
 }
 function rotuloDe(p, v){
   const o = p.ops.find(x => x[0] === v);
-  return o ? o[1] : String(v);
+  return o ? o[1] : (p.peso ? "Pesos personalizados" : String(v));
+}
+function aplicaPerfil(chave){
+  const p = PERFIS_PESO[chave]; if(!p) return;
+  S.w = Object.assign({}, p.w);
 }
 function iconeCerto(){
   return `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.1"` +

@@ -89,7 +89,10 @@ Ausências que nenhum trabalho futuro pode preencher com invenção:
    como "o melhor carro". Nenhuma tela pode apresentar um vencedor sem as condições que o elegeram
    ao lado, e o contraste que mostra a troca precisa vir de uma varredura real, nunca de um exemplo
    escrito à mão.
-6. **O produto envelhece em público.** Mês de referência e limitações são elemento de primeira classe, porque o link circula sem mim junto para explicar.
+6. **Premissa que decide a resposta não pode ficar escondida.** O perfil de peso mudava o vencedor
+   mais do que rodagem, prazo e teto somados, e era o único que o visitante não via. Toda premissa
+   com esse poder é perguntada na entrada e fica visível junto do resultado.
+7. **O produto envelhece em público.** Mês de referência e limitações são elemento de primeira classe, porque o link circula sem mim junto para explicar.
 
 ## Accessibility & Inclusion
 
