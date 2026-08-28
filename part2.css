@@ -16,6 +16,26 @@
   .topo nav{display:flex}
   .topo .marca{margin-right:26px}
 }
+/* Abaixo de 1040px o menu do topo some e a página fica com 13.000px de rolagem
+   sem índice. A tira aparece só depois do herói, que é quando navegar passa a
+   fazer sentido, então ela não custa altura na primeira tela. */
+.topo nav.secTira{display:none}
+@media(max-width:1039px){
+  .topo nav.secTira{position:absolute; left:0; right:0; top:60px; display:flex; gap:6px;
+    padding:0 14px 8px; overflow-x:auto; overscroll-behavior-x:contain;
+    scrollbar-width:none; background:inherit;
+    transform:translateY(-8px); opacity:0; pointer-events:none;
+    transition:transform .2s cubic-bezier(.2,.8,.25,1), opacity .16s}
+  .topo nav.secTira::-webkit-scrollbar{display:none}
+  body.rolou .topo nav.secTira{transform:none; opacity:1; pointer-events:auto}
+  body.rolou .sec{scroll-margin-top:108px}
+  .topo nav.secTira a{flex:0 0 auto; font-size:12.5px; font-weight:600; color:var(--ink-3);
+    padding:8px 13px; min-height:40px; display:flex; align-items:center;
+    border:1px solid var(--line-2); border-radius:99px; background:var(--card)}
+  .topo nav.secTira a:hover{text-decoration:none; color:var(--ink)}
+  .topo nav.secTira a.atual{color:var(--acc-on); background:var(--acc); border-color:var(--acc)}
+}
+@media(max-width:1039px) and (prefers-reduced-motion:reduce){ .topo nav.secTira{transition:none} }
 .topo nav a{font-size:13.5px; font-weight:500; color:var(--ink-2); padding:7px 10px; border-radius:99px}
 .topo nav a:hover{background:var(--bg-2); color:var(--ink); text-decoration:none}
 .topo nav a.atual{color:var(--ink); font-weight:650; background:var(--bg-2)}
@@ -131,8 +151,10 @@ input.mini{width:100%; font:inherit; font-size:14.5px; padding:9px 12px; min-hei
 @media(prefers-reduced-motion:reduce){ #grupoCriterios.piscar{animation:none} }
 .barraPesos{display:flex; height:28px; border-radius:6px; overflow:hidden; background:var(--bg-3)}
 .barraPesos i{display:block; position:relative}
+/* Era color:#fff fixo, que reprovava sobre teal, azul e roxo (3,71 a 3,84 no escuro).
+   A tinta agora vem da luminância real do segmento, como na matriz. */
 .barraPesos i span{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-  font-size:9.5px; font-weight:800; color:#fff; letter-spacing:.02em; white-space:nowrap; overflow:hidden}
+  font-size:9.5px; font-weight:800; letter-spacing:.02em; white-space:nowrap; overflow:hidden}
 .pesosLeg{display:flex; flex-wrap:wrap; gap:4px 12px; margin-top:9px; font-size:11.5px; color:var(--ink-3)}
 .pesosLeg span{display:inline-flex; align-items:center; gap:5px}
 .pesosLeg i{width:9px; height:9px; border-radius:2px; flex:0 0 auto}

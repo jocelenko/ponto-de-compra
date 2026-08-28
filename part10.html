@@ -16,6 +16,15 @@
       <a href="#s-lista">Lista</a>
       <a href="#s-metodo">Método</a>
     </nav>
+    <nav class="secTira" id="secTira" aria-label="Seções da página">
+      <a href="#s-veredito">O que comprar</a>
+      <a href="#s-curva">A curva</a>
+      <a href="#s-modelo">O achado</a>
+      <a href="#s-matriz">Preços</a>
+      <a href="#s-fronteira">Preço x custo</a>
+      <a href="#s-lista">Lista</a>
+      <a href="#s-metodo">Método</a>
+    </nav>
     <button class="tbtn" id="theme" aria-label="Alternar tema">
       <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="7" cy="7" r="3.2"/><path d="M7 .8v1.6M7 11.6v1.6M13.2 7h-1.6M2.4 7H.8M11.4 2.6l-1.1 1.1M3.7 10.3l-1.1 1.1M11.4 11.4l-1.1-1.1M3.7 3.7L2.6 2.6"/></svg>
     </button>
@@ -118,7 +127,7 @@
   <div class="wrap in">
     <span class="olho"><b>Tabela FIPE</b> <span id="hRef"></span><span class="soAmplo"> · <span id="hFam"></span> modelos · <span id="hPts"></span> preços</span></span>
     <h1>Não existe melhor carro.<br>Existe o melhor <span class="ris2">para você<i class="pt">.</i></span></h1>
-    <p class="chamada">A resposta muda com o seu uso. Responda três coisas e veja a sua.</p>
+    <p class="chamada">Aqui carro se compara pelo que custa <b>por ano de posse</b>, não pelo preço de vitrine. Responda <span id="qtdPerg">quatro</span> coisas e veja o seu.</p>
 
     <div class="jogo" id="jogo">
       <div class="jTopo">
@@ -176,8 +185,8 @@
   <section class="sec faixa" id="s-veredito">
     <div class="wrap">
       <div class="sec-cab rev"><span class="papel">O que comprar</span>
-        <h2>Os três que lideram no seu filtro</h2>
-        <p><span id="cCount"></span> combinações de modelo e ano passam pelo que você pediu. Estas três ficam na frente depois de pesar custo por ano, garantia, manutenção, conforto, facilidade de revenda e risco de câmbio.</p></div>
+        <h2>Os três que lideram para você</h2>
+        <p><span id="cCount"></span> combinações de modelo e ano passam pelo que você pediu. <span id="porQuePesos"></span></p></div>
       <div class="grade g3" id="picks"></div>
       <div class="grade g4 rev" id="tiles" style="margin-top:20px"></div>
     </div>
@@ -202,7 +211,7 @@
         <div class="fixo">
           <div class="quadro">
             <p class="tit">Quanto do valor de zero quilômetro o carro ainda segura</p>
-            <p class="sub">Cada linha é um modelo. A linha tracejada é a mediana do mercado. Toque nos nomes para trocar.</p>
+            <p class="sub">Cada linha é um modelo. A linha tracejada é a mediana do mercado. Use os nomes para trocar.</p>
             <div class="chartbox" id="cCurva"></div><div class="legf" id="lgCurva"></div>
           </div>
         </div>
@@ -230,7 +239,7 @@
     <div class="wrap">
       <div class="sec-cab rev"><span class="papel">Os preços</span>
         <h2>Quanto custa cada modelo, em cada ano</h2>
-        <p>Em cima o preço FIPE de hoje. Embaixo, em cinza, o custo estimado por ano, que soma depreciação, IPVA, seguro, manutenção, energia e juros. Quanto mais escura a célula, mais caro o carro. Toque em qualquer uma para abrir o modelo no detalhe.</p></div>
+        <p>Em cima o preço FIPE de hoje. Embaixo, em cinza, o custo estimado por ano, que soma depreciação, IPVA, seguro, manutenção, energia e juros. Quanto mais escura a célula, mais caro o carro. Abra qualquer uma para ver o modelo no detalhe.</p></div>
       <div class="quadro rev"><div class="hmwrap" id="heat"></div><div class="escala" id="hmScale"></div></div>
     </div>
   </section>

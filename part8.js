@@ -85,7 +85,7 @@ function montaConta(c){
    Testar só rodagem dava a impressão falsa de que a resposta era estável. */
 const PERFIS = [
   ["perfil","custo",    "você olhasse só o custo por ano",            "Gastar o mínimo"],
-  ["perfil","problema", "o que pesasse fosse não dar dor de cabeça",  "Não dar dor de cabeça"],
+  ["perfil","problema", "o que pesasse fosse o menor risco mecânico", "Menos risco mecânico"],
   ["perfil","revenda",  "o que pesasse fosse revender fácil",         "Revender fácil depois"],
   ["perfil","conforto", "o que pesasse fosse conforto e equipamento", "Conforto e equipamento"],
   ["budMax",  50000, "seu teto de compra fosse R$ 50 mil"],
@@ -251,7 +251,7 @@ function drawBarraPesos(){
   alvo.innerHTML = ordem.map(([k,nome],i)=>{
     const pct = S.w[k]/soma*100;
     return `<i style="width:${pct}%;background:var(${SERIES[i%6]})" title="${nome}: ${Math.round(pct)}%">` +
-      `${pct >= 13 ? `<span>${Math.round(pct)}%</span>` : ""}</i>`;
+      `${pct >= 13 ? `<span style="color:${inkPara(SERIES[i%6])}">${Math.round(pct)}%</span>` : ""}</i>`;
   }).join("") || `<i style="width:100%;background:var(--ink-3)"><span>sem peso definido</span></i>`;
   let leg = alvo.nextElementSibling;
   if(!leg || !leg.classList.contains("pesosLeg")){

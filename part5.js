@@ -5,6 +5,15 @@ function el(t, a, p){ const e = document.createElementNS(NS,t);
 function svgFor(box, w, h){
   box.innerHTML = "";
   const s = el("svg", {viewBox:`0 0 ${w} ${h}`, role:"img", preserveAspectRatio:"xMidYMid meet"}, box);
+  // role="img" achata o SVG num nó só. Sem nome, o leitor de tela anuncia
+  // cinco gráficos mudos. Todo quadro já tem a conclusão no .tit e a leitura
+  // no .sub, então o nome sai de lá em vez de virar texto solto para manter.
+  const quadro = box.closest(".quadro");
+  const tit = quadro && quadro.querySelector(".tit");
+  const sub = quadro && quadro.querySelector(".sub");
+  const nome = [tit && tit.textContent.trim(), sub && sub.textContent.trim()]
+    .filter(Boolean).join(". ");
+  s.setAttribute("aria-label", nome ? "Gráfico. " + nome : "Gráfico");
   return s;
 }
 function tipFor(box){

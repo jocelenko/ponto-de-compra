@@ -33,6 +33,7 @@ function render(){
     const q = id => document.getElementById(id);
     const põe = (id, v) => { const e = q(id); if(e) e.textContent = v; };
     põe("cCount", cs.length); põe("tblCount", cs.length); põe("contRes", cs.length);
+    põe("porQuePesos", fraseDosPesos());
     const n = filtrosAtivos();
     põe("contFiltros", n);
     if(q("contFiltros")) q("contFiltros").style.display = n ? "" : "none";
@@ -173,9 +174,17 @@ function bind(){
 
   // gaveta de filtros
   const dr = q("drawer"), velo = q("velo"), bf = q("btnFiltros");
-  const abrir = on => { dr.classList.toggle("on", on); velo.classList.toggle("on", on);
-    bf.setAttribute("aria-expanded", on); document.body.style.overflow = on ? "hidden" : "";
-    if(on) dr.querySelector("select,input,button").focus(); };
+  const abrir = on => {
+    dr.classList.toggle("on", on); velo.classList.toggle("on", on);
+    bf.setAttribute("aria-expanded", on);
+    document.body.style.overflow = on ? "hidden" : "";
+    // Escondida só por transform, a gaveta continuava no caminho do Tab: eram 104
+    // controles invisíveis antes do conteúdo da página.
+    dr.inert = !on;
+    if(on) (q("fecharDrawer") || dr.querySelector("select,input,button")).focus();
+    else bf.focus();   // sem isso o foco ficava preso num botão fora da tela
+  };
+  dr.inert = true;
   bf.onclick = () => abrir(!dr.classList.contains("on"));
   q("fecharDrawer").onclick = () => abrir(false);
   q("verResultados").onclick = () => { abrir(false);
@@ -227,7 +236,7 @@ const PERFIS_PESO = {
   // exato decidia a resposta, o que é arbitrário. Se o rótulo promete o menor custo
   // por ano, o peso honesto é o custo sozinho.
   custo:    {rot:"Gastar o mínimo",        w:{custo:100, manut:0, gar:0,  conf:0,  liq:0,  camb:0}},
-  problema: {rot:"Não dar dor de cabeça",  w:{custo:12, manut:28, gar:30, conf:2,  liq:6,  camb:22}},
+  problema: {rot:"Menos risco mecânico",    w:{custo:12, manut:28, gar:30, conf:2,  liq:6,  camb:22}},
   revenda:  {rot:"Revender fácil depois",  w:{custo:20, manut:4,  gar:8,  conf:4,  liq:56, camb:8}},
   conforto: {rot:"Conforto e equipamento", w:{custo:20, manut:4,  gar:8,  conf:56, liq:6,  camb:6}},
   tudo:     {rot:"Um pouco de tudo",       w:{custo:34, manut:12, gar:16, conf:10, liq:16, camb:12}}
@@ -245,7 +254,7 @@ const QUIZ = [
   {id:"perfil", perg:"O que mais pesa na sua escolha?", peso:true,
    dica:"Isto muda a ordem do ranking, não a lista. Dá para regular fino nos filtros.",
    ops:[["custo","Gastar o mínimo","o menor custo por ano"],
-        ["problema","Não dar dor de cabeça","garantia, câmbio e oficina barata"],
+        ["problema","Menos risco mecânico","câmbio seguro, garantia longa, oficina barata"],
         ["revenda","Revender fácil depois","modelo que sai rápido no anúncio"],
         ["conforto","Conforto e equipamento","porte maior e mais itens de série"],
         ["custom","Quero regular eu mesmo","abre os seis pesos para você mexer"]]}
@@ -255,6 +264,8 @@ function desenhaJogo(){
   const resumo = document.getElementById("resumo");
   const fim = S.passo >= QUIZ.length;
 
+  const qtd = document.getElementById("qtdPerg");
+  if(qtd) qtd.textContent = ["uma","duas","três","quatro","cinco","seis"][QUIZ.length-1] || QUIZ.length;
   document.body.classList.toggle("jogando", !fim);
   // "Responda três coisas" só ajuda antes da primeira resposta. Depois é ruído.
   document.body.classList.toggle("iniciado", S.passo > 0 || fim);
@@ -320,6 +331,21 @@ function desenhaJogo(){
 function rotuloDe(p, v){
   const o = p.ops.find(x => x[0] === v);
   return o ? o[1] : (p.peso ? "Pesos personalizados" : String(v));
+}
+/* A frase do veredito citava sempre a ponderação equilibrada, mesmo quando o
+   visitante tinha escolhido outra prioridade. Agora ela sai dos pesos em vigor. */
+function fraseDosPesos(){
+  const soma = Object.values(S.w).reduce((a,b)=>a+b,0) || 1;
+  const nomes = {custo:"custo por ano", manut:"manutenção barata", gar:"garantia de fábrica",
+                 conf:"conforto e itens", liq:"revenda fácil", camb:"câmbio confiável"};
+  const ativos = Object.entries(S.w).filter(([,v]) => v > 0)
+    .sort((a,b) => b[1]-a[1]).map(([k,v]) => `${nomes[k]} ${Math.round(v/soma*100)}%`);
+  if(!ativos.length) return "Nenhum critério está com peso, então a ordem é arbitrária.";
+  if(ativos.length === 1) return `Estas três ficam na frente olhando só ${ativos[0]}.`;
+  const lista = ativos.length > 3
+    ? ativos.slice(0,3).join(", ") + " e mais " + (ativos.length-3) + " critérios"
+    : ativos.slice(0,-1).join(", ") + " e " + ativos[ativos.length-1];
+  return `Estas três ficam na frente pesando ${lista}.`;
 }
 function aplicaPerfil(chave){
   const p = PERFIS_PESO[chave]; if(!p) return;
@@ -414,7 +440,7 @@ function revelar(){
   window._revFallback = setTimeout(revelarTudo, 1500);
 }
 function rolagem(){
-  const links = [...document.querySelectorAll("#navTopo a")];
+  const links = [...document.querySelectorAll("#navTopo a, #secTira a")];
   const secs = links.map(a => document.querySelector(a.getAttribute("href"))).filter(Boolean);
   const barra = document.getElementById("progresso");
   const passos = [...document.querySelectorAll(".passo")];
@@ -426,6 +452,7 @@ function rolagem(){
     requestAnimationFrame(() => {
       const y = scrollY, h = document.body.scrollHeight - innerHeight;
       barra.style.transform = "scaleX(" + (h > 0 ? Math.min(1, y/h) : 0) + ")";
+      document.body.classList.toggle("rolou", y > innerHeight * 0.6);
       let atual = null;
       secs.forEach(s => { if(s.getBoundingClientRect().top <= innerHeight*0.35) atual = s.id; });
       links.forEach(a => a.classList.toggle("atual", a.getAttribute("href") === "#"+atual));

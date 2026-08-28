@@ -75,6 +75,10 @@ Achados medidos, não opinião:
 
 Ausências que nenhum trabalho futuro pode preencher com invenção:
 
+- Não há dado de confiabilidade de marca. O critério chama-se **"menos risco mecânico"**, e não
+  "não dar dor de cabeça", porque o que existe medido é meses de garantia, tipo de câmbio e custo
+  estimado de oficina. Prometer confiabilidade de marca seria inventar, ainda mais apontando para
+  marca chinesa recente, onde nem histórico existe.
 - Não há dado de confiabilidade, recall ou custo de oficina de fonte primária. Manutenção, seguro, consumo, liquidez e risco de câmbio são **estimativas de mercado**, não medição.
 - Não há preço de anúncio real, só referência FIPE. Negociação, cor, quilometragem e estado mexem uns 10% para cada lado.
 - Não há histórico suficiente para medir depreciação das marcas chinesas recentes. Onde falta, a curva é do mercado e vem marcada como estimada.

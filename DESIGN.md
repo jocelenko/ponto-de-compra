@@ -38,6 +38,9 @@ Regras duráveis:
 - **`--acc-on` existe porque branco sobre `#2997FF` reprova em contraste (3,02).** No escuro a tinta do botão primário é escura. Nunca voltar para branco fixo.
 - Série de gráfico usa `--s1` a `--s6`, um conjunto já validado para daltonismo e contraste nas duas superfícies. Não trocar sem revalidar.
 - A tinta dentro das células da matriz é **calculada pela luminância real do degrau**, nunca por limiar fixo de índice. Limiar fixo quebra quando a rampa inverte de direção entre os temas.
+- **Pelo mesmo motivo, a barra de pesos não usa tinta fixa.** Era `color:#fff` cravado, que reprovava
+  em contraste sobre teal, azul e roxo (3,71 a 3,84 no escuro). Agora passa por `inkPara()` e fica
+  entre 4,97 e 5,13.
 - Sem gradiente em texto. Ênfase vem de peso e tamanho.
 
 ## Tipografia
@@ -54,7 +57,13 @@ Regras duráveis:
 ## Componentes
 
 - **`.topo`**: barra fixa de 60px, translúcida com `backdrop-filter`. Contém navegação inline (some
-  abaixo de 1040px), tema e o botão de filtros com contador. Nada mais. Os botões de seções e de
+  abaixo de 1040px), tema e o botão de filtros com contador.
+- **`.secTira`**: tira de seções rolável na horizontal, só abaixo de 1040px, e só depois que o
+  visitante passa do herói. Existe porque tirar o botão de seções deixou 13.000px de rolagem sem
+  índice nenhum no celular. Aparecer só depois do herói é o que faz ela não custar altura na
+  primeira tela, que é onde o jogo precisa do espaço. **Ela é um `<nav>` dentro de `.topo`, então
+  precisa de `.topo nav.secTira` para vencer `.topo nav`**, senão o comportamento sai invertido:
+  ligada no desktop e desligada no celular. Os botões de seções e de
   critérios saíram: o primeiro repetia o menu, o segundo virou o primeiro grupo da gaveta.
 - **`.drawer`**: gaveta de filtros à direita, recolhível, `transform: translateX(100%)` quando fechada. Largura `min(420px, 100%)`, então ocupa a tela inteira no celular. **Nunca virar coluna permanente.**
 - **`.jogo`**: o herói pergunta **uma coisa por vez**. Rodagem, horizonte e teto de compra, com
@@ -107,6 +116,26 @@ Regras duráveis:
 - **`.ajuda` e `#balao`**: ajuda contextual. Um balão único no `body`, posicionado por JS, porque como
   filho de cada número ele seria cortado pela tabela e pela matriz, que têm `overflow` próprio.
 - **`.quadro`**: moldura de gráfico. **Todo gráfico é obrigado a ter `.tit` com a conclusão e `.sub` ensinando a ler.** Gráfico sem título que conclui é gráfico incompleto.
+
+## Fundação do documento, regra durável
+
+`build.py` emite `<!doctype html>`, `<html lang="pt-BR">`, `<head>` e `<body>`. Isso não é enfeite:
+sem doctype o navegador roda em `BackCompat`, que muda o box model, e sem `lang` o leitor de tela lê
+português com voz inglesa e o navegador não oferece tradução. A página passou meses assim porque
+`part1.html` começava direto no `<meta charset>` e o navegador se recuperava em silêncio.
+
+O `<head>` carrega `meta description`, Open Graph e Twitter card. O link circula por WhatsApp, e sem
+isso ele chegava sem prévia, sem descrição e sem imagem.
+
+## Teclado, regra durável
+
+A gaveta fechada recebe `inert`. Escondê-la só com `transform` deixava **104 controles invisíveis no
+caminho do Tab**, antes de qualquer conteúdo da página. Ao abrir, o foco vai para o botão de fechar e
+não para o primeiro controle em ordem de DOM, que é o "Limpar" e é a ação mais destrutiva do painel.
+Ao fechar, o foco volta para o botão que abriu.
+
+Todo SVG criado por `svgFor` recebe `aria-label` montado a partir do `.tit` e do `.sub` do próprio
+quadro. `role="img"` achata o gráfico num nó só, então sem nome eram cinco gráficos mudos.
 
 ## Nomes de classe, regra durável
 

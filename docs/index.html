@@ -1,6 +1,18 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ponto de Compra</title>
+<title>Ponto de Compra: quanto cada carro custa por ano, não na vitrine</title>
+<meta name="description" content="Compare 574 modelos da Tabela FIPE pelo custo por ano de posse, somando depreciação medida, IPVA, seguro, manutenção e energia. Responda quatro perguntas e veja o carro certo para o seu uso.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:site_name" content="Ponto de Compra">
+<meta property="og:title" content="Não existe melhor carro. Existe o melhor para você.">
+<meta property="og:description" content="574 modelos da Tabela FIPE comparados pelo custo por ano de posse, e não pelo preço de vitrine. Responda quatro perguntas e veja o seu.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Não existe melhor carro. Existe o melhor para você.">
+<meta name="twitter:description" content="574 modelos da Tabela FIPE comparados pelo custo por ano de posse. Responda quatro perguntas e veja o seu.">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2080%2096%22%3E%3Ccircle%20cx%3D%2226%22%20cy%3D%2224%22%20r%3D%2213%22%20fill%3D%22none%22%20stroke%3D%22%230B72F0%22%20stroke-width%3D%228.5%22%2F%3E%3Cpath%20d%3D%22M10%208%20L44%2042%22%20stroke%3D%22%23C5221F%22%20stroke-width%3D%228.5%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M5%2060%20H22%20C36%2060%2032%2086%2046%2086%20H57%22%20fill%3D%22none%22%20stroke%3D%22%230B72F0%22%20stroke-width%3D%228.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3Ccircle%20cx%3D%2264%22%20cy%3D%2286%22%20r%3D%227%22%20fill%3D%22%230B72F0%22%2F%3E%3C%2Fsvg%3E">
 <!--
   THESIS: o preço da vitrine não é o custo do carro. Cada número aparece explicado onde é lido.
@@ -100,6 +112,26 @@ a:hover{text-decoration:underline; text-underline-offset:3px}
   .topo nav{display:flex}
   .topo .marca{margin-right:26px}
 }
+/* Abaixo de 1040px o menu do topo some e a página fica com 13.000px de rolagem
+   sem índice. A tira aparece só depois do herói, que é quando navegar passa a
+   fazer sentido, então ela não custa altura na primeira tela. */
+.topo nav.secTira{display:none}
+@media(max-width:1039px){
+  .topo nav.secTira{position:absolute; left:0; right:0; top:60px; display:flex; gap:6px;
+    padding:0 14px 8px; overflow-x:auto; overscroll-behavior-x:contain;
+    scrollbar-width:none; background:inherit;
+    transform:translateY(-8px); opacity:0; pointer-events:none;
+    transition:transform .2s cubic-bezier(.2,.8,.25,1), opacity .16s}
+  .topo nav.secTira::-webkit-scrollbar{display:none}
+  body.rolou .topo nav.secTira{transform:none; opacity:1; pointer-events:auto}
+  body.rolou .sec{scroll-margin-top:108px}
+  .topo nav.secTira a{flex:0 0 auto; font-size:12.5px; font-weight:600; color:var(--ink-3);
+    padding:8px 13px; min-height:40px; display:flex; align-items:center;
+    border:1px solid var(--line-2); border-radius:99px; background:var(--card)}
+  .topo nav.secTira a:hover{text-decoration:none; color:var(--ink)}
+  .topo nav.secTira a.atual{color:var(--acc-on); background:var(--acc); border-color:var(--acc)}
+}
+@media(max-width:1039px) and (prefers-reduced-motion:reduce){ .topo nav.secTira{transition:none} }
 .topo nav a{font-size:13.5px; font-weight:500; color:var(--ink-2); padding:7px 10px; border-radius:99px}
 .topo nav a:hover{background:var(--bg-2); color:var(--ink); text-decoration:none}
 .topo nav a.atual{color:var(--ink); font-weight:650; background:var(--bg-2)}
@@ -215,8 +247,10 @@ input.mini{width:100%; font:inherit; font-size:14.5px; padding:9px 12px; min-hei
 @media(prefers-reduced-motion:reduce){ #grupoCriterios.piscar{animation:none} }
 .barraPesos{display:flex; height:28px; border-radius:6px; overflow:hidden; background:var(--bg-3)}
 .barraPesos i{display:block; position:relative}
+/* Era color:#fff fixo, que reprovava sobre teal, azul e roxo (3,71 a 3,84 no escuro).
+   A tinta agora vem da luminância real do segmento, como na matriz. */
 .barraPesos i span{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-  font-size:9.5px; font-weight:800; color:#fff; letter-spacing:.02em; white-space:nowrap; overflow:hidden}
+  font-size:9.5px; font-weight:800; letter-spacing:.02em; white-space:nowrap; overflow:hidden}
 .pesosLeg{display:flex; flex-wrap:wrap; gap:4px 12px; margin-top:9px; font-size:11.5px; color:var(--ink-3)}
 .pesosLeg span{display:inline-flex; align-items:center; gap:5px}
 .pesosLeg i{width:9px; height:9px; border-radius:2px; flex:0 0 auto}
@@ -656,6 +690,11 @@ footer{border-top:1px solid var(--line-2); padding:28px 0 48px; font-size:13px; 
   border-radius:50%; border:1px solid var(--line); background:var(--card); color:var(--ink-3);
   font:inherit; font-size:11px; font-weight:800; line-height:1; cursor:help; padding:0;
   vertical-align:middle; margin-left:5px; flex:0 0 auto; position:relative; top:-1px}
+/* 17px é o tamanho certo dentro do texto, mas é metade do alvo mínimo de toque.
+   O pseudo-elemento estende a área clicável sem mexer no desenho. */
+.ajuda::after{content:""; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:44px; height:44px; border-radius:50%}
+@media(pointer:fine){ .ajuda::after{width:28px; height:28px} }
 .ajuda:hover,.ajuda[aria-expanded=true]{border-color:var(--acc); color:var(--acc); background:var(--acc-soft)}
 @media (pointer:coarse){ .ajuda{width:24px; height:24px; font-size:13px} }
 #balao{position:fixed; z-index:120; width:max-content; min-width:230px; max-width:320px; background:var(--card);
@@ -675,6 +714,8 @@ table.rk th .thin button{width:auto}
 
 </style>
 
+</head>
+<body>
 <header class="topo">
   <div class="in">
     <a class="marca" href="#topo" aria-label="Ponto de Compra, ir para o topo">
@@ -690,6 +731,15 @@ table.rk th .thin button{width:auto}
       <a href="#s-veredito">O que comprar</a>
       <a href="#s-curva">A curva</a>
       <a href="#s-matriz">Preços</a>
+      <a href="#s-lista">Lista</a>
+      <a href="#s-metodo">Método</a>
+    </nav>
+    <nav class="secTira" id="secTira" aria-label="Seções da página">
+      <a href="#s-veredito">O que comprar</a>
+      <a href="#s-curva">A curva</a>
+      <a href="#s-modelo">O achado</a>
+      <a href="#s-matriz">Preços</a>
+      <a href="#s-fronteira">Preço x custo</a>
       <a href="#s-lista">Lista</a>
       <a href="#s-metodo">Método</a>
     </nav>
@@ -795,7 +845,7 @@ table.rk th .thin button{width:auto}
   <div class="wrap in">
     <span class="olho"><b>Tabela FIPE</b> <span id="hRef"></span><span class="soAmplo"> · <span id="hFam"></span> modelos · <span id="hPts"></span> preços</span></span>
     <h1>Não existe melhor carro.<br>Existe o melhor <span class="ris2">para você<i class="pt">.</i></span></h1>
-    <p class="chamada">A resposta muda com o seu uso. Responda três coisas e veja a sua.</p>
+    <p class="chamada">Aqui carro se compara pelo que custa <b>por ano de posse</b>, não pelo preço de vitrine. Responda <span id="qtdPerg">quatro</span> coisas e veja o seu.</p>
 
     <div class="jogo" id="jogo">
       <div class="jTopo">
@@ -853,8 +903,8 @@ table.rk th .thin button{width:auto}
   <section class="sec faixa" id="s-veredito">
     <div class="wrap">
       <div class="sec-cab rev"><span class="papel">O que comprar</span>
-        <h2>Os três que lideram no seu filtro</h2>
-        <p><span id="cCount"></span> combinações de modelo e ano passam pelo que você pediu. Estas três ficam na frente depois de pesar custo por ano, garantia, manutenção, conforto, facilidade de revenda e risco de câmbio.</p></div>
+        <h2>Os três que lideram para você</h2>
+        <p><span id="cCount"></span> combinações de modelo e ano passam pelo que você pediu. <span id="porQuePesos"></span></p></div>
       <div class="grade g3" id="picks"></div>
       <div class="grade g4 rev" id="tiles" style="margin-top:20px"></div>
     </div>
@@ -879,7 +929,7 @@ table.rk th .thin button{width:auto}
         <div class="fixo">
           <div class="quadro">
             <p class="tit">Quanto do valor de zero quilômetro o carro ainda segura</p>
-            <p class="sub">Cada linha é um modelo. A linha tracejada é a mediana do mercado. Toque nos nomes para trocar.</p>
+            <p class="sub">Cada linha é um modelo. A linha tracejada é a mediana do mercado. Use os nomes para trocar.</p>
             <div class="chartbox" id="cCurva"></div><div class="legf" id="lgCurva"></div>
           </div>
         </div>
@@ -907,7 +957,7 @@ table.rk th .thin button{width:auto}
     <div class="wrap">
       <div class="sec-cab rev"><span class="papel">Os preços</span>
         <h2>Quanto custa cada modelo, em cada ano</h2>
-        <p>Em cima o preço FIPE de hoje. Embaixo, em cinza, o custo estimado por ano, que soma depreciação, IPVA, seguro, manutenção, energia e juros. Quanto mais escura a célula, mais caro o carro. Toque em qualquer uma para abrir o modelo no detalhe.</p></div>
+        <p>Em cima o preço FIPE de hoje. Embaixo, em cinza, o custo estimado por ano, que soma depreciação, IPVA, seguro, manutenção, energia e juros. Quanto mais escura a célula, mais caro o carro. Abra qualquer uma para ver o modelo no detalhe.</p></div>
       <div class="quadro rev"><div class="hmwrap" id="heat"></div><div class="escala" id="hmScale"></div></div>
     </div>
   </section>
@@ -1282,6 +1332,15 @@ function el(t, a, p){ const e = document.createElementNS(NS,t);
 function svgFor(box, w, h){
   box.innerHTML = "";
   const s = el("svg", {viewBox:`0 0 ${w} ${h}`, role:"img", preserveAspectRatio:"xMidYMid meet"}, box);
+  // role="img" achata o SVG num nó só. Sem nome, o leitor de tela anuncia
+  // cinco gráficos mudos. Todo quadro já tem a conclusão no .tit e a leitura
+  // no .sub, então o nome sai de lá em vez de virar texto solto para manter.
+  const quadro = box.closest(".quadro");
+  const tit = quadro && quadro.querySelector(".tit");
+  const sub = quadro && quadro.querySelector(".sub");
+  const nome = [tit && tit.textContent.trim(), sub && sub.textContent.trim()]
+    .filter(Boolean).join(". ");
+  s.setAttribute("aria-label", nome ? "Gráfico. " + nome : "Gráfico");
   return s;
 }
 function tipFor(box){
@@ -1930,7 +1989,7 @@ function montaConta(c){
    Testar só rodagem dava a impressão falsa de que a resposta era estável. */
 const PERFIS = [
   ["perfil","custo",    "você olhasse só o custo por ano",            "Gastar o mínimo"],
-  ["perfil","problema", "o que pesasse fosse não dar dor de cabeça",  "Não dar dor de cabeça"],
+  ["perfil","problema", "o que pesasse fosse o menor risco mecânico", "Menos risco mecânico"],
   ["perfil","revenda",  "o que pesasse fosse revender fácil",         "Revender fácil depois"],
   ["perfil","conforto", "o que pesasse fosse conforto e equipamento", "Conforto e equipamento"],
   ["budMax",  50000, "seu teto de compra fosse R$ 50 mil"],
@@ -2096,7 +2155,7 @@ function drawBarraPesos(){
   alvo.innerHTML = ordem.map(([k,nome],i)=>{
     const pct = S.w[k]/soma*100;
     return `<i style="width:${pct}%;background:var(${SERIES[i%6]})" title="${nome}: ${Math.round(pct)}%">` +
-      `${pct >= 13 ? `<span>${Math.round(pct)}%</span>` : ""}</i>`;
+      `${pct >= 13 ? `<span style="color:${inkPara(SERIES[i%6])}">${Math.round(pct)}%</span>` : ""}</i>`;
   }).join("") || `<i style="width:100%;background:var(--ink-3)"><span>sem peso definido</span></i>`;
   let leg = alvo.nextElementSibling;
   if(!leg || !leg.classList.contains("pesosLeg")){
@@ -2226,6 +2285,7 @@ function render(){
     const q = id => document.getElementById(id);
     const põe = (id, v) => { const e = q(id); if(e) e.textContent = v; };
     põe("cCount", cs.length); põe("tblCount", cs.length); põe("contRes", cs.length);
+    põe("porQuePesos", fraseDosPesos());
     const n = filtrosAtivos();
     põe("contFiltros", n);
     if(q("contFiltros")) q("contFiltros").style.display = n ? "" : "none";
@@ -2366,9 +2426,17 @@ function bind(){
 
   // gaveta de filtros
   const dr = q("drawer"), velo = q("velo"), bf = q("btnFiltros");
-  const abrir = on => { dr.classList.toggle("on", on); velo.classList.toggle("on", on);
-    bf.setAttribute("aria-expanded", on); document.body.style.overflow = on ? "hidden" : "";
-    if(on) dr.querySelector("select,input,button").focus(); };
+  const abrir = on => {
+    dr.classList.toggle("on", on); velo.classList.toggle("on", on);
+    bf.setAttribute("aria-expanded", on);
+    document.body.style.overflow = on ? "hidden" : "";
+    // Escondida só por transform, a gaveta continuava no caminho do Tab: eram 104
+    // controles invisíveis antes do conteúdo da página.
+    dr.inert = !on;
+    if(on) (q("fecharDrawer") || dr.querySelector("select,input,button")).focus();
+    else bf.focus();   // sem isso o foco ficava preso num botão fora da tela
+  };
+  dr.inert = true;
   bf.onclick = () => abrir(!dr.classList.contains("on"));
   q("fecharDrawer").onclick = () => abrir(false);
   q("verResultados").onclick = () => { abrir(false);
@@ -2420,7 +2488,7 @@ const PERFIS_PESO = {
   // exato decidia a resposta, o que é arbitrário. Se o rótulo promete o menor custo
   // por ano, o peso honesto é o custo sozinho.
   custo:    {rot:"Gastar o mínimo",        w:{custo:100, manut:0, gar:0,  conf:0,  liq:0,  camb:0}},
-  problema: {rot:"Não dar dor de cabeça",  w:{custo:12, manut:28, gar:30, conf:2,  liq:6,  camb:22}},
+  problema: {rot:"Menos risco mecânico",    w:{custo:12, manut:28, gar:30, conf:2,  liq:6,  camb:22}},
   revenda:  {rot:"Revender fácil depois",  w:{custo:20, manut:4,  gar:8,  conf:4,  liq:56, camb:8}},
   conforto: {rot:"Conforto e equipamento", w:{custo:20, manut:4,  gar:8,  conf:56, liq:6,  camb:6}},
   tudo:     {rot:"Um pouco de tudo",       w:{custo:34, manut:12, gar:16, conf:10, liq:16, camb:12}}
@@ -2438,7 +2506,7 @@ const QUIZ = [
   {id:"perfil", perg:"O que mais pesa na sua escolha?", peso:true,
    dica:"Isto muda a ordem do ranking, não a lista. Dá para regular fino nos filtros.",
    ops:[["custo","Gastar o mínimo","o menor custo por ano"],
-        ["problema","Não dar dor de cabeça","garantia, câmbio e oficina barata"],
+        ["problema","Menos risco mecânico","câmbio seguro, garantia longa, oficina barata"],
         ["revenda","Revender fácil depois","modelo que sai rápido no anúncio"],
         ["conforto","Conforto e equipamento","porte maior e mais itens de série"],
         ["custom","Quero regular eu mesmo","abre os seis pesos para você mexer"]]}
@@ -2448,6 +2516,8 @@ function desenhaJogo(){
   const resumo = document.getElementById("resumo");
   const fim = S.passo >= QUIZ.length;
 
+  const qtd = document.getElementById("qtdPerg");
+  if(qtd) qtd.textContent = ["uma","duas","três","quatro","cinco","seis"][QUIZ.length-1] || QUIZ.length;
   document.body.classList.toggle("jogando", !fim);
   // "Responda três coisas" só ajuda antes da primeira resposta. Depois é ruído.
   document.body.classList.toggle("iniciado", S.passo > 0 || fim);
@@ -2513,6 +2583,21 @@ function desenhaJogo(){
 function rotuloDe(p, v){
   const o = p.ops.find(x => x[0] === v);
   return o ? o[1] : (p.peso ? "Pesos personalizados" : String(v));
+}
+/* A frase do veredito citava sempre a ponderação equilibrada, mesmo quando o
+   visitante tinha escolhido outra prioridade. Agora ela sai dos pesos em vigor. */
+function fraseDosPesos(){
+  const soma = Object.values(S.w).reduce((a,b)=>a+b,0) || 1;
+  const nomes = {custo:"custo por ano", manut:"manutenção barata", gar:"garantia de fábrica",
+                 conf:"conforto e itens", liq:"revenda fácil", camb:"câmbio confiável"};
+  const ativos = Object.entries(S.w).filter(([,v]) => v > 0)
+    .sort((a,b) => b[1]-a[1]).map(([k,v]) => `${nomes[k]} ${Math.round(v/soma*100)}%`);
+  if(!ativos.length) return "Nenhum critério está com peso, então a ordem é arbitrária.";
+  if(ativos.length === 1) return `Estas três ficam na frente olhando só ${ativos[0]}.`;
+  const lista = ativos.length > 3
+    ? ativos.slice(0,3).join(", ") + " e mais " + (ativos.length-3) + " critérios"
+    : ativos.slice(0,-1).join(", ") + " e " + ativos[ativos.length-1];
+  return `Estas três ficam na frente pesando ${lista}.`;
 }
 function aplicaPerfil(chave){
   const p = PERFIS_PESO[chave]; if(!p) return;
@@ -2607,7 +2692,7 @@ function revelar(){
   window._revFallback = setTimeout(revelarTudo, 1500);
 }
 function rolagem(){
-  const links = [...document.querySelectorAll("#navTopo a")];
+  const links = [...document.querySelectorAll("#navTopo a, #secTira a")];
   const secs = links.map(a => document.querySelector(a.getAttribute("href"))).filter(Boolean);
   const barra = document.getElementById("progresso");
   const passos = [...document.querySelectorAll(".passo")];
@@ -2619,6 +2704,7 @@ function rolagem(){
     requestAnimationFrame(() => {
       const y = scrollY, h = document.body.scrollHeight - innerHeight;
       barra.style.transform = "scaleX(" + (h > 0 ? Math.min(1, y/h) : 0) + ")";
+      document.body.classList.toggle("rolou", y > innerHeight * 0.6);
       let atual = null;
       secs.forEach(s => { if(s.getBoundingClientRect().top <= innerHeight*0.35) atual = s.id; });
       links.forEach(a => a.classList.toggle("atual", a.getAttribute("href") === "#"+atual));
@@ -2642,3 +2728,5 @@ matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
 
 
 </script>
+</body>
+</html>
