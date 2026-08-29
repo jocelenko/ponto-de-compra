@@ -39,6 +39,9 @@ Dois mecanismos sustentam isso e um concorrente não copia sem refazer o trabalh
 ## Capabilities and Constraints
 
 - Universo atual: 54 marcas, 574 modelos, 1.782 versões automáticas, 5.009 pontos de preço, referência agosto/2026.
+- **Anos presentes: 2016 a 2026, e só.** A coleta de 2010 em diante e de câmbio manual foi iniciada e
+  está parada em 1.500 de 10.552 tarefas. Enquanto não terminar, a idade máxima real é 10 anos, e o
+  filtro de idade deriva essa faixa do próprio dado em vez de prometer 16.
 - Ficam de fora apenas Alfa Romeo, Daewoo, Mazda e MG, que não têm nenhum ano modelo a partir de 2016.
 - Recorte de anos: 2016 em diante. Ano modelo futuro é 0 km e sai da conta.
 - Separação obrigatória por energia: flex, híbrido, elétrico e diesel viram linhas distintas, porque misturam preço e custo de energia incompatíveis.
@@ -71,7 +74,13 @@ Achados medidos, não opinião:
 
 - Retenção mediana de mercado: 100% no zero, 93% em 1 ano, 87% em 2, 80% em 3, e 12 anos para valer metade.
 - A queda é constante, perto de 6% ao ano. **Não existe joelho na curva.** O tombo famoso acontece entre o preço de concessionária e a FIPE, fora desta série.
-- Escolher o modelo pesa cerca de 4x mais que escolher o ano. A mediana do custo anual varia 28% entre idades, e dentro da mesma idade a distância entre modelos passa de 110%.
+- Escolher o modelo pesa muito mais que escolher o ano. No estado sem filtro de hoje a mediana do
+  custo anual varia **16%** entre idades, e dentro da mesma idade a distância do modelo mais barato
+  para o mais caro é de **559%**.
+  **Esses dois números dependem do recorte e não são constantes do mercado.** Foram 28% e 110% quando
+  o orçamento padrão ia de R$ 50 a 120 mil. Hoje o padrão vai de R$ 10 mil a R$ 500 mil, então a
+  mesma faixa de idade compara um Kwid com um Porsche e o espalhamento explode. O achado se mantém,
+  a grandeza não. Ao citar, dizer sob qual recorte.
 
 Ausências que nenhum trabalho futuro pode preencher com invenção:
 

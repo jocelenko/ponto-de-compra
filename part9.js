@@ -44,6 +44,18 @@ function render(){
 }
 
 /* ============ controles ============ */
+/* O universo coletado vai de 2016 a 2026, então a idade máxima real é 10 e não 16.
+   Derivar do dado evita que a interface prometa uma faixa que não existe, e se
+   a coleta de 2010 em diante terminar um dia, o filtro cresce sozinho. */
+function idadeMaxDoDado(){
+  // serie e indexada por ano modelo. retencao e indexada por idade, entao nao serve aqui.
+  let maisVelho = D.anoRef;
+  for(const f of D.familias)
+    for(const k in (f.serie || {})){
+      const y = +k; if(y && y < maisVelho) maisVelho = y;
+    }
+  return Math.max(2, D.anoRef - maisVelho);
+}
 const FAIXAS = [10000,15000,20000,30000,40000,50000,60000,80000,100000,120000,150000,200000,250000,300000,400000,500000];
 function bind(){
   const q = id => document.getElementById(id);
@@ -52,8 +64,19 @@ function bind(){
   q("budMin").innerHTML = FAIXAS.slice(0,-1).map(v=>opt(v,`de R$ ${(v/1000).toLocaleString("pt-BR")} mil`)).join("");
   q("budMax").innerHTML = FAIXAS.slice(1).map(v=>opt(v,`até R$ ${(v/1000).toLocaleString("pt-BR")} mil`)).join("");
   q("budMin").value = S.budMin; q("budMax").value = S.budMax;
-  q("idadeMin").innerHTML = [0,1,2,3,4,5,6,8,10,12].map(v=>opt(v, v===0?"de 0 km":`de ${v} ano${v>1?"s":""}`)).join("");
-  q("idadeMax").innerHTML = [2,3,4,5,6,8,10,12,14,16].map(v=>opt(v, v>=16?"sem limite de idade":`até ${v} anos`)).join("");
+  // A faixa sai do dado, nunca de uma lista fixa. Com 2016 como ano mais antigo,
+  // as opções de 12, 14 e 16 anos eram mortas, e pedir idade mínima de 12
+  // devolvia zero carro sem dizer por quê.
+  const idadeTeto = idadeMaxDoDado();
+  // o padrao era 16 fixo. Sem a opcao 16 o select ficava vazio, entao ele passa
+  // a nascer no teto real, e "Limpar" volta para o mesmo lugar.
+  if(S.idadeMax > idadeTeto) S.idadeMax = idadeTeto;
+  PADRAO.idadeMax = idadeTeto;
+  const ate = lim => [0,1,2,3,4,5,6,8,10,12,14,16].filter(v => v <= lim);
+  q("idadeMin").innerHTML = ate(Math.max(0, idadeTeto-1))
+    .map(v=>opt(v, v===0?"de 0 km":`de ${v} ano${v>1?"s":""}`)).join("");
+  q("idadeMax").innerHTML = ate(idadeTeto).filter(v=>v>=2)
+    .map(v=>opt(v, v>=idadeTeto?"sem limite de idade":`até ${v} anos`)).join("");
   q("idadeMin").value = S.idadeMin; q("idadeMax").value = S.idadeMax;
   q("buscaSel").innerHTML = `<option value="">Todos os modelos</option>` +
     [...new Set(D.familias.map(f=>famNome(f.nome)))].sort((a,b)=>a.localeCompare(b,"pt-BR")).map(n=>opt(n,n)).join("");

@@ -127,6 +127,16 @@ português com voz inglesa e o navegador não oferece tradução. A página pass
 O `<head>` carrega `meta description`, Open Graph e Twitter card. O link circula por WhatsApp, e sem
 isso ele chegava sem prévia, sem descrição e sem imagem.
 
+## Controle não promete faixa que o dado não tem, regra durável
+
+O filtro de idade oferecia até 16 anos com uma lista fixa, mas o universo coletado vai de 2016 a 2026.
+As opções de 12, 14 e 16 devolviam o mesmo resultado que 10, e pedir idade mínima de 12 devolvia
+**zero carro sem dizer por quê**. A faixa agora sai de `idadeMaxDoDado()`, que lê o ano mais antigo
+em `serie`. Se a coleta de 2010 em diante terminar, o filtro cresce sozinho.
+
+Cuidado ao mexer: `f.retencao` é indexada por **idade** e `f.serie` por **ano modelo**. Trocar uma
+pela outra passa despercebido e devolve um teto absurdo.
+
 ## Teclado, regra durável
 
 A gaveta fechada recebe `inert`. Escondê-la só com `transform` deixava **104 controles invisíveis no
