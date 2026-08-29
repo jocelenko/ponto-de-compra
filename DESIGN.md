@@ -137,6 +137,21 @@ em `serie`. Se a coleta de 2010 em diante terminar, o filtro cresce sozinho.
 Cuidado ao mexer: `f.retencao` é indexada por **idade** e `f.serie` por **ano modelo**. Trocar uma
 pela outra passa despercebido e devolve um teto absurdo.
 
+## Controle contínuo não pode ser redesenhado, regra durável
+
+`drawCriterios()` reescrevia o `innerHTML` da grade inteira a cada evento de `input`, ou seja,
+**destruía o próprio slider que estava na mão do usuário**. O navegador perdia o alvo do ponteiro e o
+arrasto morria depois de um passo. A grade agora é montada uma vez e depois só atualizada no lugar, e
+**nunca se escreve `value` no elemento que está com o foco**, senão o cursor pula durante o arrasto.
+
+Todo slider passa por `renderLeve()`, que junta os eventos num quadro. Um render completo custa 47 ms
+com cinco gráficos e a tabela, então um render por pixel de arrasto estourava o orçamento de 16 ms em
+3x. Coalescido, vinte eventos custam 1 ms. O `renderLeve` tem rede de `setTimeout` porque
+`requestAnimationFrame` não dispara em aba oculta.
+
+O `max` dos pesos é 100, não 50. Com o preset de custo em 100 o slider clampava para 50 e passava a
+mostrar um número diferente do que estava valendo.
+
 ## Teclado, regra durável
 
 A gaveta fechada recebe `inert`. Escondê-la só com `transform` deixava **104 controles invisíveis no

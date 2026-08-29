@@ -1,5 +1,6 @@
 import io, sys
-p = "/Users/machome/Claude/fipe-analise/"
+import os
+p = os.path.dirname(os.path.abspath(__file__)) + "/"
 dados = open(p+"dados.json", encoding="utf-8").read()
 parts = [
   # Sem doctype o navegador cai em BackCompat, que muda o box model.

@@ -182,6 +182,8 @@ a:hover{text-decoration:underline; text-underline-offset:3px}
   font-size:14px; font-weight:600; margin-bottom:6px}
 .campo .val{font-size:13.5px; font-weight:700; color:var(--acc-ink); font-variant-numeric:tabular-nums}
 .campo input[type=range]{width:100%; accent-color:var(--acc); min-height:28px}
+/* 28px e menos do que qualquer dedo precisa para pegar o cursor do slider */
+@media(pointer:coarse){ .campo input[type=range]{min-height:44px} }
 .campo select{width:100%; font:inherit; font-size:15px; padding:11px 34px 11px 12px; min-height:46px;
   border:1px solid var(--line); border-radius:var(--r-s); background:var(--card-2); color:var(--ink);
   appearance:none; cursor:pointer;
@@ -619,6 +621,7 @@ table.rk .sg{color:var(--ink-3); font-size:12px; display:block}
 .crit .fonte{display:inline-block; margin-top:9px; font-size:11.5px; font-weight:650; color:var(--ink-3);
   background:var(--bg-2); padding:3px 9px; border-radius:99px}
 .crit input[type=range]{width:100%; accent-color:var(--acc); min-height:28px; margin-top:9px}
+@media(pointer:coarse){ .crit input[type=range]{min-height:44px} }
 
 /* ============ método ============ */
 .metodo{font-size:15.5px; color:var(--ink-2); line-height:1.62}
@@ -2166,17 +2169,32 @@ function drawBarraPesos(){
     `<span><i style="background:var(${SERIES[i%6]})"></i>${nome} ${Math.round(S.w[k]/soma*100)}%</span>`).join("");
 }
 
+/* Antes isto reescrevia o innerHTML inteiro a cada evento de input, ou seja,
+   destruia o proprio slider que estava sendo arrastado. O navegador perdia o
+   alvo do ponteiro e o arrasto morria depois de um passo. Agora a grade e
+   montada uma vez e depois so atualizada no lugar. */
 function drawCriterios(){
+  const grade = document.getElementById("critGrade"); if(!grade) return;
+  if(!grade.dataset.pronto){
+    grade.innerHTML = CRIT_INFO.map(([k,nome,exp,fonte])=>`
+      <div class="crit">
+        <div class="cima"><h4>${nome}</h4><span class="peso" id="pct_${k}"></span></div>
+        <p>${exp}</p>
+        <span class="fonte">${fonte}</span>
+        <input type="range" id="w_${k}" min="0" max="100" step="2" aria-label="Peso de ${nome}">
+      </div>`).join("");
+    Object.keys(S.w).forEach(k=>{ const e=document.getElementById("w_"+k);
+      if(e) e.oninput = ev => { S.w[k] = +ev.target.value; S.perfil = null; renderLeve(); }; });
+    grade.dataset.pronto = "1";
+  }
   const soma = Object.values(S.w).reduce((a,b)=>a+b,0) || 1;
-  document.getElementById("critGrade").innerHTML = CRIT_INFO.map(([k,nome,exp,fonte])=>`
-    <div class="crit">
-      <div class="cima"><h4>${nome}</h4><span class="peso">${Math.round(S.w[k]/soma*100)}%</span></div>
-      <p>${exp}</p>
-      <span class="fonte">${fonte}</span>
-      <input type="range" id="w_${k}" min="0" max="50" step="2" value="${S.w[k]}" aria-label="Peso de ${nome}">
-    </div>`).join("");
-  Object.keys(S.w).forEach(k=>{ const e=document.getElementById("w_"+k);
-    if(e) e.oninput = ev => { S.w[k] = +ev.target.value; S.perfil = null; render(); }; });
+  for(const [k, nome] of CRIT_INFO){
+    const pct = document.getElementById("pct_"+k);
+    if(pct) pct.textContent = Math.round(S.w[k]/soma*100) + "%";
+    const e = document.getElementById("w_"+k);
+    // nunca escrever no slider que esta sob o dedo: isso e o que fazia o arrasto pular
+    if(e && e !== document.activeElement && +e.value !== S.w[k]) e.value = S.w[k];
+  }
   drawBarraPesos();
 }
 
@@ -2252,6 +2270,24 @@ function drawTable(cs){
 
 /* ============ orquestração ============ */
 let abrirPesos = () => {};
+
+/* Arrastar um slider disparava um render inteiro por pixel, com cinco gráficos e
+   a tabela. Coalescer num quadro mantém o arrasto fluido sem perder resposta. */
+let _pend = false, _pendT = 0;
+function renderLeve(){
+  if(_pend) return;
+  _pend = true;
+  const correr = () => {
+    if(!_pend) return;
+    _pend = false; clearTimeout(_pendT);
+    if(window._upd) window._upd();
+    render();
+  };
+  requestAnimationFrame(correr);
+  // rAF nao dispara em aba oculta. Sem esta rede, mexer num filtro com a aba em
+  // segundo plano deixaria o estado e a tela discordando ate o usuario voltar.
+  _pendT = setTimeout(correr, 120);
+}
 function render(){
   const cs = pontuar(candidatos(false));
   if(S.listaN > 10 && S._ultimoN !== cs.length){ S.listaN = 10; }   // filtro mudou: recomeca a lista
@@ -2400,7 +2436,7 @@ function bind(){
   q("idadeMax").onchange = e => { S.idadeMax = +e.target.value;
     if(S.idadeMin > S.idadeMax){ S.idadeMin = Math.max(0,S.idadeMax-1); q("idadeMin").value = S.idadeMin; } render(); };
   q("buscaSel").onchange = e => { S.busca = e.target.value; S.sel = null; render(); };
-  q("tetoCusto").oninput = e => { S.tetoCusto = +e.target.value; upd(); render(); };
+  q("tetoCusto").oninput = e => { S.tetoCusto = +e.target.value; renderLeve(); };
   q("ene").onchange = e => { S.ene = e.target.value; S.sel=null; render(); };
 
   q("uf").onchange = e => { S.uf = e.target.value; S.ipva = IPVA_UF[S.uf] ?? PADRAO.ipva;
@@ -2409,7 +2445,7 @@ function bind(){
   [["km",v=>S.km=+v],["ipva",v=>S.ipva=+v/1000],["comb",v=>S.comb=+v/100],
    ["kwh",v=>S.kwh=+v/100],["bat",v=>S.bat=+v/1000],["mm",v=>S.mmult=+v/100],
    ["entrada",v=>S.entrada=+v/100],["jurosAM",v=>S.jurosAM=+v/10000],["prazo",v=>S.prazo=+v]]
-    .forEach(([id,set])=>{ const e=q(id); if(e) e.oninput = ev => { set(ev.target.value); upd(); render(); }; });
+    .forEach(([id,set])=>{ const e=q(id); if(e) e.oninput = ev => { set(ev.target.value); renderLeve(); }; });
 
   [["soGarantia","soGarantia"],["soConfiavel","soConfiavel"],["soLiquido","soLiquido"],["soCambio","soCambio"]]
     .forEach(([id,k])=>{ q(id).onchange = e => { S[k] = e.target.checked; render(); }; });

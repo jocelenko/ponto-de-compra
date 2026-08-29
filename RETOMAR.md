@@ -9,7 +9,7 @@
 
 ## Como retomar
 ```
-cd /Users/machome/Claude/fipe-analise
+cd /Users/machome/Claude/projetos-pessoais/ponto-de-compra
 python3 fetch_all.py          # continua de onde parou, usa cache2
 python3 export4.py            # gera dados.json
 python3 build.py              # monta ponto-de-compra.html

@@ -1,5 +1,23 @@
 /* ============ orquestração ============ */
 let abrirPesos = () => {};
+
+/* Arrastar um slider disparava um render inteiro por pixel, com cinco gráficos e
+   a tabela. Coalescer num quadro mantém o arrasto fluido sem perder resposta. */
+let _pend = false, _pendT = 0;
+function renderLeve(){
+  if(_pend) return;
+  _pend = true;
+  const correr = () => {
+    if(!_pend) return;
+    _pend = false; clearTimeout(_pendT);
+    if(window._upd) window._upd();
+    render();
+  };
+  requestAnimationFrame(correr);
+  // rAF nao dispara em aba oculta. Sem esta rede, mexer num filtro com a aba em
+  // segundo plano deixaria o estado e a tela discordando ate o usuario voltar.
+  _pendT = setTimeout(correr, 120);
+}
 function render(){
   const cs = pontuar(candidatos(false));
   if(S.listaN > 10 && S._ultimoN !== cs.length){ S.listaN = 10; }   // filtro mudou: recomeca a lista
@@ -148,7 +166,7 @@ function bind(){
   q("idadeMax").onchange = e => { S.idadeMax = +e.target.value;
     if(S.idadeMin > S.idadeMax){ S.idadeMin = Math.max(0,S.idadeMax-1); q("idadeMin").value = S.idadeMin; } render(); };
   q("buscaSel").onchange = e => { S.busca = e.target.value; S.sel = null; render(); };
-  q("tetoCusto").oninput = e => { S.tetoCusto = +e.target.value; upd(); render(); };
+  q("tetoCusto").oninput = e => { S.tetoCusto = +e.target.value; renderLeve(); };
   q("ene").onchange = e => { S.ene = e.target.value; S.sel=null; render(); };
 
   q("uf").onchange = e => { S.uf = e.target.value; S.ipva = IPVA_UF[S.uf] ?? PADRAO.ipva;
@@ -157,7 +175,7 @@ function bind(){
   [["km",v=>S.km=+v],["ipva",v=>S.ipva=+v/1000],["comb",v=>S.comb=+v/100],
    ["kwh",v=>S.kwh=+v/100],["bat",v=>S.bat=+v/1000],["mm",v=>S.mmult=+v/100],
    ["entrada",v=>S.entrada=+v/100],["jurosAM",v=>S.jurosAM=+v/10000],["prazo",v=>S.prazo=+v]]
-    .forEach(([id,set])=>{ const e=q(id); if(e) e.oninput = ev => { set(ev.target.value); upd(); render(); }; });
+    .forEach(([id,set])=>{ const e=q(id); if(e) e.oninput = ev => { set(ev.target.value); renderLeve(); }; });
 
   [["soGarantia","soGarantia"],["soConfiavel","soConfiavel"],["soLiquido","soLiquido"],["soCambio","soCambio"]]
     .forEach(([id,k])=>{ q(id).onchange = e => { S[k] = e.target.checked; render(); }; });

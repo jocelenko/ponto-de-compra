@@ -262,17 +262,32 @@ function drawBarraPesos(){
     `<span><i style="background:var(${SERIES[i%6]})"></i>${nome} ${Math.round(S.w[k]/soma*100)}%</span>`).join("");
 }
 
+/* Antes isto reescrevia o innerHTML inteiro a cada evento de input, ou seja,
+   destruia o proprio slider que estava sendo arrastado. O navegador perdia o
+   alvo do ponteiro e o arrasto morria depois de um passo. Agora a grade e
+   montada uma vez e depois so atualizada no lugar. */
 function drawCriterios(){
+  const grade = document.getElementById("critGrade"); if(!grade) return;
+  if(!grade.dataset.pronto){
+    grade.innerHTML = CRIT_INFO.map(([k,nome,exp,fonte])=>`
+      <div class="crit">
+        <div class="cima"><h4>${nome}</h4><span class="peso" id="pct_${k}"></span></div>
+        <p>${exp}</p>
+        <span class="fonte">${fonte}</span>
+        <input type="range" id="w_${k}" min="0" max="100" step="2" aria-label="Peso de ${nome}">
+      </div>`).join("");
+    Object.keys(S.w).forEach(k=>{ const e=document.getElementById("w_"+k);
+      if(e) e.oninput = ev => { S.w[k] = +ev.target.value; S.perfil = null; renderLeve(); }; });
+    grade.dataset.pronto = "1";
+  }
   const soma = Object.values(S.w).reduce((a,b)=>a+b,0) || 1;
-  document.getElementById("critGrade").innerHTML = CRIT_INFO.map(([k,nome,exp,fonte])=>`
-    <div class="crit">
-      <div class="cima"><h4>${nome}</h4><span class="peso">${Math.round(S.w[k]/soma*100)}%</span></div>
-      <p>${exp}</p>
-      <span class="fonte">${fonte}</span>
-      <input type="range" id="w_${k}" min="0" max="50" step="2" value="${S.w[k]}" aria-label="Peso de ${nome}">
-    </div>`).join("");
-  Object.keys(S.w).forEach(k=>{ const e=document.getElementById("w_"+k);
-    if(e) e.oninput = ev => { S.w[k] = +ev.target.value; S.perfil = null; render(); }; });
+  for(const [k, nome] of CRIT_INFO){
+    const pct = document.getElementById("pct_"+k);
+    if(pct) pct.textContent = Math.round(S.w[k]/soma*100) + "%";
+    const e = document.getElementById("w_"+k);
+    // nunca escrever no slider que esta sob o dedo: isso e o que fazia o arrasto pular
+    if(e && e !== document.activeElement && +e.value !== S.w[k]) e.value = S.w[k];
+  }
   drawBarraPesos();
 }
 
